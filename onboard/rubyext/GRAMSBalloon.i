@@ -9,7 +9,7 @@
 #ifdef USE_PIGPIO
 #include "GetEnvironmentalData.hh"
 #endif
-#ifdef USE_WAVEFORMS
+#ifndef GB_MAC
 #include "ReceiveCommand.hh"
 #endif
 #ifdef USE_WAVEFORMS
@@ -24,7 +24,7 @@
 #ifdef USE_WAVEFORMS
 #include "ReadWaveform.hh"
 #endif
-#ifdef USE_WAVEFORMS
+#ifndef GB_MAC
 #include "SendTelemetry.hh"
 #endif
 #ifdef USE_RASPISYS
@@ -50,6 +50,17 @@
 #include "ReadTelemetry.hh"
 #ifdef USE_ROOT
 #include "PlotWaveform.hh"
+#endif
+#ifdef GB_DEMO_MODE
+#include "GBBasicDemoModule.hh"
+#include "ShutdownSystemDemo.hh"
+#include "GetEnvironmentalDataDemo.hh"
+#include "MeasureAccelerationDemo.hh"
+#include "MeasureTemperatureWithRTDSensorDemo.hh"
+#include "GetRaspiStatusDemo.hh"
+#include "ControlHighVoltageDemo.hh"
+#include "ReadWaveformDemo.hh"
+#include "GetSlowADCDataDemo.hh"
 #endif
 %}
 
@@ -82,7 +93,7 @@ public:
 };
 #endif
 
-#ifdef USE_WAVEFORMS
+#if defined GB_MAC || defined GB_DEMO_MODE
 class ReceiveCommand : public anlnext::BasicModule
 {
 public:
@@ -122,7 +133,7 @@ public:
 };
 #endif
 
-#ifdef USE_WAVEFORMS
+#if defined GB_MAC || defined GB_DEMO_MODE
 class SendTelemetry : public anlnext::BasicModule
 {
 public:
@@ -203,5 +214,62 @@ public:
   PlotWaveform();
 };
 #endif
+#ifdef GB_DEMO_MODE
+class GBBasicDemoModule : public anlnext::BasicModule
+{
+public:
+  GBBasicDemoModule();
+protected:
+  double SampleFromUniformDistribution();
+  void PrintInfo(const std::string &msg) const;
+};
 
+class ShutdownSystem : public anlnext::BasicModule
+{
+public:
+  ShutdownSystem();
+};
+
+class GetEnvironmentalData : public GBBasicDemoModule
+{
+public:
+  GetEnvironmentalData();
+};
+
+class MeasureAcceleration : public GBBasicDemoModule
+{
+public:
+  MeasureAcceleration();
+};
+
+class MeasureTemperatureWithRTDSensor : public GBBasicDemoModule
+{
+public:
+  MeasureTemperatureWithRTDSensor();
+};
+
+class GetRaspiStatus : public GBBasicDemoModule
+{
+public:
+  GetRaspiStatus();
+};
+
+class ControlHighVoltage : public GBBasicDemoModule
+{
+public:
+  ControlHighVoltage();
+};
+
+class ReadWaveform : public GBBasicDemoModule
+{
+public:
+  ReadWaveform();
+};
+
+class GetSlowADCData : public GBBasicDemoModule
+{
+public:
+  GetSlowADCData();
+};
+#endif
 } // namespace GRAMSBalloon

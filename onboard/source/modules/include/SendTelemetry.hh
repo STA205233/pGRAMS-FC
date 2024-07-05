@@ -22,6 +22,7 @@
 #include "SerialCommunication.hh"
 #include "ReceiveCommand.hh"
 #include "RunIDManager.hh"
+#include <thread>
 
 namespace gramsballoon {
 

@@ -9,6 +9,9 @@
 #ifndef ReadWaveform_H
 #define ReadWaveform_H 1
 
+#ifdef GB_DEMO_MODE
+#include "ReadWaveformDemo.hh"
+#else
 #include<fstream>
 #include <anlnext/BasicModule.hh>
 #include "AnalogDiscoveryManager.hh"
@@ -112,5 +115,5 @@ private:
 };
 
 } /* namespace gramsballoon */
-
+#endif /* GB_DEMO_MODE */
 #endif /* ReadWaveform_H */

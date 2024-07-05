@@ -1,3 +1,4 @@
+#ifndef GB_DEMO_MODE
 #include "AnalogDiscoveryManager.hh"
 
 using namespace anlnext;
@@ -62,3 +63,4 @@ ANLStatus AnalogDiscoveryManager::mod_finalize()
 }
 
 } /* namespace gramsballoon */
+#endif /* GB_DEMO_MODE */

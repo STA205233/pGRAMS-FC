@@ -28,6 +28,25 @@ set(GB_MODULES
   src/ReadTelemetry.cc
   )
 
+if(GB_DEMO_MODE)
+  set(GB_DEMO_MODULES
+    ../demo/src/GBBasicDemoModule.cc
+    ../demo/src/MeasureTemperatureWithRTDSensorDemo.cc
+    ../demo/src/ReadWaveformDemo.cc
+    ../demo/src/MeasureAccelerationDemo.cc
+    ../demo/src/GetRaspiStatusDemo.cc
+    ../demo/src/ShutdownSystemDemo.cc
+    ../demo/src/ControlHighVoltageDemo.cc
+    ../demo/src/GetEnvironmentalDataDemo.cc
+    ../demo/src/GetSlowADCDataDemo.cc
+  )
+  list(APPEND GB_MODULES 
+    src/ReceiveCommand.cc
+    src/SendTelemetry.cc
+  )
+   include_directories(../demo/include)
+endif(GB_DEMO_MODE) 
+  
 if(GB_USE_PIGPIO)
   set(GB_PIGPIO_MODULES
     src/SPIManager.cc
@@ -81,6 +100,7 @@ add_library(GBModules SHARED
   ${GB_RASPISYS_MODULES}
   ${GB_HSQUICKLOOK_MODULES}
   ${GB_ROOT_MODULES}
+  ${GB_DEMO_MODULES}
   )
 
 target_link_libraries(GBModules
@@ -104,4 +124,9 @@ if(INSTALL_HEADERS)
   install(DIRECTORY include/
     DESTINATION ${CMAKE_INSTALL_PREFIX}/include/GRAMSBalloon
     FILES_MATCHING PATTERN "*.hh")
+  if (GB_DEMO_MODE)
+  install(DIRECTORY ../demo/include/
+    DESTINATION ${CMAKE_INSTALL_PREFIX}/include/GRAMSBalloon
+    FILES_MATCHING PATTERN "*.hh")
+  endif(GB_DEMO_MODE)
 endif(INSTALL_HEADERS)

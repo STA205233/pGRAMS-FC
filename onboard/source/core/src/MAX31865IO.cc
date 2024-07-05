@@ -1,3 +1,4 @@
+#ifndef GB_DEMO_MODE
 #include "MAX31865IO.hh"
 #include <vector>
 #include <iomanip>
@@ -248,3 +249,4 @@ char MAX31865IO::getFilter()
 }
 
 } /* namespace gramsballoon */
+#endif /* GB_DEMO_MODE */

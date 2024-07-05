@@ -1,3 +1,4 @@
+#ifndef GB_DEMO_MODE
 #include "ICM20948IO.hh"
 
 namespace gramsballoon {
@@ -46,3 +47,4 @@ void ICM20948IO::calibrateGyro()
 }
 
 } /* namespace gramsballoon */
+#endif // GB_DEMO_MODE

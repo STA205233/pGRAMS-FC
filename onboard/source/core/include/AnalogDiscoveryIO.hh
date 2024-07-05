@@ -1,6 +1,7 @@
 #ifndef AnalogDiscoveryIO_H
 #define AnalogDiscoveryIO_H 1
 
+#ifndef GB_DEMO_MODE
 #ifdef WIN32
 #include "../../inc/dwf.h"
 #elif __APPLE__
@@ -50,4 +51,5 @@ private:
 
 } /* namespace gramsballoon */
 
+#endif /* GB_DEMO_MODE */
 #endif /* AnalogDiscoveryIO_H */

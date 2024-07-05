@@ -1,3 +1,4 @@
+#ifndef GB_DEMO_MODE
 #include "SlowADCIO.hh"
 #include <vector>
 #include <iomanip>
@@ -74,3 +75,4 @@ double SlowADCIO::conversion(uint16_t adc)
 }
 
 } /* namespace gramsballoon */
+#endif /* GB_DEMO_MODE */

@@ -1,3 +1,4 @@
+#ifndef GB_DEMO_MODE
 #include "BME680IO.hh"
 #include <vector>
 #include <iomanip>
@@ -142,7 +143,7 @@ void BME680IO::printData()
 }
 
 } /* namespace gramsballoon */
-
+#endif  /* GB_DEMO_MODE */
 
 
 

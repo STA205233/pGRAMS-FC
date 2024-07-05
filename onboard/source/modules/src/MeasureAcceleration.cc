@@ -1,3 +1,4 @@
+#ifndef GB_DEMO_MODE
 #include "MeasureAcceleration.hh"
 
 using namespace anlnext;
@@ -78,3 +79,4 @@ void MeasureAcceleration::debug()
 }
 
 } /* namespace gramsballoon */
+#endif /* GB_DEMO_MODE */

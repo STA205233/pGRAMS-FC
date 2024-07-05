@@ -5,8 +5,10 @@
  * @date 2023-04-04
  */
 
+#ifndef GB_DEMO_MODE
 #ifndef ICM20948IO_H
 #define ICM20948IO_H 1
+
 #include "ICM20948.h"
 #include <string.h>
 #include <chrono>
@@ -39,4 +41,5 @@ private:
 
 } /* namespace gramsballoon */
 
+#endif /* GB_DEMO_MODE */
 #endif /*ICM20948IO_H*/

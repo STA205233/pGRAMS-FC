@@ -1,3 +1,4 @@
+#ifndef GB_DEMO_MODE
 #include "ShutdownSystem.hh"
 #include <string.h>
 #include <errno.h>
@@ -179,3 +180,4 @@ void ShutdownSystem::setSoftwareStop(bool v)
 
 
 } /* namespace gramsballoon */
+#endif /* GB_DEMO_MODE */

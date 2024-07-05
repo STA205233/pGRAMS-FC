@@ -1,3 +1,4 @@
+#ifndef GB_DEMO_MODE
 #include "GetRaspiStatus.hh"
 #include <sys/vfs.h>
 #include <fstream>
@@ -77,3 +78,4 @@ int GetRaspiStatus::getCapacity()
 }
 
 } /* namespace gramsballoon */
+#endif /* GB_DEMO_MODE */

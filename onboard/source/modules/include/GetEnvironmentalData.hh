@@ -8,7 +8,9 @@
 
 #ifndef GetEnvironmentalData_H
 #define GetEnvironmentalData_H 1
-
+#ifdef GB_DEMO_MODE
+#include "GetEnvironmentalDataDemo.hh"
+#else /* GB_DEMO_MODE */
 #include <anlnext/BasicModule.hh>
 #include "SPIInterface.hh"
 #include "BME680IO.hh"
@@ -60,5 +62,5 @@ private:
 };
 
 } /* namespace gramsballoon */
-
+#endif /* GB_DEMO_MODE */
 #endif /* GetEnvironmentalData_H */

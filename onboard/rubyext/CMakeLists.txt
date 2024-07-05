@@ -6,6 +6,7 @@ set(CLASS_LIST_FILE class_list_${TARGET_EXT_LIBRARY}.hh)
 set(RUBY_EXT_INCLUDE_DIRS
   ../source/modules/include
   ../source/core/include
+  ../source/demo/include
   ../source/BME68x-Sensor-API/include
   ../source/ICM20948-linux-i2c/src
   ../source/ICM20948-linux-i2c/I2C/src
@@ -55,6 +56,12 @@ if(GB_USE_HSQUICKLOOK)
 endif()
 if(GB_USE_ROOT)
   list(APPEND cxx_definitions -DUSE_ROOT)
+endif()
+if(GB_MAC)
+  list(APPEND cxx_definitions -DGB_MAC)
+endif()
+if(GB_DEMO_MODE)
+  list(APPEND cxx_definitions -DGB_DEMO_MODE)
 endif()
 
 set(SWIG_FLAGS ${cxx_definitions})

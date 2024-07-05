@@ -1,3 +1,4 @@
+#ifndef GB_DEMO_MODE
 #include "DAQIO.hh"
 #include <thread>
 #include <chrono>
@@ -310,3 +311,4 @@ void DAQIO::getRange()
 }
 
 } /* namespace gramsballoon */
+#endif /* GB_DEMO_MODE */

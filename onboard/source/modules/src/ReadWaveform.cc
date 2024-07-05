@@ -1,3 +1,4 @@
+#ifndef GB_DEMO_MODE
 #include <sstream>
 #include <chrono>
 #include <thread>
@@ -273,3 +274,4 @@ void ReadWaveform::writeData()
 }
 
 } /* namespace gramsballoon */
+#endif /* GB_DEMO_MODE */

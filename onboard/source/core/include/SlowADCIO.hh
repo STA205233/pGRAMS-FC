@@ -1,3 +1,4 @@
+#ifndef GB_DEMO_MODE
 #ifndef SlowADCIO_H
 #define SlowADCIO_H 1
 
@@ -37,6 +38,7 @@ private:
 
 } /* namespace gramsballoon */
 
+#endif /* GB_DEMO_MODE */
 #endif 
 
 

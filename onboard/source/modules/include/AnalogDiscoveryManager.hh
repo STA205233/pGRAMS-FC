@@ -8,6 +8,7 @@
 
 #ifndef AnalogDiscoveryManager_H
 #define AnalogDiscoveryManager_H 1
+#ifndef GB_DEMO_MODE
 
 #include <anlnext/BasicModule.hh>
 #include "AnalogDiscoveryIO.hh"
@@ -45,5 +46,5 @@ private:
 };
 
 } /* namespace gramsballoon */
-
+#endif /* GB_DEMO_MODE */
 #endif /* AnalogDiscoveryManager_H */

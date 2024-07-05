@@ -8,6 +8,9 @@
 
 #ifndef MeasureAcceleration_H
 #define MeasureAcceleration_H 1
+#ifdef GB_DEMO_MODE
+#include "MeasureAccelerationDemo.hh"
+#else /* GB_DEMO_MODE */
 
 #include <anlnext/BasicModule.hh>
 #include "ICM20948IO.hh"
@@ -59,5 +62,5 @@ private:
 };
 
 } /* namespace gramsballoon */
-
+#endif /* GB_DEMO_MODE */
 #endif /*MeasureAcceleration_H*/

@@ -8,6 +8,9 @@
 
 #ifndef MeasureTemperatureWithRTDSensor_H
 #define MeasureTemperatureWithRTDSensor_H 1
+#ifdef GB_DEMO_MODE
+#include "MeasureTemperatureWithRTDSensorDemo.hh"
+#else /* GB_DEMO_MODE */
 
 #include <anlnext/BasicModule.hh>
 #include "SPIInterface.hh"
@@ -55,5 +58,5 @@ private:
 };
 
 } /* namespace gramsballoon */
-
+#endif /* GB_DEMO_MODE */
 #endif /* MeasureTemperatureWithRTDSensor_H */

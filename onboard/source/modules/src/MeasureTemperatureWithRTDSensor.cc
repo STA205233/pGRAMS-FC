@@ -1,3 +1,4 @@
+#ifndef GB_DEMO_MODE
 #include <thread>
 #include <chrono>
 #include "MeasureTemperatureWithRTDSensor.hh"
@@ -125,3 +126,4 @@ void MeasureTemperatureWithRTDSensor::setDataAquisitionError()
 }
 
 } /* namespace gramsballoon */
+#endif /* GB_DEMO_MODE */

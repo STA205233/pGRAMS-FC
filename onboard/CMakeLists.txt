@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.0)
+cmake_minimum_required(VERSION 3.6)
 #CMAKE_MINIMUM_REQUIRED_VERSION(VERSION 3.14)
 
 ### Initial definition of cmake variables
@@ -22,7 +22,7 @@ set(USE_RUBY ON)
 set(MY_LIBRARY GRAMSBalloon)
 #set(RASPI ON)
 
-find_package(Ruby 2.7 REQUIRED)
+find_package(Ruby 3.2 REQUIRED)
 
 ### options
 ## library options
@@ -36,12 +36,14 @@ option(GB_USE_ROOT "enable root" OFF)
 ## install options
 option(GB_INSTALL_HEADERS "install all header files" ON)
 option(GB_INSTALL_CMAKE_FILES "install all cmake files" ON)
+option(GB_DEMO_MODE "demo mode" OFF)
 set(INSTALL_HEADERS ${GB_INSTALL_HEADERS})
 set(INSTALL_CMAKE_FILES ${GB_INSTALL_CMAKE_FILES})
 ## shortcut options
 option(GB_MAC "shortcut" OFF)
 
 if (GB_MAC)
+  message("-- GB_MAC is set")
   set(GB_USE_PIGPIO OFF)
   set(GB_USE_WAVEFORMS OFF)
   set(GB_USE_ICM20948 OFF)
@@ -50,6 +52,18 @@ if (GB_MAC)
   set(GB_APT_RUBY OFF)
   set(GB_USE_ROOT ON)
 endif(GB_MAC)
+
+if (GB_DEMO_MODE)
+  message("-- GB_DEMO_MODE is set")
+  set(GB_USE_PIGPIO OFF)
+  set(GB_USE_WAVEFORMS OFF)
+  set(GB_USE_ICM20948 OFF)
+  set(GB_USE_RASPISYS OFF)
+  set(GB_USE_HSQUICKLOOK ON)
+  set(GB_APT_RUBY OFF)
+  set(GB_USE_ROOT ON)
+  add_compile_definitions("-DGB_DEMO_MODE")
+endif(GB_DEMO_MODE)
 
 if (GB_APT_RUBY)
   set(RUBY_CONFIG_FILE_DIR /usr/include/arm-linux-gnueabihf/ruby-2.7.0)

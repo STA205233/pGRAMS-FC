@@ -8,7 +8,9 @@
 
 #ifndef GetSlowADCData_H
 #define GetSlowADCData_H 1
-
+#ifdef GB_DEMO_MODE
+#include "GetSlowADCDataDemo.hh"
+#else /* GB_DEMO_MODE */
 #include <anlnext/BasicModule.hh>
 #include "SlowADCIO.hh"
 #include "SPIManager.hh"
@@ -56,5 +58,5 @@ private:
 };
 
 } /* namespace gramsballoon */
-
+#endif /* GB_DEMO_MODE */
 #endif /* GetSlowADCData_H */

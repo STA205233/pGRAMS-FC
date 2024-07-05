@@ -1,3 +1,4 @@
+#ifndef GB_DEMO_MODE
 #include "ControlHighVoltage.hh"
 #include <chrono>
 #include <thread>
@@ -121,3 +122,5 @@ void ControlHighVoltage::setInvalidChannelError()
 }
 
 } /* namespace gramsballoon */
+
+#endif /* GB_DEMO_MODE */

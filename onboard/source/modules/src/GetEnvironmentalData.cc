@@ -1,3 +1,4 @@
+#ifndef GB_DEMO_MODE
 #include <thread>
 #include <chrono>
 #include "GetEnvironmentalData.hh"
@@ -114,3 +115,4 @@ void GetEnvironmentalData::setDataAquisitionError()
 }
 
 } /* namespace gramsballoon */
+#endif /* GB_DEMO_MODE */

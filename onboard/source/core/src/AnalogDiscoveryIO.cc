@@ -1,3 +1,4 @@
+#ifndef GB_DEMO_MODE
 #include "AnalogDiscoveryIO.hh"
 #include <thread>
 #include <chrono>
@@ -114,3 +115,4 @@ void AnalogDiscoveryIO::finalize()
 }
 
 } /* namespace gramsballoon */
+#endif /* GB_DEMO_MODE */

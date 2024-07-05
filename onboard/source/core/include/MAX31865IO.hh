@@ -1,5 +1,7 @@
+#ifndef GB_DEMO_MODE
 #ifndef MAX31865IO_H
 #define MAX31865IO_H 1
+
 
 #include <pigpiod_if2.h>
 #include <iostream>
@@ -110,6 +112,7 @@ private:
 
 } /* namespace gramsballoon */
 
+#endif /* GB_DEMO_MODE */
 #endif 
 
 

@@ -1,3 +1,4 @@
+#ifndef GB_DEMO_MODE
 #include "SPIManager.hh"
 #include "pigpiod_if2.h"
 #include "bme68x.h"
@@ -82,3 +83,4 @@ void SPIManager::addChipSelect(int v)
 }
 
 } /* namespace gramsballoon */
+#endif /* GB_DEMO_MODE */
