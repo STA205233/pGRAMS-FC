@@ -1,3 +1,9 @@
+/**
+ * Basic module for demo version
+ *
+ * @author Shota Arai
+ * @date 2024-07-02
+ */
 #ifndef GBBasicDemoModule_hh
 #define GBBasicDemoModule_hh 1
 #include <anlnext/BasicModule.hh>

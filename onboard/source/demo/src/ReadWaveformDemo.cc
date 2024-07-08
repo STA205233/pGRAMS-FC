@@ -1,5 +1,5 @@
-#include "ReadWaveform.hh"
 #include "DAQIO.hh"
+#include "ReadWaveform.hh"
 #include <chrono>
 #include <sstream>
 #include <thread>
@@ -56,11 +56,16 @@ ANLStatus ReadWaveform::mod_analyze() {
     std::this_thread::sleep_for(std::chrono::milliseconds(500));
     return AS_OK;
   }
+  std::this_thread::sleep_for(std::chrono::milliseconds(100));
+  eventHeader_.resize(5);
   if (eventID_ % numEventsPerFile_ == 0) {
     if (eventID_ != 0) {
       closeOutputFile();
     }
     createNewOutputFile();
+    if (!(*ofs_)) {
+      return AS_QUIT_ALL_ERROR;
+    }
   }
   DAQResult res = DAQResult::TRIGGERED;
   if (SampleFromUniformDistribution() < 0.1) {
