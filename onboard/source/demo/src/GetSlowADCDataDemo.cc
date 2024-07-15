@@ -1,3 +1,4 @@
+#include "GetSlowADCDataDemo.hh"
 #include "GetSlowADCData.hh"
 using namespace anlnext;
 namespace gramsballoon {
@@ -11,6 +12,11 @@ ANLStatus GetSlowADCData::mod_define() {
   define_parameter("chatter", &mod_class::chatter_);
   define_parameter("channels_mean", &mod_class::voltageMean_);
   define_parameter("channels_width", &mod_class::voltageWidth_);
+  define_parameter("main_voltage_channel", &mod_class::mainVoltageChennal_);
+  define_parameter("main_current_channel", &mod_class::mainCurrentChannel_);
+  define_parameter("chamber_pressure_channel", &mod_class::chamberPressureChannel_);
+  define_parameter("tpc_hv_voltage_channel", &mod_class::tpcHVVoltageChannel_);
+  define_parameter("tpc_hv_current_channel", &mod_class::tpcHVCurrentChannel_);
   define_parameter("slow_ADC_daq_error", &mod_class::slowADCDaqError_);
   define_parameter("spi_manager_not_found", &mod_class::SPIManagerNotFound_);
   return AS_OK;
@@ -97,8 +103,76 @@ uint16_t GetSlowADCData::InverseConversion(double voltage) {
     return 0;
 }
 int GetSlowADCData::GetData(int channel, uint16_t &adc, double &voltage) {
-  voltage = SampleFromUniformDistribution() * voltageWidth_[channel] + voltageMean_[channel];
+  if (channel == mainVoltageChennal_) {
+    const double voltage_main = SampleFromUniformDistribution() * voltageWidth_[channel] + voltageMean_[channel];
+    voltage = MainVoltageInverseConversion(voltage_main);
+  }
+  else if (channel == mainCurrentChannel_) {
+    const double current = SampleFromUniformDistribution() * voltageWidth_[channel] + voltageMean_[channel];
+    voltage = CurrentInverseConversion(current);
+  }
+  else if (channel == tpcHVVoltageChannel_) {
+    const double voltage_tpc = SampleFromUniformDistribution() * voltageWidth_[channel] + voltageMean_[channel];
+    voltage = TPCHVVoltageInverseConversion(voltage_tpc);
+  }
+  else if (channel == tpcHVCurrentChannel_) {
+    const double current_tpc = SampleFromUniformDistribution() * voltageWidth_[channel] + voltageMean_[channel];
+    voltage = TPCHVCurrentInverseConversion(current_tpc);
+  }
+  else if (channel == chamberPressureChannel_) {
+    const double chamber_pressure = SampleFromUniformDistribution() * voltageWidth_[channel] + voltageMean_[channel];
+    voltage = ChamberPressureInverseConversion(chamber_pressure);
+  }
+  else {
+    voltage = SampleFromUniformDistribution() * voltageWidth_[channel] + voltageMean_[channel];
+  }
   adc = InverseConversion(voltage);
+
   return 1;
+}
+double GetSlowADCData::CurrentInverseConversion(double current) const {
+  const double voltage = current / 1.25 + 1;
+  return voltage;
+}
+double GetSlowADCData::CurrentConversion(double voltage) const {
+  const double ret = (voltage - 1) * 1.25;
+  if (ret > 0.0)
+    return ret;
+  else
+    return 0.0;
+}
+double GetSlowADCData::MainVoltageInverseConversion(double voltage) const {
+  const double vol_adc = voltage / 24. * 3.34;
+  return vol_adc;
+}
+double GetSlowADCData::MainVoltageConversion(double voltage_main) const {
+  const double ret = voltage_main / 3.34 * 24.;
+  return ret;
+}
+double GetSlowADCData::TPCHVVoltageInverseConversion(double voltage) const {
+  const double vol_adc = voltage / 4;
+  return vol_adc;
+}
+double GetSlowADCData::TPCHVVoltageConversion(double voltage_adc) const {
+  const double ret = voltage_adc * 4;
+  return ret;
+}
+double GetSlowADCData::TPCHVCurrentConversion(double voltage_adc) const {
+  const double current = voltage_adc / 4 * 200;
+  return current;
+}
+double GetSlowADCData::TPCHVCurrentInverseConversion(double current) const {
+  const double voltage_adc = current * 4 / 200;
+  return voltage_adc;
+}
+double GetSlowADCData::ChamberPressureConversion(double voltage_adc) const {
+  constexpr double rShunt = 100;
+  const double pressure = (voltage_adc / rShunt * 1000 - 4) * 2 / 16;
+  return pressure;
+}
+double GetSlowADCData::ChamberPressureInverseConversion(double pressure) const {
+  constexpr double rShunt = 100;
+  const double voltage_adc = (pressure * 8 + 4) / 1000 * rShunt;
+  return voltage_adc;
 }
 } // namespace gramsballoon

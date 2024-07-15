@@ -6,7 +6,7 @@ class MyApp < ANL::ANLApp
     def setup()
 
         chain GRAMSBalloon::ReceiveCommand
-        with_parameters(serial_path: "/dev/ttys012", chatter: 0, binary_filename_base: ENV["HOME"] + "/data/command_test/command") do |m|
+        with_parameters(serial_path: "/dev/ttys012", chatter: 0, binary_filename_base: ENV["HOME"] + "/data/command/command") do |m|
             m.set_singleton(1)
         end
 
@@ -33,7 +33,7 @@ class MyApp < ANL::ANLApp
 
         chain GRAMSBalloon::GetSlowADCData
         with_parameters(chip_select: 17, Va: 5.026,
-        channels: [0, 1, 2, 3, 4], num_trials: 100, chatter: 0, channels_mean:[0.0, 0.0, 0.0, 0.0, 0.0], channels_width:[10.0, 10.0, 10.0, 10.0, 10.0]) do |m|
+        channels: [0, 1, 2, 3, 4], num_trials: 100, chatter: 0, channels_mean:[28.0, 1.0, 1.0, 0.0, 0.0], channels_width:[0.1, 0.1, 0.01, 0.01, 0.01], main_voltage_channel:0, main_current_channel:1, chamber_pressure_channel: 2, tpc_hv_voltage_channel:3, tpc_hv_current_channel:4) do |m|
             m.set_singleton(0)
         end
 
@@ -62,7 +62,7 @@ class MyApp < ANL::ANLApp
             trig_position: 5.0,
             time_window: 30.0, # us
             sample_frequency: 100.0, #MHz
-            output_filename_base: ENV["HOME"] + "/data/daq_test/daq_output",
+            output_filename_base: ENV["HOME"] + "/data/daq/daq_output",
             num_events_per_file: 100,
             start_reading: true
         ) do |m|
@@ -85,13 +85,16 @@ class MyApp < ANL::ANLApp
                                               "GetEnvironmentalData_5"],
           TPCHVController_module_name: "ControlHighVoltage_TPC",
           PMTHVController_module_name: "ControlHighVoltage_PMT",
-          binary_filename_base:ENV["HOME"] + "/data/telemetry_test/telemetry",
+          binary_filename_base:ENV["HOME"] + "/data/telemetry/telemetry",
           chatter: 0
         ) do |m|
             m.set_singleton(0)
         end
 
-        chain GRAMSBalloon::RunIDManager do |m|
+        chain GRAMSBalloon::RunIDManager
+        with_parameters(
+          filename: ENV["HOME"] + "settings/run_id/run_id.txt",
+        ) do |m|
             m.set_singleton(0)
         end
 

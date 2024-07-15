@@ -22,6 +22,7 @@ ANLStatus ReadWaveform::mod_define() {
   define_parameter("num_events_per_file", &mod_class::numEventsPerFile_);
   define_parameter("start_reading", &mod_class::startReading_);
   define_parameter("max_non_detection_count", &mod_class::maxNonDetectionCount_);
+  define_parameter("non_detection_rate", &mod_class::nonDetectionRate_);
   define_parameter("chatter", &mod_class::chatter_);
   return AS_OK;
 }
@@ -68,7 +69,7 @@ ANLStatus ReadWaveform::mod_analyze() {
     }
   }
   DAQResult res = DAQResult::TRIGGERED;
-  if (SampleFromUniformDistribution() < 0.1) {
+  if (SampleFromUniformDistribution() + 0.5 < nonDetectionRate_) {
     res = DAQResult::NON_DETECTION;
   }
   else {

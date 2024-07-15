@@ -114,6 +114,7 @@ private:
   void GenerateEventHeader();
   void GenerateEventFooter();
   void GenerateFakeEvent();
+  double nonDetectionRate_ = 0.0;
 };
 } // namespace gramsballoon
 

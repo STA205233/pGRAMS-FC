@@ -34,15 +34,30 @@ void MeasureTemperatureWithRTDSensor::setDataAquisitionError() {
     sendTelemetry_->getErrorManager()->setError(ErrorType::OTHER_ERRORS);
   }
 }
+ANLStatus MeasureTemperatureWithRTDSensor::mod_pre_initialize() {
+  GBBasicDemoModule::mod_pre_initialize();
+  if (rtdDataAquisitionError_) {
+    setDataAquisitionError();
+  }
+  if (SPIManagerNotFound_) {
+    std::cerr << "SPI manager does not exist. Module name = " << SPIManagerName_ << std::endl;
+    if (sendTelemetry_) {
+      sendTelemetry_->getErrorManager()->setError(ErrorType::MODULE_ACCESS_ERROR);
+    }
+  }
+  return AS_OK;
+}
 ANLStatus MeasureTemperatureWithRTDSensor::mod_initialize() {
-  meanTemperatureADC_ = TInverseConversion(meanTemperature_);
-  temperatureWidthADC_ = TInverseConversion(temperatureWidth_);
   GBBasicDemoModule::mod_initialize();
   return AS_OK;
 }
 ANLStatus MeasureTemperatureWithRTDSensor::mod_analyze() {
-  temperatureADC_ = static_cast<int>(SampleFromUniformDistribution() * temperatureWidthADC_ + meanTemperatureADC_);
-  temperature_ = TConversion(temperatureADC_);
+  temperature_ = SampleFromUniformDistribution() * temperatureWidth_ + meanTemperature_;
+  temperatureADC_ = TInverseConversion(temperature_);
+  if (temperatureADC_ == 0) {
+    std::cerr << "Error in " << module_id() << "::mod_analyze(), RTD ADC is equal to zero." << std::endl;
+    setDataAquisitionError();
+  }
   if (chatter_ >= 1) {
     std::cout << "temperature ADC: " << temperatureADC_ << std::endl;
     std::cout << " temperature : " << temperature_ << std::endl;

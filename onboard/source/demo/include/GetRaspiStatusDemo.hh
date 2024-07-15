@@ -30,9 +30,9 @@ private:
   int CPUTemperatureADC_;
   double CPUTemperature_;
   int CPUTempertaureWidthADC_ = 0;
-  double CPUTemperatureWidth_ = 0;
+  double CPUTemperatureWidth_ = 2.0;
   int CPUTemperatureMeanADC_ = 0;
-  double CPUTemperatureMean_ = 0;
+  double CPUTemperatureMean_ = 58.0;
   uint64_t capacityFree_ = 0;
   uint64_t capacityAll_ = 0;
   SendTelemetry *sendTelemetry_ = nullptr;

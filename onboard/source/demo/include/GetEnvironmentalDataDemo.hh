@@ -37,10 +37,10 @@ private:
   double temperature_;
   int chatter_ = 0;
   bool SPIManagerNotFound_ = false;
-  double pressureMean_ = 1.0;
-  double humidityMean_ = 20.0;
-  double temperatureMean_ = 1.0;
-  double pressureWidth_ = 0.01;
+  double pressureMean_ = 101525;
+  double humidityMean_ = 4.0;
+  double temperatureMean_ = 20.0;
+  double pressureWidth_ = 1000.0;
   double humidityWidth_ = 1;
   double temperatureWidth_ = 1.0;
   int GetData();

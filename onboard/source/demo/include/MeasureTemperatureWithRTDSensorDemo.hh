@@ -26,8 +26,9 @@ public:
   anlnext::ANLStatus mod_define() override;
   anlnext::ANLStatus mod_analyze() override;
   anlnext::ANLStatus mod_initialize() override;
+  anlnext::ANLStatus mod_pre_initialize() override;
   void setDataAquisitionError();
-  double TemperatureADC() { return singleton_self()->temperature_; }
+  double TemperatureADC() { return singleton_self()->temperatureADC_; }
 
 private:
   std::shared_ptr<SendTelemetry> sendTelemetry_ = nullptr;
@@ -37,10 +38,10 @@ private:
   int TInverseConversion(double temperature) const;
   const int rRef_ = 430;
   int temperatureADC_ = 0;
-  double meanTemperature_ = 0.0;
-  int meanTemperatureADC_ = 0.0;
-  double temperatureWidth_ = 0.0;
-  int temperatureWidthADC_ = 0.0;
+  double meanTemperature_ = 25.0;
+  double temperatureWidth_ = 1.0;
+  bool rtdDataAquisitionError_ = false;
+  bool SPIManagerNotFound_ = false;
   int chipSelect_ = 8;
   std::string SPIManagerName_ = "SPIManager";
 };

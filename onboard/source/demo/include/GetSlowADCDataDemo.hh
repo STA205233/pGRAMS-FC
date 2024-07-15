@@ -41,7 +41,22 @@ private:
   std::vector<double> voltageWidth_;
   bool slowADCDaqError_ = false;
   bool SPIManagerNotFound_ = false;
+  int mainVoltageChennal_ = -1;
+  int mainCurrentChannel_ = -1;
+  int tpcHVVoltageChannel_ = -1;
+  int tpcHVCurrentChannel_ = -1;
+  int chamberPressureChannel_ = -1;
   int GetData(int channel, uint16_t &adc, double &voltage);
+  double CurrentInverseConversion(double current) const;
+  double CurrentConversion(double voltage_adc) const;
+  double MainVoltageInverseConversion(double voltage) const;
+  double MainVoltageConversion(double voltage) const;
+  double TPCHVVoltageInverseConversion(double voltage) const;
+  double TPCHVVoltageConversion(double voltage_adc) const;
+  double TPCHVCurrentConversion(double voltage) const;
+  double TPCHVCurrentInverseConversion(double voltage) const;
+  double ChamberPressureConversion(double voltage_adc) const;
+  double ChamberPressureInverseConversion(double pressure) const;
 };
 } // namespace gramsballoon
 #endif //GB_GetSlowADCDataDemo_hh
