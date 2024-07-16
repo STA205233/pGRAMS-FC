@@ -1,4 +1,4 @@
-# pGRAMSFC (Flight Computer)
+# pGRAMSFC (pGRAMS Flight Computer)
 
 Software for pGRAMS flight computer
 
