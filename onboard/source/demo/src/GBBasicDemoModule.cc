@@ -9,6 +9,7 @@ ANLStatus GBBasicDemoModule::mod_define() {
 ANLStatus GBBasicDemoModule::mod_initialize() {
   engine_ = std::make_shared<std::mt19937>(seed_);
   distribution_ = std::make_shared<std::uniform_real_distribution<>>(min_, max_);
+  gaussianDistribution_ = std::make_shared<std::normal_distribution<>>(0.0, 1.0);
   return AS_OK;
 }
 void GBBasicDemoModule::PrintInfo(const std::string &msg) const {

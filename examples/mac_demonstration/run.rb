@@ -60,11 +60,12 @@ class MyApp < ANL::ANLApp
             trig_mode: 18,
             trig_level: -0.01,
             trig_position: 5.0,
-            time_window: 30.0, # us
-            sample_frequency: 100.0, #MHz
+            time_window: 160.0, # us
+            sample_frequency: 50.0, #MHz
             output_filename_base: ENV["HOME"] + "/data/daq/daq_output",
             num_events_per_file: 100,
-            start_reading: true
+            start_reading: true,
+            non_detection_rate: 0.1
         ) do |m|
           m.set_singleton(2)
         end
@@ -93,7 +94,7 @@ class MyApp < ANL::ANLApp
 
         chain GRAMSBalloon::RunIDManager
         with_parameters(
-          filename: ENV["HOME"] + "settings/run_id/run_id.txt",
+          filename: ENV["HOME"] + "/settings/run_id/run_id.txt"
         ) do |m|
             m.set_singleton(0)
         end

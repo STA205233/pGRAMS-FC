@@ -41,9 +41,9 @@ public:
   int TrigSlope() const { return singleton_self()->trigSlope_; }
   double TrigLevel() const { return singleton_self()->trigLevel_; }
   double TrigPosition() const { return singleton_self()->trigPosition_; }
-  const std::vector<double> &Offset() const { return singleton_self()->offset_; }
-  const std::vector<double> &Range() const { return singleton_self()->range_; }
-  double SampleFrequency() const { return singleton_self()->sampleFrequency_; }
+  const std::vector<double> &Offset() const { return singleton_self()->adcOffsetList_; }
+  const std::vector<double> &Range() const { return singleton_self()->adcRangeList_; }
+  double SampleFrequency() const { return singleton_self()->sampleFreq_; }
   double TimeWindow() const { return singleton_self()->timeWindow_; }
 
   void setStartReading(bool v) { singleton_self()->startReading_ = v; }
@@ -82,7 +82,7 @@ private:
   double trigPosition_ = 0.0; // us
   double timeWindow_ = 10.0; // us
   double sampleFreq_ = 2.0; //MHz
-  std::vector<double> adcRangeList_ = {1.0, 1.0, 1.0, 1.0}; // volt
+  std::vector<double> adcRangeList_ = {5.0, 5.0, 5.0, 5.0}; // volt
   std::vector<double> adcOffsetList_ = {0., 0., 0., 0.};
 
   std::vector<int16_t> eventHeader_;
@@ -105,15 +105,25 @@ private:
   uint32_t eventCount_ = 0;
   int trigSrc_ = 0;
   int trigSlope_ = 0;
-  std::vector<double> offset_ = {0., 0., 0., 0.};
-  std::vector<double> range_ = {5.0, 5.0, 5.0, 5.0};
-  double sampleFrequency_ = 2.0;
+  double pulseHeightWidth_ = 20.0; //mV
+  double pulseHeightMean_ = 40.0; //mV
+  double pulseSigmaWidth_ = 0.2;
+  double pulseSigmaMean_ = 0.4;
+  double noiseSigma_ = 1.0;
+  double pulseHeightSlowPMTWidth_ = 5.0;
+  double pulseHeightSlowPMTMean_ = 50.0;
+  double pulseHeightFastPMTWidth_ = 5.0;
+  double pulseHeightFastPMTMean_ = 20.0;
+  const double slowTau_ = 1.5;
+  const double fastTau_ = 0.020;
   std::string ADManagerName_ = "";
   void GenerateFileHeader(std::vector<int16_t> &header, int16_t num_event);
   void GenerateFileFooter(std::vector<int16_t> &footer);
   void GenerateEventHeader();
   void GenerateEventFooter();
   void GenerateFakeEvent();
+  double ConvertVoltage(int adc, double range, double offset);
+  int InverseConvertVoltage(double voltage, double range, double offset);
   double nonDetectionRate_ = 0.0;
 };
 } // namespace gramsballoon

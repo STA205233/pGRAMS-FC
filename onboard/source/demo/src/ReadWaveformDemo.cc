@@ -1,5 +1,6 @@
 #include "DAQIO.hh"
 #include "ReadWaveform.hh"
+#include "TMath.h"
 #include <chrono>
 #include <sstream>
 #include <thread>
@@ -23,6 +24,13 @@ ANLStatus ReadWaveform::mod_define() {
   define_parameter("start_reading", &mod_class::startReading_);
   define_parameter("max_non_detection_count", &mod_class::maxNonDetectionCount_);
   define_parameter("non_detection_rate", &mod_class::nonDetectionRate_);
+  define_parameter("pulse_height_mean", &mod_class::pulseHeightMean_);
+  define_parameter("pulse_height_width", &mod_class::pulseHeightWidth_);
+  define_parameter("pulse_height_slow_pmt_mean", &mod_class::pulseHeightSlowPMTMean_);
+  define_parameter("pulse_height_slow_pmt_width", &mod_class::pulseHeightSlowPMTWidth_);
+  define_parameter("pulse_height_fast_pmt_mean", &mod_class::pulseHeightFastPMTMean_);
+  define_parameter("pulse_height_fast_pmt_width", &mod_class::pulseHeightFastPMTWidth_);
+  define_parameter("noise_sigma", &mod_class::noiseSigma_);
   define_parameter("chatter", &mod_class::chatter_);
   return AS_OK;
 }
@@ -69,13 +77,15 @@ ANLStatus ReadWaveform::mod_analyze() {
     }
   }
   DAQResult res = DAQResult::TRIGGERED;
+  GenerateEventHeader();
   if (SampleFromUniformDistribution() + 0.5 < nonDetectionRate_) {
     res = DAQResult::NON_DETECTION;
   }
   else {
     res = DAQResult::TRIGGERED;
+    eventCount_++;
+    GenerateFakeEvent();
   }
-  GenerateFakeEvent();
 
   if (recentEventHeader_.size() == 0) {
     recentEventHeader_ = eventHeader_;
@@ -84,7 +94,6 @@ ANLStatus ReadWaveform::mod_analyze() {
     recentEventData_ = eventData_;
   }
   if (res == DAQResult::NON_DETECTION) {
-    GenerateEventHeader();
     nonDetectionCounter_++;
   }
   if (res == DAQResult::TRIGGERED) {
@@ -213,7 +222,7 @@ void ReadWaveform::GenerateFileHeader(std::vector<int16_t> &header, int16_t num_
   header.resize(sz_header);
   timeval time_now;
   gettimeofday(&time_now, NULL);
-  int numSample = 8000;
+  int numSample = 8192;
   header[0] = static_cast<int16_t>(trigDevice_);
   header[1] = static_cast<int16_t>(trigChannel_);
   header[2] = static_cast<int16_t>(trigSrc_);
@@ -233,15 +242,15 @@ void ReadWaveform::GenerateFileHeader(std::vector<int16_t> &header, int16_t num_
   int index = 14;
   for (int i = 0; i < 4; i++) {
     const double scale = 1.0E3;
-    header[index] = static_cast<int16_t>(((static_cast<int>(range_[i] * scale)) >> 16) & (0xffff));
-    header[index + 1] = static_cast<int16_t>((static_cast<int>(range_[i] * scale)) & (0xffff));
+    header[index] = static_cast<int16_t>(((static_cast<int>(adcRangeList_[i] * scale)) >> 16) & (0xffff));
+    header[index + 1] = static_cast<int16_t>((static_cast<int>(adcRangeList_[i] * scale)) & (0xffff));
     index += 2;
   }
 
   for (int i = 0; i < 4; i++) {
     const double scale = 1.0E3;
-    header[index] = static_cast<int16_t>(((static_cast<int>(offset_[i] * scale)) >> 16) & (0xffff));
-    header[index + 1] = static_cast<int16_t>((static_cast<int>(offset_[i] * scale)) & (0xffff));
+    header[index] = static_cast<int16_t>(((static_cast<int>(adcOffsetList_[i] * scale)) >> 16) & (0xffff));
+    header[index + 1] = static_cast<int16_t>((static_cast<int>(adcOffsetList_[i] * scale)) & (0xffff));
     index += 2;
   }
 }
@@ -267,13 +276,41 @@ void ReadWaveform::GenerateEventHeader() {
 }
 void ReadWaveform::GenerateFakeEvent() {
   eventData_.clear();
-  const int num_sample = static_cast<int>(sampleFreq_ * timeWindow_);
-  for (int i = 0; i < 4; i++) {
-    std::vector<int16_t> ph;
-    for (int j = 0; j < num_sample; j++) {
-      ph.push_back(static_cast<int16_t>(j));
+  const int num_sample = 8000;
+  {
+    const double pulse_height_fast = SampleFromUniformDistribution() * pulseHeightFastPMTWidth_ + pulseHeightFastPMTMean_;
+    const double pulse_height_slow = SampleFromUniformDistribution() * pulseHeightSlowPMTWidth_ + pulseHeightSlowPMTMean_;
+    std::vector<int16_t> ph(8192, 0);
+    for (int i = 0; i < num_sample; i++) {
+      const double time = i / sampleFreq_; //us
+      if (time < trigPosition_) {
+        ph[i] = static_cast<int16_t>(InverseConvertVoltage(0, adcRangeList_[0], adcOffsetList_[0])) + SampleFromGaussianDistribution() * noiseSigma_;
+        continue;
+      }
+      const double voltage = -TMath::Exp(-(time - trigPosition_) / slowTau_) * pulse_height_slow - TMath::Exp(-(time - trigPosition_) / fastTau_) * pulse_height_fast + SampleFromGaussianDistribution() * noiseSigma_;
+      const double adc_value = InverseConvertVoltage(voltage / 1000, adcRangeList_[0], adcOffsetList_[0]);
+      ph[i] = static_cast<int16_t>(adc_value);
     }
     eventData_.push_back(ph);
   }
+  for (int i = 1; i < 4; i++) {
+    std::vector<int16_t> ph(8192, 0);
+    const double pulse_height = (SampleFromUniformDistribution() * pulseHeightWidth_ + pulseHeightMean_);
+    const double pulse_sigma = SampleFromUniformDistribution() * pulseSigmaWidth_ + pulseSigmaMean_;
+    const double pulse_position = (SampleFromUniformDistribution() + 0.5) * (timeWindow_ - trigPosition_) + trigPosition_;
+    for (int j = 0; j < num_sample; j++) {
+      const double time = j / sampleFreq_; //us
+      const double voltage = (TMath::Erf((time - pulse_position) / pulse_sigma) + 0.5) * pulse_height + SampleFromGaussianDistribution() * noiseSigma_;
+      const double adc_value = InverseConvertVoltage(voltage / 1000, adcRangeList_[i], adcOffsetList_[i]);
+      ph[j] = static_cast<int16_t>(adc_value);
+    }
+    eventData_.push_back(ph);
+  }
+}
+double ReadWaveform::ConvertVoltage(int adc, double range, double offset) {
+  return adc * range / 65536 + offset;
+}
+int ReadWaveform::InverseConvertVoltage(double voltage, double range, double offset) {
+  return static_cast<int>(65536 * (voltage - offset) / range);
 }
 } // namespace gramsballoon
