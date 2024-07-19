@@ -88,9 +88,9 @@ Run CMake and then make:
 
 First, you should establish virtual serial communication:
 
-`socat -d -d pty,raw,ospeed=1200,ispeed=1200,parenb=0,csize=3 pty,raw,ospeed=1200,ispeed=1200,parenb=0,csize=3` (for command)
+`socat -d -d pty,raw,ospeed=B1200,ispeed=B1200,parenb=0,csize=3 pty,raw,ospeed=B1200,ispeed=B1200,parenb=0,csize=3` (for command)
 
-`socat -d -d pty,raw,ispeed=57600,ospeed=57600,parenb=0,csize=3 pty,raw,ispeed=57600,ospeed=57600,parenb=0,csize=3` (for telemetry)
+`socat -d -d pty,raw,ispeed=B57600,ospeed=B57600,parenb=0,csize=3 pty,raw,ispeed=B57600,ospeed=B57600,parenb=0,csize=3` (for telemetry)
 
 After type this, the screen shows like this:
 
