@@ -1,7 +1,7 @@
 #include "DAQIO.hh"
 #include "ReadWaveform.hh"
-#include "TMath.h"
 #include <chrono>
+#include <cmath>
 #include <sstream>
 #include <thread>
 
@@ -287,7 +287,7 @@ void ReadWaveform::GenerateFakeEvent() {
         ph[i] = static_cast<int16_t>(InverseConvertVoltage(0, adcRangeList_[0], adcOffsetList_[0])) + SampleFromGaussianDistribution() * noiseSigma_;
         continue;
       }
-      const double voltage = -TMath::Exp(-(time - trigPosition_) / slowTau_) * pulse_height_slow - TMath::Exp(-(time - trigPosition_) / fastTau_) * pulse_height_fast + SampleFromGaussianDistribution() * noiseSigma_;
+      const double voltage = -std::exp(-(time - trigPosition_) / slowTau_) * pulse_height_slow - std::exp(-(time - trigPosition_) / fastTau_) * pulse_height_fast + SampleFromGaussianDistribution() * noiseSigma_;
       const double adc_value = InverseConvertVoltage(voltage / 1000, adcRangeList_[0], adcOffsetList_[0]);
       ph[i] = static_cast<int16_t>(adc_value);
     }
@@ -300,7 +300,7 @@ void ReadWaveform::GenerateFakeEvent() {
     const double pulse_position = (SampleFromUniformDistribution() + 0.5) * (timeWindow_ - trigPosition_) + trigPosition_;
     for (int j = 0; j < num_sample; j++) {
       const double time = j / sampleFreq_; //us
-      const double voltage = (TMath::Erf((time - pulse_position) / pulse_sigma) + 0.5) * pulse_height + SampleFromGaussianDistribution() * noiseSigma_;
+      const double voltage = (std::erf((time - pulse_position) / pulse_sigma) + 0.5) * pulse_height + SampleFromGaussianDistribution() * noiseSigma_;
       const double adc_value = InverseConvertVoltage(voltage / 1000, adcRangeList_[i], adcOffsetList_[i]);
       ph[j] = static_cast<int16_t>(adc_value);
     }

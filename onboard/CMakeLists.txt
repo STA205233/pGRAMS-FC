@@ -60,7 +60,6 @@ if (GB_DEMO_MODE)
   set(GB_USE_ICM20948 OFF)
   set(GB_USE_RASPISYS OFF)
   set(GB_APT_RUBY OFF)
-  set(GB_USE_ROOT ON)
   add_compile_definitions("-DGB_DEMO_MODE")
 endif(GB_DEMO_MODE)
 
