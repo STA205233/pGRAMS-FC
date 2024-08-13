@@ -88,23 +88,23 @@ Run CMake and then make:
 
 First, you should establish virtual serial communication:
 
-`socat -d -d pty,raw,ospeed=B1200,ispeed=B1200,parenb=0,csize=3 pty,raw,ospeed=B1200,ispeed=B1200,parenb=0,csize=3` (for command)
+~~`socat -d -d pty,raw,ospeed=B1200,ispeed=B1200,parenb=0,csize=3 pty,raw,ospeed=B1200,ispeed=B1200,parenb=0,csize=3` (for command)~~
 
-`socat -d -d pty,raw,ispeed=B57600,ospeed=B57600,parenb=0,csize=3 pty,raw,ispeed=B57600,ospeed=B57600,parenb=0,csize=3` (for telemetry)
+~~`socat -d -d pty,raw,ispeed=B57600,ospeed=B57600,parenb=0,csize=3 pty,raw,ispeed=B57600,ospeed=B57600,parenb=0,csize=3` (for telemetry)~~
 
-After type this, the screen shows like this:
+~~After type this, the screen shows like this:~~
 
     $ socat -d -d pty,raw,echo=0 pty,raw,echo=0
     2024/07/07 13:49:51 socat[29591] N PTY is /dev/ttys001
     2024/07/07 13:49:51 socat[29591] N PTY is /dev/ttys002
     2024/07/07 13:49:51 socat[29591] N starting data transfer loop with FDs [5,5] and [7,7]
 
-In this example, serial ports `/dev/ttys001` and `/dev/ttys002` are connected. You should repeat it again to establish another set of serial communication (`/dev/ttys003` and `/dev/ttys004`).
-Note that if you rerun socat, the corresponding port may be changed.
+~~In this example, serial ports `/dev/ttys001` and `/dev/ttys002` are connected. You should repeat it again to establish another set of serial communication (`/dev/ttys003` and `/dev/ttys004`).~~
+~~Note that if you rerun socat, the corresponding port may be changed.~~
 
-Then, you edit examples/mac_demonstration/run.rb. In the example above, you edit it as following:
+~~Then, you edit examples/mac_demonstration/run.rb. In the example above, you edit it as following:~~
 
-     chain GRAMSBalloon::ReceiveCommand
+    chain GRAMSBalloon::ReceiveCommand
         with_parameters(serial_path: "/dev/ttys001", chatter: 0, binary_filename_base: ENV["HOME"] + "/data/command/command") do |m|
             m.set_singleton(1)
         end
@@ -114,6 +114,10 @@ Then, you edit examples/mac_demonstration/run.rb. In the example above, you edit
         with_parameters(
           serial_path: "/dev/ttys003",
     ...
+
+<b>(2024/8/13 revised)</b>  
+Opening virtual serial can be done by only executing `examples/mac_demonstration/OpenVirtualSerial.py`.
+The default values for this program are written in run.rb
 
 And make some directories and a file:
 

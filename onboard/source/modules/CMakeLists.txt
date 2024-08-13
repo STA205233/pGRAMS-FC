@@ -26,6 +26,7 @@ set(GB_MODULES
   src/ReceiveTelemetry.cc
   src/RunIDManager.cc
   src/ReadTelemetry.cc
+  src/DumpSerial.cc
   )
 
 if(GB_DEMO_MODE)

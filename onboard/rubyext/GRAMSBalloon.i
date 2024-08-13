@@ -48,6 +48,7 @@
 #endif
 #include "RunIDManager.hh"
 #include "ReadTelemetry.hh"
+#include "DumpSerial.hh"
 #ifdef USE_ROOT
 #include "PlotWaveform.hh"
 #endif
@@ -161,6 +162,11 @@ class ReceiveTelemetry :  public anlnext::BasicModule
 {
 public:
   ReceiveTelemetry();
+};
+
+class DumpSerial: public anlnext::BasicModule {
+public:
+    DumpSerial();
 };
 
 #ifdef USE_RASPISYS

@@ -6,7 +6,7 @@ class MyApp < ANL::ANLApp
     def setup()
 
         chain GRAMSBalloon::ReceiveCommand
-        with_parameters(serial_path: "./commandPTY0", chatter: 0, binary_filename_base: ENV["HOME"] + "/data/command_test/command") do |m|
+        with_parameters(serial_path: "./commandPTY0", chatter: 0, binary_filename_base: ENV["HOME"] + "/data/command/command") do |m|
             m.set_singleton(1)
         end
 
@@ -62,7 +62,7 @@ class MyApp < ANL::ANLApp
             trig_position: 5.0,
             time_window: 160.0, # us
             sample_frequency: 50.0, #MHz
-            output_filename_base: ENV["HOME"] + "/data/daq_test/daq_output",
+            output_filename_base: ENV["HOME"] + "/data/daq/daq_output",
             num_events_per_file: 100,
             start_reading: true,
             non_detection_rate: 0.1
@@ -86,7 +86,7 @@ class MyApp < ANL::ANLApp
                                               "GetEnvironmentalData_5"],
           TPCHVController_module_name: "ControlHighVoltage_TPC",
           PMTHVController_module_name: "ControlHighVoltage_PMT",
-          binary_filename_base:ENV["HOME"] + "/data/telemetry_test/telemetry",
+          binary_filename_base:ENV["HOME"] + "/data/telemetry/telemetry",
           chatter: 0
         ) do |m|
             m.set_singleton(0)
