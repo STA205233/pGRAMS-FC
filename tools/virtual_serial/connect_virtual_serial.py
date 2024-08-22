@@ -4,6 +4,7 @@ import subprocess
 import time
 import signal
 import os
+from sys import platform
 
 
 class VirtualSerial:
@@ -12,13 +13,21 @@ class VirtualSerial:
         self.virtual_filename = "./vPTY"
         self.ps = []
         self.used_filename = []
+        if platform == "win32":
+            raise NotImplementedError("This script is not supported on Windows.")
+        elif platform == "darwin":
+            self.speed_header = ""
+        elif platform == "linux" or platform == "linux2":
+            self.speed_header = "B"
+        else:
+            raise NotImplementedError("This script is not supported on this platform.")
 
     def connect_virtual_serial(self, baudrate: int = 57600) -> None:
         self.__check_filename(f"{self.virtual_filename}{self.index}")
         self.__check_filename(f"{self.virtual_filename}{self.index + 1}")
         # Connect to the virtual serial port
-        option = f"pty,raw,echo=0,ispeed={baudrate},ospeed={baudrate},link={self.virtual_filename}{self.index}"
-        option2 = f"pty,raw,echo=0,ispeed={baudrate},ospeed={baudrate},link={self.virtual_filename}{self.index + 1}"
+        option = f"pty,raw,echo=0,ispeed={self.speed_header}{baudrate},ospeed={self.speed_header}{baudrate},link={self.virtual_filename}{self.index}"
+        option2 = f"pty,raw,echo=0,ispeed={self.speed_header}{baudrate},ospeed={self.speed_header}{baudrate},link={self.virtual_filename}{self.index + 1}"
         print(f"\n{self.virtual_filename}{self.index} <-> {self.virtual_filename}{self.index + 1}")
         print(f"Baudrate: {baudrate}")
         self.ps.append(subprocess.Popen(["socat", "-d", "-d", option, option2]))
@@ -30,8 +39,8 @@ class VirtualSerial:
         self.__check_filename(f"{filename}0")
         self.__check_filename(f"{filename}1")
         # Connect to the virtual serial port
-        option = f"pty,raw,echo=0,ispeed={baudrate},ospeed={baudrate},link={filename}0"
-        option2 = f"pty,raw,echo=0,ispeed={baudrate},ospeed={baudrate},link={filename}1"
+        option = f"pty,raw,echo=0,ispeed={self.speed_header}{baudrate},ospeed={self.speed_header}{baudrate},link={filename}0"
+        option2 = f"pty,raw,echo=0,ispeed={self.speed_header}{baudrate},ospeed={self.speed_header}{baudrate},link={filename}1"
         print(f"\n{filename}0 <-> {filename}1")
         print(f"Baudrate: {baudrate}")
         self.index += 2
@@ -76,7 +85,7 @@ class VirtualSerial:
         except KeyboardInterrupt:
             self.close_virtual_serial()
 
-    @ staticmethod
+    @staticmethod
     def default_setting() -> 'VirtualSerial':
         ret = VirtualSerial()
         ret.connect_virtual_serial_multi([57600, 1200], ["./telemetryPTY", "./commandPTY"])
