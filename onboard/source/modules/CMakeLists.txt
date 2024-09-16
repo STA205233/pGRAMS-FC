@@ -27,6 +27,7 @@ set(GB_MODULES
   src/RunIDManager.cc
   src/ReadTelemetry.cc
   src/DumpSerial.cc
+  src/GetArduinoData.cc
   )
 
 if(GB_DEMO_MODE)
