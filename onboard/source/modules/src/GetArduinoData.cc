@@ -1,5 +1,4 @@
 #include "GetArduinoData.hh"
-#include <fstream>
 using namespace anlnext;
 
 namespace gramsballoon::pgrams {
@@ -24,6 +23,7 @@ ANLStatus GetArduinoData::mod_analyze() {
     catch (const std::invalid_argument &e) {
       adcData_[i] = 0;
     }
+    std::cout << "ch" << i << ": " << adcData_[i] << std::endl;
   }
   return AS_OK;
 }

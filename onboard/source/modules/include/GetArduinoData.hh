@@ -2,6 +2,7 @@
 #define GRAMSBalloon_GetArduinoData_hh 1
 #include "anlnext/BasicModule.hh"
 #include <array>
+#include <fstream>
 #include <regex>
 #include <string>
 namespace gramsballoon::pgrams {
@@ -27,9 +28,10 @@ public:
   anlnext::ANLStatus mod_analyze() override;
   anlnext::ANLStatus mod_initialize() override;
   anlnext::ANLStatus mod_finalize() override;
-  std::array<int, NUM_CH> &AdcData() {
+  const std::array<int, NUM_CH> &AdcData() const {
     return singleton_self()->adcData_;
   }
+  constexpr int GetNUMCH() const { return NUM_CH; }
 };
 } // namespace gramsballoon::pgrams
 #endif //GRAMSBalloon_GetArduinoData_hh
