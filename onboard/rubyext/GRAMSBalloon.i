@@ -62,6 +62,7 @@
 #include "ControlHighVoltageDemo.hh"
 #include "ReadWaveformDemo.hh"
 #include "GetSlowADCDataDemo.hh"
+#include "GetArduinoData.hh"
 #endif
 %}
 
@@ -277,5 +278,11 @@ class GetSlowADCData : public GBBasicDemoModule
 public:
   GetSlowADCData();
 };
+namespace pgrams {
+class GetArduinoData: public anlnext::BasicModule {
+public:
+    GetArduinoData();
+};
+} // namespace pgrams
 #endif
 } // namespace GRAMSBalloon
