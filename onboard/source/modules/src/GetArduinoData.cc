@@ -1,4 +1,5 @@
 #include "GetArduinoData.hh"
+#include "boost/format.hpp"
 using namespace anlnext;
 
 namespace gramsballoon::pgrams {
@@ -7,23 +8,24 @@ ANLStatus GetArduinoData::mod_define() {
   return AS_OK;
 }
 ANLStatus GetArduinoData::mod_initialize() {
-  regex_ = std::regex(R"(A(\d+)\_(\d*)_)");
+  ifs_ = std::ifstream(filename_);
   return AS_OK;
 }
 ANLStatus GetArduinoData::mod_analyze() {
-  std::ifstream ifs(filename_);
   std::string dat;
-  ifs >> dat;
-  std::smatch m;
-  std::regex_match(dat, m, regex_);
+  ifs_ >> dat;
   for (int i = 0; i < NUM_CH; i++) {
+    regex_ = std::regex((boost::format("A%i_(\\d*)") % i).str());
+    std::smatch m;
+    std::regex_search(dat, m, regex_);
     try {
-      adcData_[i] = std::stoi(m[i + 1].str());
+      adcData_[i] = std::stoi(m[1].str());
     }
     catch (const std::invalid_argument &e) {
+      std::cout << "Ch " << i << " data was not read." << std::endl;
       adcData_[i] = 0;
     }
-    std::cout << "ch" << i << ": " << adcData_[i] << std::endl;
+    std::cout << "Ch" << i << ": " << adcData_[i] << std::endl;
   }
   return AS_OK;
 }

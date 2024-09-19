@@ -1,3 +1,11 @@
+/**
+ *  Module for communicating with Arduino.
+ *
+ * @author Shota Arai
+ * @date 2024-09-19
+ * 
+ */
+
 #ifndef GRAMSBalloon_GetArduinoData_hh
 #define GRAMSBalloon_GetArduinoData_hh 1
 #include "anlnext/BasicModule.hh"
@@ -8,20 +16,21 @@
 namespace gramsballoon::pgrams {
 class GetArduinoData: public anlnext::BasicModule {
   DEFINE_ANL_MODULE(GetArduinoData, 1.0);
-  ENABLE_PARALLEL_RUN();
+  //ENABLE_PARALLEL_RUN();
 
 public:
   GetArduinoData() = default;
   virtual ~GetArduinoData() = default;
 
 protected:
-  GetArduinoData(const GetArduinoData &r) = default;
+  GetArduinoData(const GetArduinoData &r) = delete;
 
 private:
   static constexpr int NUM_CH = 32;
   std::array<int, NUM_CH> adcData_;
   std::string filename_ = "/dev/ttyACM0";
   std::regex regex_;
+  std::ifstream ifs_;
 
 public:
   anlnext::ANLStatus mod_define() override;
@@ -29,7 +38,7 @@ public:
   anlnext::ANLStatus mod_initialize() override;
   anlnext::ANLStatus mod_finalize() override;
   const std::array<int, NUM_CH> &AdcData() const {
-    return singleton_self()->adcData_;
+    return adcData_;
   }
   constexpr int GetNUMCH() const { return NUM_CH; }
 };

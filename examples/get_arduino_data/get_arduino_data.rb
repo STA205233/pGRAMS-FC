@@ -6,9 +6,9 @@ MHz = 1000000
 class MyApp < ANL::ANLApp
   def setup()
     chain GRAMSBalloon::GetArduinoData
-    with_parameters(ch:0)
+    with_parameters()
   end
 end
 
 a = MyApp.new
-a.run(100, 1)
+a.run(1, 1)
