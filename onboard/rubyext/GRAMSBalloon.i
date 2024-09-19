@@ -50,6 +50,8 @@
 #include "RunIDManager.hh"
 #include "ReadTelemetry.hh"
 #include "DumpSerial.hh"
+#include "GetArduinoData.hh"
+#include "GetMHADCData.hh"
 #ifdef USE_ROOT
 #include "PlotWaveform.hh"
 #endif
@@ -59,11 +61,11 @@
 #include "GetEnvironmentalDataDemo.hh"
 #include "MeasureAccelerationDemo.hh"
 #include "MeasureTemperatureWithRTDSensorDemo.hh"
+#include "MeasureTemperatureWithRTDSensorByArduino.hh"
 #include "GetRaspiStatusDemo.hh"
 #include "ControlHighVoltageDemo.hh"
 #include "ReadWaveformDemo.hh"
 #include "GetSlowADCDataDemo.hh"
-#include "GetArduinoData.hh"
 #endif
 %}
 
@@ -171,6 +173,18 @@ public:
     DumpSerial();
 };
 
+namespace pgrams {
+class GetArduinoData: public anlnext::BasicModule {
+public:
+  GetArduinoData();
+};
+
+class GetMHADCData: public anlnext::BasicModule {
+public:
+  GetMHADCData();
+};
+} // namespace pgrams
+
 #ifdef USE_RASPISYS
 class ShutdownSystem : public anlnext::BasicModule
 {
@@ -255,7 +269,12 @@ class MeasureTemperatureWithRTDSensor : public GBBasicDemoModule
 public:
   MeasureTemperatureWithRTDSensor();
 };
-
+namespace pgrams{
+class MeasureTemperatureWithRTDSensorByArduino: public GBBasicDemoModule {
+public:
+  MeasureTemperatureWithRTDSensorByArduino();
+};
+} // namespace pgrams
 class GetRaspiStatus : public GBBasicDemoModule
 {
 public:
@@ -279,11 +298,5 @@ class GetSlowADCData : public GBBasicDemoModule
 public:
   GetSlowADCData();
 };
-namespace pgrams {
-class GetArduinoData: public anlnext::BasicModule {
-public:
-    GetArduinoData();
-};
-} // namespace pgrams
 #endif
 } // namespace GRAMSBalloon

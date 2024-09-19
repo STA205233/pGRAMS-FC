@@ -28,6 +28,7 @@ set(GB_MODULES
   src/ReadTelemetry.cc
   src/DumpSerial.cc
   src/GetArduinoData.cc
+  src/GetMHADCData.cc
   )
 
 if(GB_DEMO_MODE)
