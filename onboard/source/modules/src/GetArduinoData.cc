@@ -15,7 +15,6 @@ ANLStatus GetArduinoData::mod_initialize() {
   adcData_.resize(numCh_);
   esc_ = std::make_shared<EncodedSerialCommunication>(filename_, baudrate_, mode_);
   esc_->initialize();
-  bufferSize_ = 7 * numCh_ + (numCh_ - 1);
   return AS_OK;
 }
 ANLStatus GetArduinoData::mod_analyze() {
@@ -32,7 +31,7 @@ ANLStatus GetArduinoData::mod_analyze() {
     return AS_OK;
   }
   std::string dat;
-  esc_->ReadData(dat, bufferSize_);
+  esc_->ReadDataUntilBreak(dat);
   for (int i = 0; i < numCh_; i++) {
     std::regex reg = std::regex((boost::format("A%i_(\\d*)") % i).str());
     std::smatch m;
