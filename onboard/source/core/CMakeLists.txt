@@ -19,6 +19,7 @@ set(GB_CORE_CLASSES
   src/CRC16.cc
   src/ErrorManager.cc
   src/DateManager.cc
+  src/EncodedSerialCommunication.cc
   )
 
 if(GB_USE_PIGPIO)

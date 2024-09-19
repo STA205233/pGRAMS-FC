@@ -2,6 +2,7 @@
 %{
 // include headers of my modules
 #include <anlnext/BasicModule.hh>
+#include <string>
 #include "SimpleLoop.hh"
 #ifdef USE_PIGPIO
 #include "SPIManager.hh"
