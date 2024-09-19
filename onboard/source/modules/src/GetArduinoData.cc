@@ -7,12 +7,15 @@ ANLStatus GetArduinoData::mod_define() {
   define_parameter("filename", &mod_class::filename_);
   define_parameter("num_ch", &mod_class::numCh_);
   define_parameter("timeout_sec", &mod_class::timeout_);
+  define_parameter("baudrate", &mod_class::baudrate_);
+  define_parameter("mode", &mod_class::mode_);
   return AS_OK;
 }
 ANLStatus GetArduinoData::mod_initialize() {
   adcData_.resize(numCh_);
-  esc_ = std::make_shared<EncodedSerialCommunication>(filename_, B9600, O_RDWR | O_NONBLOCK);
+  esc_ = std::make_shared<EncodedSerialCommunication>(filename_, baudrate_, mode_);
   esc_->initialize();
+  bufferSize_ = 7 * numCh_ + (numCh_ - 1);
   return AS_OK;
 }
 ANLStatus GetArduinoData::mod_analyze() {
@@ -29,7 +32,7 @@ ANLStatus GetArduinoData::mod_analyze() {
     return AS_OK;
   }
   std::string dat;
-  esc_->ReadData(dat, BUFFER_SIZE);
+  esc_->ReadData(dat, bufferSize_);
   for (int i = 0; i < numCh_; i++) {
     std::regex reg = std::regex((boost::format("A%i_(\\d*)") % i).str());
     std::smatch m;

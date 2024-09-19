@@ -33,6 +33,9 @@ private:
   std::string filename_ = "/dev/ttyACM0";
   std::shared_ptr<EncodedSerialCommunication> esc_ = nullptr;
   int timeout_ = 1;
+  speed_t baudrate_ = B9600;
+  int bufferSize_ = 0;
+  mode_t mode_ = O_RDWR | O_NONBLOCK;
 
 public:
   anlnext::ANLStatus mod_define() override;
