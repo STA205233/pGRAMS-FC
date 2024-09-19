@@ -8,6 +8,7 @@
 
 #ifndef GRAMSBalloon_GetArduinoData_hh
 #define GRAMSBalloon_GetArduinoData_hh 1
+#include "EncodedSerialCommunication.hh"
 #include "anlnext/BasicModule.hh"
 #include <fstream>
 #include <regex>
@@ -26,9 +27,12 @@ protected:
   GetArduinoData(const GetArduinoData &r) = default;
 
 private:
+  static constexpr int BUFFER_SIZE = 500;
   int numCh_ = 32;
   std::vector<int> adcData_;
   std::string filename_ = "/dev/ttyACM0";
+  std::shared_ptr<EncodedSerialCommunication> esc_ = nullptr;
+  int timeout_ = 1;
 
 public:
   anlnext::ANLStatus mod_define() override;
