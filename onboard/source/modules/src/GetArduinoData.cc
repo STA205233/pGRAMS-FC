@@ -5,19 +5,21 @@ using namespace anlnext;
 namespace gramsballoon::pgrams {
 ANLStatus GetArduinoData::mod_define() {
   define_parameter("filename", &mod_class::filename_);
+  define_parameter("num_ch", &mod_class::numCh_);
   return AS_OK;
 }
 ANLStatus GetArduinoData::mod_initialize() {
-  ifs_ = std::ifstream(filename_);
+  adcData_.resize(numCh_);
   return AS_OK;
 }
 ANLStatus GetArduinoData::mod_analyze() {
+  std::ifstream ifs = std::ifstream(filename_);
   std::string dat;
-  ifs_ >> dat;
-  for (int i = 0; i < NUM_CH; i++) {
-    regex_ = std::regex((boost::format("A%i_(\\d*)") % i).str());
+  ifs >> dat;
+  for (int i = 0; i < numCh_; i++) {
+    std::regex reg = std::regex((boost::format("A%i_(\\d*)") % i).str());
     std::smatch m;
-    std::regex_search(dat, m, regex_);
+    std::regex_search(dat, m, reg);
     try {
       adcData_[i] = std::stoi(m[1].str());
     }

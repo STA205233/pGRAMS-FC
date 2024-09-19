@@ -9,38 +9,38 @@
 #ifndef GRAMSBalloon_GetArduinoData_hh
 #define GRAMSBalloon_GetArduinoData_hh 1
 #include "anlnext/BasicModule.hh"
-#include <array>
 #include <fstream>
 #include <regex>
 #include <string>
+#include <vector>
 namespace gramsballoon::pgrams {
 class GetArduinoData: public anlnext::BasicModule {
   DEFINE_ANL_MODULE(GetArduinoData, 1.0);
-  //ENABLE_PARALLEL_RUN();
+  ENABLE_PARALLEL_RUN();
 
 public:
   GetArduinoData() = default;
   virtual ~GetArduinoData() = default;
 
 protected:
-  GetArduinoData(const GetArduinoData &r) = delete;
+  GetArduinoData(const GetArduinoData &r) = default;
 
 private:
-  static constexpr int NUM_CH = 32;
-  std::array<int, NUM_CH> adcData_;
+  int numCh_ = 32;
+  std::vector<int> adcData_;
   std::string filename_ = "/dev/ttyACM0";
-  std::regex regex_;
-  std::ifstream ifs_;
 
 public:
   anlnext::ANLStatus mod_define() override;
   anlnext::ANLStatus mod_analyze() override;
   anlnext::ANLStatus mod_initialize() override;
   anlnext::ANLStatus mod_finalize() override;
-  const std::array<int, NUM_CH> &AdcData() const {
+  const std::vector<int> &AdcData() const {
     return adcData_;
   }
-  constexpr int GetNUMCH() const { return NUM_CH; }
+  int NumCH() const {
+    return numCh_;
+  }
 };
 } // namespace gramsballoon::pgrams
 #endif //GRAMSBalloon_GetArduinoData_hh
