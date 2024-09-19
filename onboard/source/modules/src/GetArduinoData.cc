@@ -1,5 +1,7 @@
 #include "GetArduinoData.hh"
 #include "boost/format.hpp"
+#include <chrono>
+#include <thread>
 using namespace anlnext;
 
 namespace gramsballoon::pgrams {
@@ -18,6 +20,7 @@ ANLStatus GetArduinoData::mod_initialize() {
   return AS_OK;
 }
 ANLStatus GetArduinoData::mod_analyze() {
+  std::this_thread::sleep_for(std::chrono::seconds(1));
   timeval timeout;
   timeout.tv_sec = timeout_;
   timeout.tv_usec = 0;
@@ -32,6 +35,7 @@ ANLStatus GetArduinoData::mod_analyze() {
   }
   std::string dat;
   esc_->ReadDataUntilBreak(dat);
+  std::cout << dat << std::endl;
   for (int i = 0; i < numCh_; i++) {
     std::regex reg = std::regex((boost::format("A%i_(\\d*)") % i).str());
     std::smatch m;
