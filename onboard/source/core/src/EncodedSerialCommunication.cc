@@ -14,6 +14,23 @@ int EncodedSerialCommunication::ReadData(std::string &data, int length) {
   }
   return ret;
 }
+int EncodedSerialCommunication::ReadDataUntilBreak(std::string &data) {
+  data.clear();
+  uint8_t buf;
+  int cnt = 0;
+  while (true) {
+    const int ret = sreadSingle(buf);
+    if (ret < 0) {
+      return ret;
+    }
+    if (buf == '\n') {
+      break;
+    }
+    data += static_cast<char>(buf);
+    cnt++;
+  }
+  return cnt;
+}
 int EncodedSerialCommunication::WriteData(const std::string &data) {
   const int sz = data.size();
   std::vector<uint8_t> buf(sz);
