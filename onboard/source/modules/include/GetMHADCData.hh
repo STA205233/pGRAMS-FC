@@ -1,6 +1,6 @@
 #ifndef GRAMSBalloon_GetMHADCData_hh
 #define GRAMSBalloon_GetMHADCData_hh 1
-#include "EncodedSerialCommunication.hh"
+#include "EncodedSerialCommunicator.hh"
 #include "anlnext/BasicModule.hh"
 #include <regex>
 
@@ -31,11 +31,8 @@ public:
 private:
   int numCh_ = 32;
   std::vector<int> adcData_;
-  std::string filename_ = "/dev/ttyACM0";
-  std::shared_ptr<EncodedSerialCommunication> esc_ = nullptr;
-  int timeout_ = 1;
-  speed_t baudrate_ = B9600;
-  mode_t mode_ = O_RDWR | O_NONBLOCK;
+  std::shared_ptr<EncodedSerialCommunicator> encodedSerialCommunicator_ = nullptr;
+  std::string encodedSerialCommunicatorName_ = "EncodedSerialCommunicator";
 };
 } // namespace gramsballoon::pgrams
 #endif //GRAMSBalloon_GetMHADCData_hh

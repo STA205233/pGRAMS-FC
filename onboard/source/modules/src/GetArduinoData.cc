@@ -38,7 +38,7 @@ ANLStatus GetArduinoData::mod_analyze() {
   esc_->ReadDataUntilBreak(dat);
   std::cout << dat << std::endl;
   for (int i = 0; i < numCh_; i++) {
-    std::regex reg = std::regex((boost::format("A%i_(\\d*)") % i).str());
+    std::regex reg = std::regex((boost::format("A%d_(\\d*)") % i).str());
     std::smatch m;
     std::regex_search(dat, m, reg);
     try {

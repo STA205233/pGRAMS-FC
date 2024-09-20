@@ -6,40 +6,39 @@ using namespace anlnext;
 
 namespace gramsballoon::pgrams {
 ANLStatus GetMHADCData::mod_define() {
-  define_parameter("numCh", &mod_class::numCh_);
-  define_parameter("filename", &mod_class::filename_);
-  define_parameter("timeout", &mod_class::timeout_);
-  define_parameter("baudrate", &mod_class::baudrate_);
-  define_parameter("mode", &mod_class::mode_);
+  define_parameter("num_ch", &mod_class::numCh_);
+  define_parameter("MHADCManager_name", &mod_class::encodedSerialCommunicatorName_);
   return AS_OK;
 }
 ANLStatus GetMHADCData::mod_initialize() {
   adcData_.resize(numCh_);
-  esc_ = std::make_shared<EncodedSerialCommunication>(filename_, baudrate_, mode_);
-  esc_->initialize();
+  if (exist_module(encodedSerialCommunicatorName_)) {
+    encodedSerialCommunicator_.reset(get_module_NC<EncodedSerialCommunicator>(encodedSerialCommunicatorName_));
+  }
+  else {
+    std::cerr << encodedSerialCommunicatorName_ << " does not exist." << std::endl;
+    encodedSerialCommunicator_.reset();
+    return AS_ERROR;
+  }
   return AS_OK;
 }
 
 ANLStatus GetMHADCData::mod_analyze() {
-  std::this_thread::sleep_for(std::chrono::seconds(1));
   adcData_.resize(numCh_, 0);
-  timeval timeout;
-  timeout.tv_sec = timeout_;
-  timeout.tv_usec = 0;
-  const int rv = esc_->WaitForTimeOut(timeout);
-  if (rv == -1) {
-    std::cerr << "Error in GetMHADCData::mod_analyze: rv = -1" << std::endl;
-    return AS_ERROR;
-  }
-  if (rv == 0) {
-    std::cout << "TimeOut" << std::endl;
+  std::string dat;
+  if (!encodedSerialCommunicator_) {
     return AS_OK;
   }
-  esc_->WriteData("a");
-  std::string dat;
-  esc_->ReadDataUntilBreak(dat);
+  const int byte_read = encodedSerialCommunicator_->SendComAndGetData("a", dat, 500);
+  if (byte_read < 0) {
+    std::cerr << "Error in GetMHADCData::mod_analyze: byte_read = " << byte_read << std::endl;
+    return AS_OK;
+  }
+  else if (byte_read == 0) {
+    return AS_OK;
+  }
   for (int i = 0; i < numCh_; i++) {
-    std::regex reg = std::regex((boost::format("A%i_(\\d*)") % i).str());
+    std::regex reg = std::regex((boost::format("A%02d_(\\d*)") % i).str());
     std::smatch m;
     std::regex_search(dat, m, reg);
     try {

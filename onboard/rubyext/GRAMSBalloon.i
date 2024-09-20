@@ -52,6 +52,8 @@
 #include "DumpSerial.hh"
 #include "GetArduinoData.hh"
 #include "GetMHADCData.hh"
+#include "EncodedSerialCommunicator.cc"
+#include "GetCompressorData.hh"
 #ifdef USE_ROOT
 #include "PlotWaveform.hh"
 #endif
@@ -182,6 +184,16 @@ public:
 class GetMHADCData: public anlnext::BasicModule {
 public:
   GetMHADCData();
+};
+
+class EncodedSerialCommunicator: public anlnext::BasicModule {
+public:
+  EncodedSerialCommunicator();
+};
+
+class GetCompressorData: public anlnext::BasicModule {
+public:
+  GetCompressorData();
 };
 } // namespace pgrams
 
