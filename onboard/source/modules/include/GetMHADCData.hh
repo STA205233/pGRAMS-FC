@@ -31,7 +31,7 @@ public:
 private:
   int numCh_ = 32;
   std::vector<int> adcData_;
-  std::shared_ptr<EncodedSerialCommunicator> encodedSerialCommunicator_ = nullptr;
+  EncodedSerialCommunicator* encodedSerialCommunicator_ = nullptr;
   std::string encodedSerialCommunicatorName_ = "EncodedSerialCommunicator";
 };
 } // namespace gramsballoon::pgrams

@@ -52,7 +52,7 @@
 #include "DumpSerial.hh"
 #include "GetArduinoData.hh"
 #include "GetMHADCData.hh"
-#include "EncodedSerialCommunicator.cc"
+#include "EncodedSerialCommunicator.hh"
 #include "GetCompressorData.hh"
 #ifdef USE_ROOT
 #include "PlotWaveform.hh"

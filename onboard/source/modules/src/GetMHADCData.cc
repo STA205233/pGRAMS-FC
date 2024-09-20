@@ -13,11 +13,11 @@ ANLStatus GetMHADCData::mod_define() {
 ANLStatus GetMHADCData::mod_initialize() {
   adcData_.resize(numCh_);
   if (exist_module(encodedSerialCommunicatorName_)) {
-    encodedSerialCommunicator_.reset(get_module_NC<EncodedSerialCommunicator>(encodedSerialCommunicatorName_));
+    get_module_NC(encodedSerialCommunicatorName_, &encodedSerialCommunicator_);
   }
   else {
     std::cerr << encodedSerialCommunicatorName_ << " does not exist." << std::endl;
-    encodedSerialCommunicator_.reset();
+    encodedSerialCommunicator_ = nullptr;
     return AS_ERROR;
   }
   return AS_OK;

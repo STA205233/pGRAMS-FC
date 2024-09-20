@@ -27,7 +27,7 @@ private:
   static constexpr int NUM_PRESSURE = 2;
   static constexpr int NUM_TEMPERATURE = 4;
   std::string encodedSerialCommunicatorName_ = "EncodedSerialCommunicator";
-  std::shared_ptr<EncodedSerialCommunicator> communicator_ = nullptr;
+  EncodedSerialCommunicator* communicator_ = nullptr;
   std::array<int, NUM_TEMPERATURE> temperature_;
   std::array<int, NUM_PRESSURE> pressure_;
   std::regex regTemp_;
