@@ -54,6 +54,7 @@
 #include "GetMHADCData.hh"
 #include "EncodedSerialCommunicator.hh"
 #include "GetCompressorData.hh"
+#include "GetPressure.hh"
 #ifdef USE_ROOT
 #include "PlotWaveform.hh"
 #endif
@@ -194,6 +195,11 @@ public:
 class GetCompressorData: public anlnext::BasicModule {
 public:
   GetCompressorData();
+};
+
+class GetPressure: public anlnext::BasicModule {
+public:
+  GetPressure();
 };
 } // namespace pgrams
 

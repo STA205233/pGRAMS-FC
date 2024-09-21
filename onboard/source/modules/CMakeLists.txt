@@ -18,7 +18,6 @@ link_directories(
   ${ANLNEXT_LIB_DIR}
   ${ROOT_LIB_DIR}
   ${G4_LIB_DIR}
-  #${PIGPIO_LIB_DIR}
   )
 
 set(GB_MODULES
@@ -31,6 +30,7 @@ set(GB_MODULES
   src/EncodedSerialCommunicator.cc
   src/GetMHADCData.cc
   src/GetCompressorData.cc
+  src/GetPressure.cc
   )
 
 if(GB_DEMO_MODE)
