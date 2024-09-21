@@ -15,19 +15,30 @@ int EncodedSerialCommunication::ReadData(std::string &data, int length) {
   return ret;
 }
 int EncodedSerialCommunication::ReadDataUntilBreak(std::string &data) {
+  return ReadDataUntilSpecificStr(data, "\n");
+}
+int EncodedSerialCommunication::ReadDataUntilSpecificStr(std::string &data, const std::string &end) {
   data.clear();
   uint8_t buf;
   int cnt = 0;
+  const int sz_end = end.size();
+  int cnt_end = 0;
   while (true) {
+    if (cnt_end == sz_end) {
+      break;
+    }
     const int ret = sreadSingle(buf);
     if (ret < 0) {
       return ret;
     }
-    if (buf == '\n') {
-      break;
-    }
     data += static_cast<char>(buf);
     cnt++;
+    if (cnt_end > 0 && static_cast<char>(buf) != static_cast<char>(end[cnt_end])) {
+      cnt_end = 0;
+    }
+    if (static_cast<char>(buf) == static_cast<char>(end[cnt_end])) {
+      cnt_end++;
+    }
   }
   return cnt;
 }

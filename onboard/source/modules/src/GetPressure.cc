@@ -17,7 +17,8 @@ ANLStatus GetPressure::mod_initialize() {
     return AS_ERROR;
   }
   command_ = (boost::format("@%03dPR3?;FF") % channel_).str();
-  reg_ = std::regex((boost::format("@%03dACK([\\dE\\.]*);FF") % channel_).str());
+  std::string pat((boost::format("@%03dACK([0-9\\-\\+E\\.]*?);FF") % channel_).str());
+  reg_ = std::regex(pat);
   return AS_OK;
 }
 ANLStatus GetPressure::mod_analyze() {
@@ -34,7 +35,12 @@ ANLStatus GetPressure::mod_analyze() {
     return AS_OK;
   }
   std::smatch m;
-  std::regex_search(dat, m, reg_);
+  const bool result = std::regex_search(dat, m, reg_);
+  if (!result) {
+    std::cout << "Pressure data was not read." << std::endl;
+    return AS_OK;
+  }
+  std::cout << "read: " << m[1].str() << std::endl;
   try {
     pressure_ = std::stof(m[1].str());
   }

@@ -55,6 +55,7 @@
 #include "EncodedSerialCommunicator.hh"
 #include "GetCompressorData.hh"
 #include "GetPressure.hh"
+#include "PressureGaugeManager.hh"
 #ifdef USE_ROOT
 #include "PlotWaveform.hh"
 #endif
@@ -200,6 +201,11 @@ public:
 class GetPressure: public anlnext::BasicModule {
 public:
   GetPressure();
+};
+
+class PressureGaugeManager: public EncodedSerialCommunicator{
+public:
+  PressureGaugeManager();
 };
 } // namespace pgrams
 

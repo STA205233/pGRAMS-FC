@@ -14,6 +14,8 @@ public:
 
 protected:
   EncodedSerialCommunicator(const EncodedSerialCommunicator &r) = default;
+  std::shared_ptr<EncodedSerialCommunication> GetEncodedSerialCommunication() { return esc_; }
+  int GetTimeout() const { return timeout_; }
 
 public:
   anlnext::ANLStatus mod_define() override;

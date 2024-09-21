@@ -10,6 +10,7 @@ public:
   virtual ~EncodedSerialCommunication() = default;
   EncodedSerialCommunication(const std::string &serial_path, speed_t baudrate, mode_t open_mode) : SerialCommunication(serial_path, baudrate, open_mode) {}
   int ReadData(std::string &data, int length);
+  int ReadDataUntilSpecificStr(std::string &data, const std::string &end);
   int ReadDataUntilBreak(std::string &data);
   int WriteData(const std::string &data);
 };

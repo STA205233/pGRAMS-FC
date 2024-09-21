@@ -31,6 +31,7 @@ set(GB_MODULES
   src/GetMHADCData.cc
   src/GetCompressorData.cc
   src/GetPressure.cc
+  src/PressureGaugeManager.cc
   )
 
 if(GB_DEMO_MODE)

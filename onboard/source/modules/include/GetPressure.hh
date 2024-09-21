@@ -18,7 +18,7 @@ public:
 
 private:
   EncodedSerialCommunicator *encodedSerialCommunicator_ = nullptr;
-  std::string encodedSerialCommunicatorName_;
+  std::string encodedSerialCommunicatorName_ = "EncodedSerialCommunicator";
   float pressure_ = 0;
   int channel_ = 0;
   std::string command_ = "";
