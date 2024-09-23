@@ -17,17 +17,27 @@ public:
 protected:
   GetCompressorData(const GetCompressorData &r) = default;
 
+private:
+  static constexpr int NUM_PRESSURE = 2;
+  static constexpr int NUM_TEMPERATURE = 4;
+
 public:
   anlnext::ANLStatus mod_define() override;
   anlnext::ANLStatus mod_analyze() override;
   anlnext::ANLStatus mod_initialize() override;
   anlnext::ANLStatus mod_finalize() override;
+  int Temperature(int index) const {
+    return singleton_self()->temperature_[index];
+  }
+  int Pressure(int index) const {
+    return singleton_self()->pressure_[index];
+  }
+  constexpr int NumPressure() const { return NUM_PRESSURE; }
+  constexpr int NumTemperature() const { return NUM_TEMPERATURE; }
 
 private:
-  static constexpr int NUM_PRESSURE = 2;
-  static constexpr int NUM_TEMPERATURE = 4;
   std::string encodedSerialCommunicatorName_ = "EncodedSerialCommunicator";
-  EncodedSerialCommunicator* communicator_ = nullptr;
+  EncodedSerialCommunicator *communicator_ = nullptr;
   std::array<int, NUM_TEMPERATURE> temperature_;
   std::array<int, NUM_PRESSURE> pressure_;
   std::regex regTemp_;

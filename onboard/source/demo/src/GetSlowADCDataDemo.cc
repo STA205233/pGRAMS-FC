@@ -88,14 +88,14 @@ ANLStatus GetSlowADCData::mod_analyze() {
   return AS_OK;
 }
 
-double GetSlowADCData::Conversion(uint16_t adc) {
+double GetSlowADCData::Conversion(uint16_t adc) const {
   const double ret = va_ / 4096.0 * (adc - 0.5);
   if (ret > 0.0)
     return ret;
   else
     return 0.0;
 }
-uint16_t GetSlowADCData::InverseConversion(double voltage) {
+uint16_t GetSlowADCData::InverseConversion(double voltage) const {
   const double ret = 4096.0 / va_ * voltage + 0.5;
   if (ret > 0.0)
     return static_cast<uint16_t>(ret);

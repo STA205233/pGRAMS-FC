@@ -45,7 +45,9 @@ if(GB_DEMO_MODE)
     ../demo/src/ControlHighVoltageDemo.cc
     ../demo/src/GetEnvironmentalDataDemo.cc
     ../demo/src/GetSlowADCDataDemo.cc
+    ../demo/src/GetSlowADCDataIncludingPressure.cc
     ../demo/src/MeasureTemperatureWithRTDSensorByArduino.cc
+    ../demo/src/MeasureTemperatureWithRTDSensorByMHADC.cc
   )
   list(APPEND GB_MODULES 
     src/ReceiveCommand.cc

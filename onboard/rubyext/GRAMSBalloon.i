@@ -66,6 +66,7 @@
 #include "MeasureAccelerationDemo.hh"
 #include "MeasureTemperatureWithRTDSensorDemo.hh"
 #include "MeasureTemperatureWithRTDSensorByArduino.hh"
+#include "MeasureTemperatureWithRTDSensorByMHADC.hh"
 #include "GetRaspiStatusDemo.hh"
 #include "ControlHighVoltageDemo.hh"
 #include "ReadWaveformDemo.hh"
@@ -294,9 +295,14 @@ public:
   MeasureTemperatureWithRTDSensor();
 };
 namespace pgrams{
-class MeasureTemperatureWithRTDSensorByArduino: public GBBasicDemoModule {
+class MeasureTemperatureWithRTDSensorByArduino: public MeasureTemperatureWithRTDSensor {
 public:
   MeasureTemperatureWithRTDSensorByArduino();
+};
+
+class MeasureTemperatureWithRTDSensorByMHADC: public MeasureTemperatureWithRTDSensor {
+public:
+  MeasureTemperatureWithRTDSensorByMHADC();
 };
 } // namespace pgrams
 class GetRaspiStatus : public GBBasicDemoModule

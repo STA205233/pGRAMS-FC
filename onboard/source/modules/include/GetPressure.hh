@@ -15,6 +15,7 @@ public:
   anlnext::ANLStatus mod_define() override;
   anlnext::ANLStatus mod_initialize() override;
   anlnext::ANLStatus mod_analyze() override;
+  float Pressure() const { return singleton_self()->pressure_; }
 
 private:
   EncodedSerialCommunicator *encodedSerialCommunicator_ = nullptr;

@@ -3,6 +3,7 @@
 using namespace anlnext;
 namespace gramsballoon::pgrams {
 ANLStatus GetCompressorData::mod_define() {
+  define_parameter("EncodedSerialCommunicator_name", &mod_class::encodedSerialCommunicatorName_);
   return AS_OK;
 }
 ANLStatus GetCompressorData::mod_initialize() {

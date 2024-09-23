@@ -70,7 +70,7 @@ endif(GB_APT_RUBY)
 
 ### External libraries
 ### BOOST ###
-find_package(Boost 1.60.0 REQUIRED COMPONENTS system chrono thread)
+find_package(Boost 1.60.0 REQUIRED CONFIG)
 set(BOOST_INC_DIR ${Boost_INCLUDE_DIRS})
 set(BOOST_LIB_DIR ${Boost_LIBRARY_DIRS})
 set(BOOST_LIB ${Boost_LIBRARIES})

@@ -22,7 +22,7 @@ public:
   anlnext::ANLStatus mod_initialize() override;
   anlnext::ANLStatus mod_finalize() override;
   const std::vector<int> &AdcData() const {
-    return adcData_;
+    return singleton_self()->adcData_;
   }
   int NumCH() const {
     return numCh_;
