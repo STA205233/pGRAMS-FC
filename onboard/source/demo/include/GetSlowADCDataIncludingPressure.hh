@@ -1,7 +1,7 @@
 #ifndef GRAMSBalloon_GetSlowADCDataIncludingPressure_hh
 #define GRAMSBalloon_GetSlowADCDataIncludingPressure_hh 1
-#include "GetSlowADCDataDemo.hh"
 #include "GetPressure.hh"
+#include "GetSlowADCDataDemo.hh"
 namespace gramsballoon::pgrams {
 class GetSlowADCDataIncludingPressure: public GetSlowADCData {
   DEFINE_ANL_MODULE(GetSlowADCDataIncludingPressure, 1.0);

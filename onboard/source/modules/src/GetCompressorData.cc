@@ -31,8 +31,11 @@ ANLStatus GetCompressorData::mod_analyze() {
   const std::string command_temp = "$TEAA4B9\r";
   const std::string command_press = "$PRA95F7\r";
   std::string data_temp, data_press;
-  communicator_->SendComAndGetData(command_temp, data_temp);
-  communicator_->SendComAndGetData(command_press, data_press);
+  const int res_temp = communicator_->SendComAndGetData(command_temp, data_temp);
+  const int res_press = communicator_->SendComAndGetData(command_press, data_press);
+  if (res_press <= 0 && res_temp <= 0) {
+    return AS_ERROR;
+  }
   std::cout << "data_temp: " << data_temp << std::endl;
   std::cout << "data_press: " << data_press << std::endl;
   std::smatch m_temp;
