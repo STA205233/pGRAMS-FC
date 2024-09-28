@@ -6,13 +6,14 @@ namespace gramsballoon::pgrams {
 
 ANLStatus EncodedSerialCommunicator::mod_define() {
   define_parameter("filename", &mod_class::filename_);
-  define_parameter("timeout", &mod_class::timeout_);
+  define_parameter("timeout_sec", &mod_class::timeout_);
+  define_parameter("timeout_usec", &mod_class::timeoutUsec_);
   define_parameter("baudrate", &mod_class::baudrate_);
   define_parameter("mode", &mod_class::mode_);
   return AS_OK;
 }
 ANLStatus EncodedSerialCommunicator::mod_initialize() {
-  if (timeout_ < 0) {
+  if (timeout_ < 0 || timeoutUsec_ < 0) {
     std::cerr << "Error in EncodedSerialCommunicator::mod_initialize: timeout_ < 0" << std::endl;
     return AS_ERROR;
   }
@@ -29,7 +30,7 @@ int EncodedSerialCommunicator::SendComAndGetData(const std::string &command, std
   std::this_thread::sleep_for(std::chrono::milliseconds(sleepfor));
   timeval timeout;
   timeout.tv_sec = timeout_;
-  timeout.tv_usec = 0;
+  timeout.tv_usec = timeoutUsec_;
   const int rv = esc_->WaitForTimeOut(timeout);
   if (rv == -1) {
     return -1;

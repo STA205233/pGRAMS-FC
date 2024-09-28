@@ -20,8 +20,9 @@ ANLStatus MeasureTemperatureWithRTDSensorByMHADC::mod_initialize() {
 }
 ANLStatus MeasureTemperatureWithRTDSensorByMHADC::mod_analyze() {
   if (getMHADCData_) {
-    SetTemperature(ConvertTemperature(getMHADCData_->AdcData()[channel_], bit_, offset_));
-    SetTemperatureADC(TInverseConversion(getMHADCData_->AdcData()[channel_]));
+    const double temp = ConvertTemperature(getMHADCData_->AdcData()[channel_], bit_, offset_);
+    SetTemperature(temp);
+    SetTemperatureADC(static_cast<int>(temp * 10));
   }
   else {
     SetTemperature(0);

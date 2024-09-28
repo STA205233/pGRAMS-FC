@@ -42,6 +42,7 @@ private:
   std::array<int, NUM_PRESSURE> pressure_;
   std::regex regTemp_;
   std::regex regPress_;
+  int sleepForMsec_ = 500;
 };
 } // namespace gramsballoon::pgrams
 #endif //GRAMSBalloon_GetCompressorData_hh

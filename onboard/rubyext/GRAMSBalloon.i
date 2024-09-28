@@ -59,6 +59,9 @@
 #ifdef USE_ROOT
 #include "PlotWaveform.hh"
 #endif
+#ifdef USE_MYSQL
+#include "PushToMySQL.hh"
+#endif
 #ifdef GB_DEMO_MODE
 #include "GBBasicDemoModule.hh"
 #include "ShutdownSystemDemo.hh"
@@ -208,6 +211,13 @@ class PressureGaugeManager: public EncodedSerialCommunicator{
 public:
   PressureGaugeManager();
 };
+#ifdef USE_MYSQL
+class PushToMySQL : public anlnext::BasicModule
+{
+public:
+  PushToMySQL();
+};
+#endif
 } // namespace pgrams
 
 #ifdef USE_RASPISYS
@@ -268,7 +278,6 @@ public:
   GBBasicDemoModule();
 protected:
   double SampleFromUniformDistribution();
-  void PrintInfo(const std::string &msg) const;
 };
 
 class ShutdownSystem : public anlnext::BasicModule

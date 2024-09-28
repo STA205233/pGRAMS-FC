@@ -4,6 +4,7 @@ using namespace anlnext;
 namespace gramsballoon::pgrams {
 ANLStatus GetCompressorData::mod_define() {
   define_parameter("EncodedSerialCommunicator_name", &mod_class::encodedSerialCommunicatorName_);
+  define_parameter("sleep_for_msec", &mod_class::sleepForMsec_);
   return AS_OK;
 }
 ANLStatus GetCompressorData::mod_initialize() {
@@ -31,8 +32,8 @@ ANLStatus GetCompressorData::mod_analyze() {
   const std::string command_temp = "$TEAA4B9\r";
   const std::string command_press = "$PRA95F7\r";
   std::string data_temp, data_press;
-  const int res_temp = communicator_->SendComAndGetData(command_temp, data_temp);
-  const int res_press = communicator_->SendComAndGetData(command_press, data_press);
+  const int res_temp = communicator_->SendComAndGetData(command_temp, data_temp, sleepForMsec_);
+  const int res_press = communicator_->SendComAndGetData(command_press, data_press, sleepForMsec_);
   if (res_press <= 0 && res_temp <= 0) {
     return AS_ERROR;
   }

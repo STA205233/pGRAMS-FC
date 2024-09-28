@@ -22,6 +22,7 @@ private:
   std::string encodedSerialCommunicatorName_ = "EncodedSerialCommunicator";
   float pressure_ = 0;
   int channel_ = 0;
+  int sleepForMsec_ = 500;
   std::string command_ = "";
   std::regex reg_;
 };

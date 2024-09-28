@@ -20,9 +20,9 @@ public:
   anlnext::ANLStatus mod_analyze() override;
 
 private:
-  std::string getPressureName_ = "GetPressure";
-  GetPressure *getPressure_ = nullptr;
-  int channel_ = 2;
+  std::vector<std::string> getPressureNames_;
+  std::vector<GetPressure *> getPressures_;
+  std::vector<int> channels_ = {2, 3};
 };
 } // namespace gramsballoon::pgrams
 #endif //GRAMSBalloon_GetSlowADCDataIncludingPressure_hh

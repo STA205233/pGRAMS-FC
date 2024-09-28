@@ -1,11 +1,11 @@
 #include "SendTelemetry.hh"
 
 using namespace anlnext;
+using namespace gramsballoon::pgrams;
 
 namespace gramsballoon {
 
-SendTelemetry::SendTelemetry()
-{
+SendTelemetry::SendTelemetry() {
   telemdef_ = std::make_shared<TelemetryDefinition>();
   errorManager_ = std::make_shared<ErrorManager>();
   binaryFilenameBase_ = "Telemetry";
@@ -18,13 +18,12 @@ SendTelemetry::SendTelemetry()
 
 SendTelemetry::~SendTelemetry() = default;
 
-ANLStatus SendTelemetry::mod_define()
-{
+ANLStatus SendTelemetry::mod_define() {
   define_parameter("MeasureTemperature_module_names", &mod_class::measureTemperatureModuleNames_);
   define_parameter("TPCHVController_module_name", &mod_class::TPCHVControllerModuleName_);
   define_parameter("PMTHVController_module_name", &mod_class::PMTHVControllerModuleName_);
   define_parameter("GetEnvironmentalData_module_names", &mod_class::getEnvironmentalDataModuleNames_);
-  
+  define_parameter("GetPressure_module_names", &mod_class::getPressureModuleNames_);
   define_parameter("serial_path", &mod_class::serialPath_);
   define_parameter("baudrate", &mod_class::baudrate_);
   define_parameter("open_mode", &mod_class::openMode_);
@@ -36,18 +35,17 @@ ANLStatus SendTelemetry::mod_define()
   return AS_OK;
 }
 
-ANLStatus SendTelemetry::mod_initialize()
-{
+ANLStatus SendTelemetry::mod_initialize() {
   const std::string read_wf_md = "ReadWaveform";
   if (exist_module(read_wf_md)) {
     get_module_NC(read_wf_md, &readWaveform_);
   }
 
   const int num_modules_temp = measureTemperatureModuleNames_.size();
-  for (int i=0; i<num_modules_temp; i++) {
+  for (int i = 0; i < num_modules_temp; i++) {
     const std::string module_name = measureTemperatureModuleNames_[i];
     if (exist_module(module_name)) {
-      MeasureTemperatureWithRTDSensor* mt;
+      MeasureTemperatureWithRTDSensor *mt;
       get_module_NC(module_name, &mt);
       measureTemperatureVec_.push_back(mt);
     }
@@ -69,10 +67,10 @@ ANLStatus SendTelemetry::mod_initialize()
   }
 
   const int num_modules_env = getEnvironmentalDataModuleNames_.size();
-  for (int i=0; i<num_modules_env; i++) {
+  for (int i = 0; i < num_modules_env; i++) {
     const std::string module_name = getEnvironmentalDataModuleNames_[i];
     if (exist_module(module_name)) {
-      GetEnvironmentalData* ged;
+      GetEnvironmentalData *ged;
       get_module_NC(module_name, &ged);
       getEnvironmentalDataVec_.push_back(ged);
     }
@@ -92,6 +90,17 @@ ANLStatus SendTelemetry::mod_initialize()
     get_module_NC(get_slowADC_data_md, &getSlowADCData_);
   }
 
+  const std::string get_compressor_data_md = "GetCompressorData";
+  if (exist_module(get_compressor_data_md)) {
+    get_module_NC(get_compressor_data_md, &getCompressorData_);
+  }
+
+  for (int i = 0; i < getPressureModuleNames_.size(); i++) {
+    const std::string module_name = getPressureModuleNames_[i];
+    if (exist_module(module_name)) {
+      getPressure_.push_back(get_module_NC<GetPressure>(module_name));
+    }
+  }
   const std::string receive_command_md = "ReceiveCommand";
   if (exist_module(receive_command_md)) {
     get_module_NC(receive_command_md, &receiveCommand_);
@@ -104,25 +113,25 @@ ANLStatus SendTelemetry::mod_initialize()
 
   // communication
   sc_ = std::make_shared<SerialCommunication>(serialPath_, baudrate_, openMode_);
-  const int status = sc_ -> initialize();
-  if (status!=0) {
+  const int status = sc_->initialize();
+  if (status != 0) {
     std::cerr << "Error in SendTelemetry::mod_initialize: Serial communication failed." << std::endl;
     getErrorManager()->setError(ErrorType::SEND_TELEMETRY_SERIAL_COMMUNICATION_ERROR);
   }
-  
+
   return AS_OK;
 }
 
-ANLStatus SendTelemetry::mod_analyze()
-{
-  if (telemetryType_==2) {
-    if (wfDivisionCounter_==0) {
+ANLStatus SendTelemetry::mod_analyze() {
+  if (chatter_ > 0) std::cout << "SendTelemetry::mod_analyze" << std::endl;
+  if (telemetryType_ == 2) {
+    if (wfDivisionCounter_ == 0) {
       inputStatusInfo();
     }
-    if (wfDivisionCounter_%2==0) {
+    if (wfDivisionCounter_ % 2 == 0) {
       wfDivisionCounter_++;
       telemdef_->setTelemetryType(telemetryType_);
-      const int division_id = wfDivisionCounter_/2;
+      const int division_id = wfDivisionCounter_ / 2;
       telemdef_->generateTelemetry(division_id);
     }
     else {
@@ -130,35 +139,35 @@ ANLStatus SendTelemetry::mod_analyze()
       telemetryType_ = 1;
     }
   }
-  if (telemetryType_==1 || telemetryType_==3) {
+  if (telemetryType_ == 1 || telemetryType_ == 3) {
     inputInfo();
     telemdef_->generateTelemetry();
     telemetryType_ = 1;
   }
 
-  const std::vector<uint8_t>& telemetry = telemdef_->Telemetry();
+  const std::vector<uint8_t> &telemetry = telemdef_->Telemetry();
   const int status = sc_->swrite(telemetry);
   const bool failed = (status != static_cast<int>(telemetry.size()));
   if (failed) {
     std::cerr << "Sending telemetry failed: status = " << status << std::endl;
     getErrorManager()->setError(ErrorType::SEND_TELEMETRY_SWRITE_ERROR);
   }
-  
+
   if (saveTelemetry_) {
     writeTelemetryToFile(failed);
   }
 
-  if (chatter_>=1) {
+  if (chatter_ >= 1) {
     std::cout << (int)telemetry.size() << std::endl;
-    for (int i=0; i<(int)telemetry.size(); i++) {
+    for (int i = 0; i < (int)telemetry.size(); i++) {
       std::cout << i << " " << static_cast<int>(telemetry[i]) << std::endl;
     }
   }
 
-  if (wfDivisionCounter_>0) {
+  if (wfDivisionCounter_ > 0) {
     telemetryType_ = 2;
   }
-  if (wfDivisionCounter_==16) {
+  if (wfDivisionCounter_ == 16) {
     telemetryType_ = 1;
     wfDivisionCounter_ = 0;
   }
@@ -168,27 +177,25 @@ ANLStatus SendTelemetry::mod_analyze()
   return AS_OK;
 }
 
-ANLStatus SendTelemetry::mod_finalize()
-{
+ANLStatus SendTelemetry::mod_finalize() {
   return AS_OK;
 }
 
-void SendTelemetry::inputInfo()
-{
+void SendTelemetry::inputInfo() {
   telemdef_->setTelemetryType(telemetryType_);
-  if (runIDManager_!=nullptr) {
+  if (runIDManager_ != nullptr) {
     telemdef_->setRunID(runIDManager_->RunID());
   }
-  
-  if (telemetryType_==1) {
+
+  if (telemetryType_ == 1) {
     inputDetectorInfo();
     inputHKVesselInfo();
     inputSoftwareInfo();
   }
-  else if (telemetryType_==2) {
+  else if (telemetryType_ == 2) {
     ;
   }
-  else if (telemetryType_==3) {
+  else if (telemetryType_ == 3) {
     inputStatusInfo();
   }
   else {
@@ -196,76 +203,90 @@ void SendTelemetry::inputInfo()
   }
 }
 
-void SendTelemetry::inputDetectorInfo()
-{
-  if (readWaveform_!=nullptr) {
+void SendTelemetry::inputDetectorInfo() {
+  if (readWaveform_ != nullptr) {
     telemdef_->setEventCount(readWaveform_->EventCount());
     telemdef_->setCurrentEventID(readWaveform_->EventID());
   }
-  if (getSlowADCData_!=nullptr) {
+  if (getSlowADCData_ != nullptr) {
     telemdef_->setChamberPressure(getSlowADCData_->getADC(2));
   }
-  const int n = measureTemperatureVec_.size();
-  for (int i=0; i<n; i++) {
+  const int n = std::min(static_cast<int>(measureTemperatureVec_.size()), 5);
+
+  for (int i = 0; i < n; i++) {
     telemdef_->setRTDTemperatureADC(i, measureTemperatureVec_[i]->TemperatureADC());
   }
 
-  if (TPCHVController_!=nullptr) {
-    telemdef_->setTPCHVSetting(TPCHVController_->NextVoltage());
+  // TODO: telemetry definition is not changed for now
+  if (getPressure_.size() > 0) {
+    if (getPressure_[0] != nullptr) {
+      telemdef_->setTPCHVSetting(getPressure_[0]->Pressure());
+    }
   }
-  if (getSlowADCData_!=nullptr) {
+  if (getSlowADCData_ != nullptr) {
     telemdef_->setTPCHVMeasure(getSlowADCData_->getADC(3));
   }
-  if (PMTHVController_!=nullptr) {
-    telemdef_->setPMTHVSetting(PMTHVController_->NextVoltage());
+
+  // TODO: telemetry definition is not changed for now
+  if (getPressure_.size() > 1) {
+    if (getPressure_[1] != nullptr) {
+      telemdef_->setPMTHVSetting(getPressure_[1]->Pressure());
+    }
   }
-  if (getSlowADCData_!=nullptr) {
-    telemdef_->setTPCHVCurrentMeasure(getSlowADCData_->getADC(4));
+  // TODO: telemetry definition is not changed for now
+  if (static_cast<int>(measureTemperatureVec_.size()) > 5) {
+    if (measureTemperatureVec_[5] != nullptr) {
+      telemdef_->setTPCHVCurrentMeasure(static_cast<uint16_t>(measureTemperatureVec_[5]->TemperatureADC()));
+    }
   }
 }
 
-
-void SendTelemetry::inputHKVesselInfo()
-{
-  if (getRaspiStatus_!=nullptr) {
+void SendTelemetry::inputHKVesselInfo() {
+  if (getRaspiStatus_ != nullptr) {
     telemdef_->setCPUTemperature(getRaspiStatus_->CPUTemperature());
   }
 
   const int n_env = getEnvironmentalDataVec_.size();
-  for (int i=0; i<n_env; i++) {
-    telemdef_->setEnvTemperature(i, getEnvironmentalDataVec_[i] -> Temperature());
-    telemdef_->setEnvHumidity(i, getEnvironmentalDataVec_[i] -> Humidity());
-    telemdef_->setEnvPressure(i, getEnvironmentalDataVec_[i] -> Pressure());
+  for (int i = 0; i < n_env; i++) {
+    telemdef_->setEnvTemperature(i, getEnvironmentalDataVec_[i]->Temperature());
+    telemdef_->setEnvHumidity(i, getEnvironmentalDataVec_[i]->Humidity());
+    telemdef_->setEnvPressure(i, getEnvironmentalDataVec_[i]->Pressure());
+    // TODO: telemetry definition is not changed for now
+    if (getCompressorData_ != nullptr) {
+      if (i < 4) {
+        telemdef_->setEnvTemperature(i, getCompressorData_->Temperature(i));
+      }
+      if (i < 2) {
+        telemdef_->setEnvPressure(i, getCompressorData_->Pressure(i));
+      }
+    }
   }
 
-  if (measureAcceleration_!=nullptr) {
-    for (int i=0; i<3; i++) {
+  if (measureAcceleration_ != nullptr) {
+    for (int i = 0; i < 3; i++) {
       telemdef_->setAcceleration(i, measureAcceleration_->getAcceleration(i));
       telemdef_->setGyro(i, measureAcceleration_->getGyro(i));
       telemdef_->setMagnet(i, measureAcceleration_->getMagnet(i));
     }
     telemdef_->setAccelSensorTemperature(measureAcceleration_->getTemperature());
   }
-  if (getSlowADCData_!=nullptr) {
+  if (getSlowADCData_ != nullptr) {
     telemdef_->setMainCurrent(getSlowADCData_->getADC(1));
     telemdef_->setMainVoltage(getSlowADCData_->getADC(0));
   }
 }
 
-
-void SendTelemetry::inputSoftwareInfo()
-{
-  if (receiveCommand_!=nullptr) {
+void SendTelemetry::inputSoftwareInfo() {
+  if (receiveCommand_ != nullptr) {
     telemdef_->setLastCommandIndex(receiveCommand_->CommandIndex());
-    telemdef_->setLastCommandCode(receiveCommand_ -> CommandCode());
+    telemdef_->setLastCommandCode(receiveCommand_->CommandCode());
     telemdef_->setCommandRejectCount(receiveCommand_->CommandRejectCount());
   }
   telemdef_->setSoftwareErrorCode(errorManager_->ErrorCode());
 }
 
-void SendTelemetry::inputStatusInfo()
-{
-  if (readWaveform_!=nullptr) {
+void SendTelemetry::inputStatusInfo() {
+  if (readWaveform_ != nullptr) {
     telemdef_->setTriggerMode(static_cast<uint16_t>(readWaveform_->TrigMode()));
     telemdef_->setTriggerDevice(static_cast<uint16_t>(readWaveform_->TrigDevice()));
     telemdef_->setTriggerChannel(static_cast<uint16_t>(readWaveform_->TrigChannel()));
@@ -277,34 +298,33 @@ void SendTelemetry::inputStatusInfo()
     telemdef_->setADCRange(readWaveform_->Range());
     telemdef_->setDAQInProgress(readWaveform_->StartReading());
   }
-  if (TPCHVController_!=nullptr) {
+  if (TPCHVController_ != nullptr) {
     telemdef_->setTPCHVUpperLimit(TPCHVController_->UpperLimitVoltage());
   }
-  if (PMTHVController_!=nullptr) {
+  if (PMTHVController_ != nullptr) {
     telemdef_->setPMTHVUpperLimit(PMTHVController_->UpperLimitVoltage());
   }
-  if (getRaspiStatus_!=nullptr) {
+  if (getRaspiStatus_ != nullptr) {
     telemdef_->setSDCapacity(getRaspiStatus_->CapacityFree());
   }
 }
 
-void SendTelemetry::writeTelemetryToFile(bool failed)
-{
+void SendTelemetry::writeTelemetryToFile(bool failed) {
   int type = telemetryType_;
   if (failed) {
     type = 0;
   }
   std::string type_str = "";
-  if (type==1) type_str = "HK";
-  if (type==2) type_str = "WF";
-  if (type==3) type_str = "Status";
-  if (type==0) type_str = "failed";
+  if (type == 1) type_str = "HK";
+  if (type == 2) type_str = "WF";
+  if (type == 3) type_str = "Status";
+  if (type == 0) type_str = "failed";
 
   const bool app = true;
-  if (fileIDmp_.find(type)==fileIDmp_.end()) {
+  if (fileIDmp_.find(type) == fileIDmp_.end()) {
     fileIDmp_[type] = std::pair<int, int>(0, 0);
   }
-  else if (fileIDmp_[type].second==numTelemPerFile_) {
+  else if (fileIDmp_[type].second == numTelemPerFile_) {
     fileIDmp_[type].first++;
     fileIDmp_[type].second = 0;
   }
@@ -322,7 +342,7 @@ void SendTelemetry::writeTelemetryToFile(bool failed)
   run_id_sout << std::setfill('0') << std::right << std::setw(6) << run_id;
   const std::string run_id_str = run_id_sout.str();
   const std::string filename = binaryFilenameBase_ + "_" + run_id_str + "_" + time_stamp_str + "_" + type_str + "_" + id_str + ".dat";
-  
+
   telemdef_->writeFile(filename, app);
   fileIDmp_[type].second++;
 }

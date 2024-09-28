@@ -4,20 +4,19 @@ include_directories(
   ../BME68x-Sensor-API/include
   ../ICM20948-linux-i2c/src
   ../ICM20948-linux-i2c/I2C/src
-  ${ANLG4_INC_DIR}
   ${ANLNEXT_INC_DIR}
   ${ROOT_INC_DIR}
-  ${G4_INC_DIR}
   ${BOOST_INC_DIR}
   ${PIGPIO_INC_DIR}
   ${HSQUICKLOOK_INC_DIR}
+  ${MYSQL_INC_DIR}
   )
 
 link_directories(
   /usr/local/lib
   ${ANLNEXT_LIB_DIR}
   ${ROOT_LIB_DIR}
-  ${G4_LIB_DIR}
+  ${MYSQL_LIB_DIR}
   )
 
 set(GB_MODULES
@@ -101,6 +100,11 @@ if(GB_USE_ROOT)
   )
 endif(GB_USE_ROOT)
 
+if(GB_USE_MYSQL)
+  set(GB_MYSQL_MODULES
+    src/PushToMySQL.cc
+  )
+endif(GB_USE_MYSQL)
 add_library(GBModules SHARED
   ${GB_MODULES}
   ${GB_PIGPIO_MODULES}
@@ -110,21 +114,20 @@ add_library(GBModules SHARED
   ${GB_HSQUICKLOOK_MODULES}
   ${GB_ROOT_MODULES}
   ${GB_DEMO_MODULES}
+  ${GB_MYSQL_MODULES}
   )
-
 target_link_libraries(GBModules
   GBCore
   ${BME68x_LIB}
-  ${ANLG4_LIB}
   ${ANLNEXT_LIB}
   ${ROOT_LIB}
-  ${G4_LIB}
   ${PIGPIO_LIB_DAEMON}
   ${PIGPIO_LIB_RT}
   ${WAVEFORMS_LIB}
   ${ICM20948_LIB}
   ${MONGODB_LIB}
   ${HSQUICKLOOK_LIB}
+  ${MYSQL_LIB}
   )
 
 install(TARGETS GBModules LIBRARY DESTINATION ${CMAKE_INSTALL_PREFIX}/lib)

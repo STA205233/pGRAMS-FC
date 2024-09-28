@@ -8,6 +8,8 @@ namespace gramsballoon::pgrams {
 ANLStatus GetMHADCData::mod_define() {
   define_parameter("num_ch", &mod_class::numCh_);
   define_parameter("MHADCManager_name", &mod_class::encodedSerialCommunicatorName_);
+  define_parameter("sleep_for_msec", &mod_class::sleepForMsec_);
+  define_parameter("chatter", &mod_class::chatter_);
   return AS_OK;
 }
 ANLStatus GetMHADCData::mod_initialize() {
@@ -24,12 +26,15 @@ ANLStatus GetMHADCData::mod_initialize() {
 }
 
 ANLStatus GetMHADCData::mod_analyze() {
+  if (chatter_ > 0) {
+    std::cout << "GetMHADCData::mod_analyze" << std::endl;
+  }
   adcData_.resize(numCh_, 0);
   std::string dat;
   if (!encodedSerialCommunicator_) {
     return AS_OK;
   }
-  const int byte_read = encodedSerialCommunicator_->SendComAndGetData("a", dat, 500);
+  const int byte_read = encodedSerialCommunicator_->SendComAndGetData("a", dat, sleepForMsec_);
   if (byte_read < 0) {
     std::cerr << "Error in GetMHADCData::mod_analyze: byte_read = " << byte_read << std::endl;
     return AS_OK;

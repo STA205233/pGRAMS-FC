@@ -6,10 +6,12 @@ include_directories(
   ${ADD_INC_DIR}
   ${BOOST_INC_DIR}
   ${PIGPIO_INC_DIR}
+  ${MYSQL_INC_DIR}
   )
 
 link_directories(
   ${BOOST_LIB_DIR}
+  ${MYSQL_LIB_DIR}
   )
 
 set(GB_CORE_CLASSES
@@ -43,11 +45,18 @@ if(GB_USE_ICM20948)
   )
 endif(GB_USE_ICM20948)
 
+if(GB_USE_MYSQL)
+  set(GB_MYSQL_CORE_CLASSES
+    src/MySQLIO.cc
+    )
+endif(GB_USE_MYSQL)
+
 add_library(GBCore SHARED
   ${GB_CORE_CLASSES}
   ${GB_PIGPIO_CORE_CLASSES}
   ${GB_WAVEFORMS_CORE_CLASSES}
   ${GB_ICM20948_CORE_CLASSES}
+  ${GB_MYSQL_CORE_CLASSES}
   )
 
 target_link_libraries(GBCore
@@ -58,6 +67,7 @@ target_link_libraries(GBCore
   ${PIGPIO_LIB_RT}
   ${WAVEFORMS_LIB}
   ${ICM20948_LIB}
+  ${MYSQL_LIB}
   )
 
 install(TARGETS GBCore LIBRARY DESTINATION ${CMAKE_INSTALL_PREFIX}/lib)

@@ -5,6 +5,7 @@ namespace gramsballoon::pgrams {
 ANLStatus GetPressure::mod_define() {
   define_parameter("channel", &mod_class::channel_);
   define_parameter("EncodedSerialCommunicator_name", &mod_class::encodedSerialCommunicatorName_);
+  define_parameter("sleep_for_msec", &mod_class::sleepForMsec_);
   return AS_OK;
 }
 ANLStatus GetPressure::mod_initialize() {
@@ -26,7 +27,7 @@ ANLStatus GetPressure::mod_analyze() {
     return AS_OK;
   }
   std::string dat;
-  const int byte_read = encodedSerialCommunicator_->SendComAndGetData(command_, dat, 500);
+  const int byte_read = encodedSerialCommunicator_->SendComAndGetData(command_, dat, sleepForMsec_);
   if (byte_read < 0) {
     std::cerr << "Error in GetPressure::mod_analyze: byte_read = " << byte_read << std::endl;
     return AS_OK;

@@ -33,6 +33,8 @@ option(GB_USE_RASPISYS "enable raspi system control" ON)
 option(GB_USE_HSQUICKLOOK "enable hsquicklook" OFF)
 option(GB_APT_RUBY "installed ruby via apt" ON)
 option(GB_USE_ROOT "enable root" OFF)
+option(GB_USE_MYSQL "enable mysql" OFF)
+
 ## install options
 option(GB_INSTALL_HEADERS "install all header files" ON)
 option(GB_INSTALL_CMAKE_FILES "install all cmake files" ON)
@@ -152,6 +154,18 @@ if(GB_USE_ROOT)
   message("-- ROOT_LIB_DIR = ${ROOT_LIB_DIR}")
   message("-- ROOT libraries = ${ROOT_LIB}")
 endif(GB_USE_ROOT)
+
+### MYSQL ###
+if(GB_USE_MYSQL)
+  find_package(mysql-concpp REQUIRED CONFIG)
+  set(MYSQL_INC_DIR ${MYSQL_CONCPP_INCLUDE_DIR})
+  set(MYSQL_LIB_DIR ${MYSQL_CONCPP_RUNTIME_LIBRARY_DIR})
+  set(MYSQL_LIB mysqlcppconnx)
+  message(STATUS "MYSQL_LIB_DIR: ${MYSQL_INC_DIR}")
+  message(STATUS "MYSQL_LIB_DIR: ${MYSQL_LIB_DIR}")
+  message(STATUS "MYSQL_LIB: ${MYSQL_LIB}")
+endif(GB_USE_MYSQL)
+
 
 ### subdirectories
 add_subdirectory(source)

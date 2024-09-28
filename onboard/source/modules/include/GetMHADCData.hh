@@ -31,7 +31,9 @@ public:
 private:
   int numCh_ = 32;
   std::vector<int> adcData_;
-  EncodedSerialCommunicator* encodedSerialCommunicator_ = nullptr;
+  int sleepForMsec_ = 500;
+  int chatter_ = 0;
+  EncodedSerialCommunicator *encodedSerialCommunicator_ = nullptr;
   std::string encodedSerialCommunicatorName_ = "EncodedSerialCommunicator";
 };
 } // namespace gramsballoon::pgrams
