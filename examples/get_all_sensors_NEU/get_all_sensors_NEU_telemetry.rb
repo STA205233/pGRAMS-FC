@@ -5,18 +5,22 @@ require 'GRAMSBalloon'
 class MyApp < ANL::ANLApp
     def setup()
       
-        chain GRAMSBalloon::EncodedSerialCommunicator, "MHADCManager"
-        with_parameters(filename: "/dev/ttyAMA0", baudrate:9600, timeout_sec: 0, timeout_usec: 100)
-        chain GRAMSBalloon::GetMHADCData
-        with_parameters(num_ch: 32, sleep_for_msec: 10, MHADCManager_name: "MHADCManager", chatter: 0) 
+        # chain GRAMSBalloon::EncodedSerialCommunicator, "MHADCManager"
+        # with_parameters(filename: "/dev/ttyAMA0", baudrate:9600, timeout_sec: 0, timeout_usec: 100)
+        # chain GRAMSBalloon::GetMHADCData
+        # with_parameters(num_ch: 32, sleep_for_msec: 10, MHADCManager_name: "MHADCManager", chatter: 0) 
+        chain GRAMSBalloon::GetArduinoData
+        with_parameters(num_ch: 5, sleep_for_msec: 10, chatter: 0)
         
         measure_temperature_modules = []
         for i in 0..5 do
-          chain GRAMSBalloon::MeasureTemperatureWithRTDSensorByMHADC, "MeasureTemperatureWithRTDSensorByMHADC_#{i}"
+          # chain GRAMSBalloon::MeasureTemperatureWithRTDSensorByMHADC, "MeasureTemperatureWithRTDSensorByMHADC_#{i}"
+          chain GRAMSBalloon::MeasureTemperatureWithRTDSensorByArduino, "MeasureTemperatureWithRTDSensorByArduino_#{i}"
           with_parameters(channel: i) do |m|
               m.set_singleton(0)
           end
-          measure_temperature_modules << "MeasureTemperatureWithRTDSensorByMHADC_#{i}"
+          # measure_temperature_modules << "MeasureTemperatureWithRTDSensorByMHADC_#{i}"
+          measure_temperature_modules << "MeasureTemperatureWithRTDSensorByArduino_#{i}"
         end
         
         chain GRAMSBalloon::EncodedSerialCommunicator, "CompresorManager"
@@ -31,9 +35,6 @@ class MyApp < ANL::ANLApp
         with_parameters(filename: "/dev/ttyUSB2", baudrate:115200, timeout_usec: 0, timeout_sec: 0)
         chain GRAMSBalloon::GetPressure, "GetPressure_2"
         with_parameters(EncodedSerialCommunicator_name:"PressureCommunicator_2", sleep_for_msec: 10)
-
-
-
         chain GRAMSBalloon::SendTelemetry
         with_parameters(
           serial_path: "./telemetryPTY0",

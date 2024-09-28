@@ -20,12 +20,13 @@ class MeasureTemperatureWithRTDSensorByArduino: public MeasureTemperatureWithRTD
 public:
   MeasureTemperatureWithRTDSensorByArduino() = default;
   virtual ~MeasureTemperatureWithRTDSensorByArduino() = default;
-  int16_t TemperatureADC() override { return singleton_self()->GetArduinoData_->AdcData()[ch_]; }
+  int16_t TemperatureADC() override { return singleton_self()->getArduinoData_->AdcData()[ch_]; }
   anlnext::ANLStatus mod_define() override;
   anlnext::ANLStatus mod_pre_initialize() override;
   anlnext::ANLStatus mod_initialize() override;
   anlnext::ANLStatus mod_analyze() override;
   anlnext::ANLStatus mod_finalize() override;
+  float ConvertTemperature(int adc, int bit, int offset) const;
 
 protected:
   MeasureTemperatureWithRTDSensorByArduino(const MeasureTemperatureWithRTDSensorByArduino &r) = default;
@@ -33,8 +34,10 @@ protected:
 private:
   std::string GetArduinoDataName_ = "GetArduinoData";
   int ch_ = 0;
-  std::shared_ptr<GetArduinoData> GetArduinoData_ = nullptr;
+  std::shared_ptr<GetArduinoData> getArduinoData_ = nullptr;
   std::shared_ptr<SendTelemetry> sendTelemetry_ = nullptr;
+  int bit_ = 10;
+  int offset_ = 0;
 };
 } // namespace pgrams
 } // namespace gramsballoon

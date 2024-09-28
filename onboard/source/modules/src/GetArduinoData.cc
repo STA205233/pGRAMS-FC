@@ -9,6 +9,7 @@ ANLStatus GetArduinoData::mod_define() {
   define_parameter("filename", &mod_class::filename_);
   define_parameter("num_ch", &mod_class::numCh_);
   define_parameter("timeout_sec", &mod_class::timeout_);
+  define_parameter("timeout_usec", &mod_class::timeoutUsec_);
   define_parameter("baudrate", &mod_class::baudrate_);
   define_parameter("mode", &mod_class::mode_);
   return AS_OK;
@@ -24,7 +25,7 @@ ANLStatus GetArduinoData::mod_analyze() {
   adcData_.resize(numCh_, 0);
   timeval timeout;
   timeout.tv_sec = timeout_;
-  timeout.tv_usec = 0;
+  timeout.tv_usec = timeoutUsec_;
   const int rv = esc_->WaitForTimeOut(timeout);
   if (rv == -1) {
     std::cerr << "Error in GetArduinoData::mod_analyze: rv = -1" << std::endl;
