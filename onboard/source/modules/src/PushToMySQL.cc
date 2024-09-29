@@ -57,14 +57,14 @@ ANLStatus PushToMySQL::mod_analyze() {
   mysqlIO_.SetItem("chamber", "jp", std::to_string(telemdef->PMTHVSetting() * 1e6));
   const uint16_t chamber_temperature2 = telemdef->TPCHVCurrentMeasure();
   mysqlIO_.SetItem("chamber", "rtd5", std::to_string(static_cast<float>(chamber_temperature2) / 10));
-  // FIXME: How to insert NULL
-  mysqlIO_.SetItem("chamber", "time", "2024:01:01:00:00:00");
+  //// FIXME: How to insert NULL
+  //mysqlIO_.SetItem("chamber", "time", "2024:01:01:00:00:00");
   mysqlIO_.SetItem("ground", "compressT1", std::to_string(telemdef->EnvTemperature(0)));
   mysqlIO_.SetItem("ground", "compressT2", std::to_string(telemdef->EnvTemperature(1)));
   mysqlIO_.SetItem("ground", "compressT3", std::to_string(telemdef->EnvTemperature(2)));
   mysqlIO_.SetItem("ground", "RP", std::to_string(telemdef->EnvPressure(0)));
-  // FIXME: How to insert NULL
-  mysqlIO_.SetItem("ground", "time", "2024:01:01:00:00:00");
+  //// FIXME: How to insert NULL
+  //mysqlIO_.SetItem("ground", "time", "2024:01:01:00:00:00");
   mysqlIO_.Insert("chamber");
   mysqlIO_.Insert("ground");
   return AS_OK;

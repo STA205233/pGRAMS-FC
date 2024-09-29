@@ -34,8 +34,8 @@ protected:
 private:
   std::string GetArduinoDataName_ = "GetArduinoData";
   int ch_ = 0;
-  std::shared_ptr<GetArduinoData> getArduinoData_ = nullptr;
-  std::shared_ptr<SendTelemetry> sendTelemetry_ = nullptr;
+  const GetArduinoData *getArduinoData_ = nullptr;
+  SendTelemetry *sendTelemetry_ = nullptr;
   int bit_ = 10;
   int offset_ = 0;
 };

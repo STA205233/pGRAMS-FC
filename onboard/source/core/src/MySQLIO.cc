@@ -21,12 +21,12 @@ void MySQLIO::Insert(const std::string &table_name) {
   }
   TRY_AND_CATCH_MYSQL_EXCEPTIONS_BEGIN;
   auto table_insert = schema_->getTable(table_name, checkExist_).insert();
-  std::vector<std::string> cols;
+  std::vector<mysqlx::Value> cols;
   const int n = tables_[table_name].size();
   cols.resize(n);
   for (auto &col: tables_[table_name]) {
     if (col.second.value == std::nullopt) {
-      cols[col.second.index] = "NULL";
+      cols[col.second.index] = mysqlx::nullvalue;
     }
     else {
       cols[col.second.index] = col.second.value.value();

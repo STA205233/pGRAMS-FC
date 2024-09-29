@@ -16,11 +16,11 @@
 namespace gramsballoon::mysql {
 struct TableContent {
   const int index;
-  std::optional<std::string> value;
+  std::optional<mysqlx::Value> value;
   TableContent(int idx, const std::string &val) : index(idx), value(val) {}
   void Reset() { value = std::nullopt; }
 };
-using value_t = std::string;
+using value_t = mysqlx::Value;
 using table_t = std::map<std::string, TableContent>;
 class MySQLIO {
 

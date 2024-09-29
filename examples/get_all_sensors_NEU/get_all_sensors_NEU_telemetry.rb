@@ -10,7 +10,7 @@ class MyApp < ANL::ANLApp
         # chain GRAMSBalloon::GetMHADCData
         # with_parameters(num_ch: 32, sleep_for_msec: 10, MHADCManager_name: "MHADCManager", chatter: 0) 
         chain GRAMSBalloon::GetArduinoData
-        with_parameters(num_ch: 5, sleep_for_msec: 10, chatter: 0)
+        with_parameters(num_ch: 5, sleep_for_msec: 10)
         
         measure_temperature_modules = []
         for i in 0..5 do

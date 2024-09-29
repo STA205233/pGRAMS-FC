@@ -36,7 +36,7 @@ private:
   speed_t baudrate_ = B9600;
   mode_t mode_ = O_RDWR | O_NONBLOCK;
   int timeoutUsec_ = 0;
-
+  int sleepForMilliSec_ = 0;
 public:
   anlnext::ANLStatus mod_define() override;
   anlnext::ANLStatus mod_analyze() override;

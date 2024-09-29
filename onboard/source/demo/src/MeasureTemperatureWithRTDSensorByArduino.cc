@@ -11,13 +11,13 @@ ANLStatus MeasureTemperatureWithRTDSensorByArduino::mod_define() {
 ANLStatus MeasureTemperatureWithRTDSensorByArduino::mod_pre_initialize() {
   const std::string send_telem_md = "SendTelemetry";
   if (exist_module(send_telem_md)) {
-    sendTelemetry_.reset(get_module_NC<SendTelemetry>(send_telem_md));
+    get_module_NC(send_telem_md, &sendTelemetry_);
   }
   return AS_OK;
 }
 ANLStatus MeasureTemperatureWithRTDSensorByArduino::mod_initialize() {
   if (exist_module(GetArduinoDataName_)) {
-    getArduinoData_.reset(get_module_NC<GetArduinoData>(GetArduinoDataName_));
+    get_module(GetArduinoDataName_, &getArduinoData_);
   }
   else {
     std::cerr << "GetArduinoData does not exist. Module name = " << GetArduinoDataName_ << std::endl;

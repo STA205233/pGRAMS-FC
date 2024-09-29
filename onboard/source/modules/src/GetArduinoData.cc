@@ -10,6 +10,7 @@ ANLStatus GetArduinoData::mod_define() {
   define_parameter("num_ch", &mod_class::numCh_);
   define_parameter("timeout_sec", &mod_class::timeout_);
   define_parameter("timeout_usec", &mod_class::timeoutUsec_);
+  define_parameter("sleep_for_msec", &mod_class::sleepForMilliSec_);
   define_parameter("baudrate", &mod_class::baudrate_);
   define_parameter("mode", &mod_class::mode_);
   return AS_OK;
@@ -21,7 +22,7 @@ ANLStatus GetArduinoData::mod_initialize() {
   return AS_OK;
 }
 ANLStatus GetArduinoData::mod_analyze() {
-  std::this_thread::sleep_for(std::chrono::seconds(1));
+  std::this_thread::sleep_for(std::chrono::milliseconds(sleepForMilliSec_));
   adcData_.resize(numCh_, 0);
   timeval timeout;
   timeout.tv_sec = timeout_;
