@@ -60,6 +60,47 @@
 
 - None.
 
+### GetArduinoData
+
+#### Functions
+
+- Get ADC data from Arduino.
+
+#### Input Parameters
+
+- <modpar>serial_path</modpar> (default: "/dev/ttyACM0") <br>
+  Path for serial communication
+- <modpar>num_ch</modpar> (default: 32) <br>
+  Number of channels.
+- <modpar>timeout_sec</modpar> (default: 1) <br>
+  Time out time in sec. If arduino sends nothing for <modpar>timeout_sec</modpar> + <modpar>timeout_usec</modpar>, this module skip the process.
+- <modpar>timeout_usec</modpar> (default: 0) <br>
+  See <modpar>timeout_sec</modpar>.
+- <modpar>sleep_for_msec</modpar> (default: 0) <br>
+  Before receiving the data, this module waits for <modpar>sleep_for_msec</modpar>.
+- <modpar>baudrate</modpar> (default: 9600) <br>
+  Baudrate of serial communication.
+- <modpar>mode</modpar> (default: O_RDWR | O_NONBLOCK) <br>
+  Serial Communication mode.
+  
+#### Specifications
+
+- <b>mod_initialize</b> <br>
+  Initialize the serial communication.
+- <b>mod_analyze</b> <br>
+  Receive the data from arduino, and extract ADC values using regular expression.
+  If it cannot receive a proper text and fails to extract ADC data, ADC value will be set to 0.
+  
+#### Core Class
+
+- EncodedSerialCommunication.cc <br>
+  Perform serial communication encoded in UTF-8.
+
+#### Relationship with other ANL Modules
+
+- MeasureTemperatureWithRTDSensorByArduino <br>
+  Converts ADC data into temperature.
+
 ### GetEnvironmentalData
 
 #### Functions
@@ -229,7 +270,7 @@
 - MySQLIO.cc
   Responsible for communication with MySQL server.
 
-#### Relationship of other ANL Modules
+#### Relationship with other ANL Modules
 
 - ReceiveTelemetry
   Get the telemetry data from this module.
