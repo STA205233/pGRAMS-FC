@@ -196,6 +196,44 @@
 
 ### PushToMongoDB
 
+### PushToMySQL
+
+#### Functions
+
+- Push telemetry data to MySQL.
+
+#### Input Parameters
+
+- <modpar>host</modpar> (default: "localhost")<br>
+  Ip address of the database.
+- <modpar>port</modpar> (default: 33060)<br>
+  Port of the database.
+- <modpar>user</modpar> (default: "root")<br>
+  User of the database.
+- <modpar>password</modpar> (default: "test")<br>
+  Password to access the database.
+- <modpar>database</modpar> (default: "pgrams")<br>
+  Database name.
+- <modpar>check_exist</modpar> (default: true)<br>
+  Flag to check the existence of the database and its column.
+
+#### Specifications
+
+- mod_initialize <br>
+  This function initialize the MySQL communicataion. If <modpar>check_exist</modpar> is true, it checks the existence of tables and its columns.
+- mod_analyze <br>
+  Collect telemetry data from telemetry definitions, and push them to MySQL.
+
+#### Core Class
+
+- MySQLIO.cc
+  Responsible for communication with MySQL server.
+
+#### Relationship of other ANL Modules
+
+- ReceiveTelemetry
+  Get the telemetry data from this module.
+
 ### ReadWaveform
 
 #### Functions
