@@ -6,14 +6,19 @@
 #include <chrono>
 #include "TelemetryDefinition.hh"
 #include "ReceiveTelemetry.hh"
+#ifdef USE_ROOT
 #include "PlotWaveform.hh"
+#endif // USE_ROOT
+#ifdef USE_HSQUICKLOOK
 #include "PushToMongoDB.hh"
-
+#endif // USE_HSQUICKLOOK
 namespace gramsballoon {
 
 class ReceiveTelemetry;
 class PlotWaveform;
+#ifdef USE_HSQUICKLOOK
 class PushToMongoDB;
+#endif // USE_HSQUICKLOOK
 
 class InterpretTelemetry : public anlnext::BasicModule {
   DEFINE_ANL_MODULE(InterpretTelemetry, 1.0);
@@ -40,8 +45,12 @@ public:
 private:
   std::shared_ptr<TelemetryDefinition> telemdef_;
   ReceiveTelemetry* receiver_ = nullptr;
+#ifdef USE_ROOT
   PlotWaveform* plotter_ = nullptr;
+#endif // USE_ROOT
+#ifdef USE_HSQUICKLOOK
   PushToMongoDB* pusher_ = nullptr;
+#endif // USE_HSQUICKLOOK
   int currentTelemetryType_ = 0;
   std::map<int, std::pair<int, int>> fileIDmp_;
   bool saveTelemetry_ = true;

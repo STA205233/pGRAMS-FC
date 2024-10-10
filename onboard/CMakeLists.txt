@@ -69,6 +69,14 @@ if (GB_APT_RUBY)
   set(RUBY_CONFIG_FILE_DIR /usr/include/arm-linux-gnueabihf/ruby-2.7.0)
 endif(GB_APT_RUBY)
 
+if (GB_USE_ROOT)
+  add_compile_definitions("USE_ROOT")
+endif(GB_USE_ROOT)
+
+if (GB_USE_HSQUICKLOOK)
+  add_compile_definitions("USE_HSQUICKLOOK")
+endif(GB_USE_HSQUICKLOOK)
+
 
 ### External libraries
 ### BOOST ###

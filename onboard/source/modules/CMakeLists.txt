@@ -31,7 +31,8 @@ set(GB_MODULES
   src/GetCompressorData.cc
   src/GetPressure.cc
   src/PressureGaugeManager.cc
-  )
+  src/InterpretTelemetry.cc
+)
 
 if(GB_DEMO_MODE)
   set(GB_DEMO_MODULES
@@ -96,7 +97,6 @@ endif(GB_USE_HSQUICKLOOK)
 if(GB_USE_ROOT)
   set(GB_ROOT_MODULES
     src/PlotWaveform.cc
-    src/InterpretTelemetry.cc
   )
 endif(GB_USE_ROOT)
 
