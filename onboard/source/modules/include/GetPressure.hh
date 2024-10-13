@@ -25,6 +25,7 @@ private:
   int sleepForMsec_ = 500;
   std::string command_ = "";
   std::regex reg_;
+  int chatter_ = 0;
 };
 
 } // namespace gramsballoon::pgrams

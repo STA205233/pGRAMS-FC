@@ -39,7 +39,7 @@ int EncodedSerialCommunicator::SendComAndGetData(const std::string &command, std
     std::cout << "TimeOut" << std::endl;
     return 0;
   }
-  const int ret = esc_->ReadDataUntilBreak(data);
+  const int ret = esc_->ReadDataUntilSpecificStr(data, "\r");
   std::cout << "data: " << data << std::endl;
   return ret;
 }

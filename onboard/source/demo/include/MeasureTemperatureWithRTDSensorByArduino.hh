@@ -38,6 +38,7 @@ private:
   SendTelemetry *sendTelemetry_ = nullptr;
   int bit_ = 10;
   int offset_ = 0;
+  int chatter_ = 0;
 };
 } // namespace pgrams
 } // namespace gramsballoon

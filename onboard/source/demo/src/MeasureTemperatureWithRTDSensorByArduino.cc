@@ -6,6 +6,7 @@ ANLStatus MeasureTemperatureWithRTDSensorByArduino::mod_define() {
   define_parameter("channel", &mod_class::ch_);
   define_parameter("bit", &mod_class::bit_);
   define_parameter("offset", &mod_class::offset_);
+  define_parameter("chatter", &mod_class::chatter_);
   return AS_OK;
 }
 ANLStatus MeasureTemperatureWithRTDSensorByArduino::mod_pre_initialize() {
@@ -42,10 +43,16 @@ ANLStatus MeasureTemperatureWithRTDSensorByArduino::mod_initialize() {
 ANLStatus MeasureTemperatureWithRTDSensorByArduino::mod_analyze() {
   if (getArduinoData_) {
     const double temp = ConvertTemperature(getArduinoData_->AdcData()[ch_], bit_, offset_);
+    if (chatter_ > 0){
+      std::cout << this->module_id() << " Temperature: " << temp << std::endl;
+    }
     SetTemperature(temp);
     SetTemperatureADC(static_cast<int>(temp * 10));
   }
   else {
+    if (chatter_ > 0) {
+      std::cout << this->module_id() << " Temperature: " << 0 << std::endl;
+    }
     SetTemperature(0);
     SetTemperatureADC(0);
   }

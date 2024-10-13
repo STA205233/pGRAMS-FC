@@ -5,6 +5,7 @@ namespace gramsballoon::pgrams {
 ANLStatus GetCompressorData::mod_define() {
   define_parameter("EncodedSerialCommunicator_name", &mod_class::encodedSerialCommunicatorName_);
   define_parameter("sleep_for_msec", &mod_class::sleepForMsec_);
+  define_parameter("chatter", &mod_class::chatter_);
   return AS_OK;
 }
 ANLStatus GetCompressorData::mod_initialize() {

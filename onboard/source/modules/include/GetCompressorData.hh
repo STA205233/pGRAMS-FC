@@ -43,6 +43,7 @@ private:
   std::regex regTemp_;
   std::regex regPress_;
   int sleepForMsec_ = 500;
+  int chatter_ = 0;
 };
 } // namespace gramsballoon::pgrams
 #endif //GRAMSBalloon_GetCompressorData_hh

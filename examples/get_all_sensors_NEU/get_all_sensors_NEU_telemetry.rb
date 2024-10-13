@@ -10,31 +10,31 @@ class MyApp < ANL::ANLApp
         # chain GRAMSBalloon::GetMHADCData
         # with_parameters(num_ch: 32, sleep_for_msec: 10, MHADCManager_name: "MHADCManager", chatter: 0) 
         chain GRAMSBalloon::GetArduinoData
-        with_parameters(num_ch: 5, sleep_for_msec: 10)
+        with_parameters(num_ch: 6, sleep_for_msec: 500, timeout_sec:1, timeout_usec:0)
         
         measure_temperature_modules = []
         for i in 0..5 do
           # chain GRAMSBalloon::MeasureTemperatureWithRTDSensorByMHADC, "MeasureTemperatureWithRTDSensorByMHADC_#{i}"
           chain GRAMSBalloon::MeasureTemperatureWithRTDSensorByArduino, "MeasureTemperatureWithRTDSensorByArduino_#{i}"
-          with_parameters(channel: i) do |m|
+          with_parameters(channel: i, chatter: 1) do |m|
               m.set_singleton(0)
           end
           # measure_temperature_modules << "MeasureTemperatureWithRTDSensorByMHADC_#{i}"
           measure_temperature_modules << "MeasureTemperatureWithRTDSensorByArduino_#{i}"
         end
         
-        chain GRAMSBalloon::EncodedSerialCommunicator, "CompresorManager"
-        with_parameters(filename: "/dev/ttyUSB0", baudrate:9600, timeout_usec: 100, timeout_sec: 0)
+        chain GRAMSBalloon::EncodedSerialCommunicator, "CompressorManager"
+        with_parameters(filename: "/dev/ttyUSB2", baudrate: 13, timeout_usec: 10000, timeout_sec: 0)
         chain GRAMSBalloon::GetCompressorData
-        with_parameters(EncodedSerialCommunicator_name: "CompresorManager", sleep_for_msec: 10)
+        with_parameters(EncodedSerialCommunicator_name: "CompressorManager", sleep_for_msec: 10)
         chain GRAMSBalloon::PressureGaugeManager, "PressureCommunicator_1"
-        with_parameters(filename: "/dev/ttyUSB1", baudrate:115200, timeout_usec: 0, timeout_sec: 0)
+        with_parameters(filename: "/dev/ttyUSB0", baudrate: 4098,  timeout_usec: 0, timeout_sec: 1)
         chain GRAMSBalloon::GetPressure, "GetPressure_1"
-        with_parameters(EncodedSerialCommunicator_name:"PressureCommunicator_1", sleep_for_msec: 10)
+        with_parameters(EncodedSerialCommunicator_name:"PressureCommunicator_1", sleep_for_msec: 100, channel: 1, chatter: 1)
         chain GRAMSBalloon::PressureGaugeManager, "PressureCommunicator_2"
-        with_parameters(filename: "/dev/ttyUSB2", baudrate:115200, timeout_usec: 0, timeout_sec: 0)
+        with_parameters(filename: "/dev/ttyUSB1", baudrate: 4098, timeout_usec: 0, timeout_sec: 1)
         chain GRAMSBalloon::GetPressure, "GetPressure_2"
-        with_parameters(EncodedSerialCommunicator_name:"PressureCommunicator_2", sleep_for_msec: 10)
+        with_parameters(EncodedSerialCommunicator_name:"PressureCommunicator_2", sleep_for_msec: 100, channel: 2, chatter: 1)
         chain GRAMSBalloon::SendTelemetry
         with_parameters(
           serial_path: "./telemetryPTY0",

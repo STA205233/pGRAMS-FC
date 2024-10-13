@@ -6,6 +6,7 @@ ANLStatus GetPressure::mod_define() {
   define_parameter("channel", &mod_class::channel_);
   define_parameter("EncodedSerialCommunicator_name", &mod_class::encodedSerialCommunicatorName_);
   define_parameter("sleep_for_msec", &mod_class::sleepForMsec_);
+  define_parameter("chatter", &mod_class::chatter_);
   return AS_OK;
 }
 ANLStatus GetPressure::mod_initialize() {
@@ -41,7 +42,9 @@ ANLStatus GetPressure::mod_analyze() {
     std::cout << "Pressure data was not read." << std::endl;
     return AS_OK;
   }
-  std::cout << "read: " << m[1].str() << std::endl;
+  if (chatter_ > 0){
+    std::cout << "read: " << m[1].str() << std::endl;
+  }
   try {
     pressure_ = std::stof(m[1].str());
   }
@@ -49,7 +52,9 @@ ANLStatus GetPressure::mod_analyze() {
     std::cout << "Pressure data was not read." << std::endl;
     pressure_ = 0;
   }
-  std::cout << "Pressure: " << pressure_ << std::endl;
+  if (chatter_ > 0){
+    std::cout << "Pressure: " << pressure_ << std::endl;
+  }
   return AS_OK;
 }
 } // namespace gramsballoon::pgrams
