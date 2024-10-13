@@ -235,6 +235,36 @@
 
 - MAX31865IO.cc
 
+### MeasureTemperatureWithRTDSensorByArduino
+
+#### Functions
+
+- Convert Arduino ADC data into temperature.
+
+#### Input Parameters
+
+- <modpar>GetArduinoData_name</modpar>: (default: "GetArduinoData") <br>
+  The name of GetArduinoData module.
+- <modpar>channel</modpar>: (default: 0) <br>
+  Channel number of ADC data in the Arduino.
+- bit: (default: 10) <br>
+  The resolution of ADC.
+- offset: (default: 0) <br>
+  Offset value of temperature.
+
+#### Specifications
+
+- mod_pre_initialize
+- mod_initialize
+- mod_begin_run
+- mod_analyze
+- mod_end_run
+- mod_finalize
+
+#### Core Class
+
+#### Relationship with other ANL Modules
+
 ### PushToMongoDB
 
 ### PushToMySQL
