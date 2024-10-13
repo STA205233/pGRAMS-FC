@@ -1,11 +1,18 @@
 #! /usr/bin/env python3
 import serial
-import sys
+import argparse
 
 if __name__ == "__main__":
-    ser = serial.Serial(sys.argv[1], 115200)
-    ser.rts = False
-    ser.dtr = False
-    ser.open()
-    print(ser.read(1))
+    parser = argparse.ArgumentParser()
+    parser.add_argument("port", help="The port to send the data to")
+    parser.add_argument("--data", "-d", help="The data to send", default=0x11, type=int)
+    args = parser.parse_args()
+    ser = serial.Serial(args.port, 115200)
+    while (True):
+        try:
+            b = ser.read(1)
+            for i in b:
+                print(bin(i))
+        except KeyboardInterrupt:
+            break
     ser.close()
