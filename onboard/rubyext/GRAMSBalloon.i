@@ -38,9 +38,7 @@
 #ifdef USE_RASPISYS
 #include "ShutdownSystem.hh"
 #endif
-#ifdef USE_ROOT
 #include "InterpretTelemetry.hh"
-#endif
 #ifdef USE_HSQUICKLOOK
 #include "PushToMongoDB.hh"
 #endif
@@ -228,13 +226,11 @@ public:
 };
 #endif
 
-#ifdef USE_ROOT
 class InterpretTelemetry : public anlnext::BasicModule
 {
 public:
   InterpretTelemetry();
 };
-#endif
 
 #ifdef USE_HSQUICKLOOK
 class PushToMongoDB : public anlnext::BasicModule
