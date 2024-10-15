@@ -53,7 +53,7 @@
 
 - <b>mod_initialize</b><br>
   Access <tt>AnalogDiscoveryManager</tt> module and initialize AnalogOut.
-- <b>mod_analyze</b><br> <br>
+- <b>mod_analyze</b><br>
   If the current output voltage (<tt>currentVoltage_</tt>) and the next output voltage (<tt>nextVoltage_</tt>) are different, <tt>nextVoltage_</tt> is newly output by the DAC. However, if the member variable <tt>exec_</tt> is false, this operation is not performed. Since <tt>exec_</tt> is set back to false after each operation, it must be rewritten to true each time after checking whether the setting is as intended.
 
 #### Core class
@@ -77,7 +77,7 @@
 - <modpar>baudrate</modpar> (default: B9600)
   Baudrate of serial communication.
 - <modpar>mode</modpar> (default: O_RDWR | O_NONBLOCK)
-  Serial mode.
+  Serial mode. See description of that in [ReceiveCommand module](#receivecommand)
 
 #### Specifications
 
@@ -113,7 +113,7 @@ None.
 - <modpar>baudrate</modpar> (default: 9600) <br>
   Baudrate of serial communication.
 - <modpar>mode</modpar> (default: O_RDWR | O_NONBLOCK) <br>
-  Serial Communication mode.
+  Serial Communication mode. See description of that in [ReceiveCommand module](#receivecommand).
   
 #### Specifications
 
@@ -171,17 +171,14 @@ None.
 - <modpar>channel</modpar> (default: 0) <br>
   Channel number of pressure meter.
 - <modpar>EncodedSerialCommunicator_name</modpar> (default: "EncodedSerialCommunicator") <br>
+  Name of EncodedSerialCommunicator. But, normally you should use PressureGaugeManager name.
 - <modpar>sleep_for_msec</modpar> (default: 500) <br>
   Sleeping time before taking data.
 
 #### Specifications
 
-- mod_pre_initialize
-- mod_initialize
-- mod_begin_run
-- mod_analyze
-- mod_end_run
-- mod_finalize
+- <b>mod_analyze</b><br>
+  Get Pressure data using EncodedSerialCommunicator, and extract it.
 
 #### Core Class
 
@@ -307,14 +304,14 @@ None.
   The name of GetArduinoData module.
 - <modpar>channel</modpar>: (default: 0) <br>
   Channel number of ADC data in the Arduino.
-- bit: (default: 10) <br>
+- <modpar>bit</modpar>: (default: 10) <br>
   The resolution of ADC.
-- offset: (default: 0) <br>
+- <modpar>offset</modpar>: (default: 0) <br>
   Offset value of temperature.
 
 #### Specifications
 
-- mod_analyze <br>
+- <b>mod_analyze</b> <br>
   Get ADC data from the Arduino and convert them.
 
 #### Core Class
@@ -346,7 +343,7 @@ None.
   
 #### Specifications
 
-- mod_analyze
+- <b>mod_analyze</b><br>
   If <modpar>GetMHADCData</modpar> exists, get data from this module, and convert it into temperature, otherwise temperature is set to 0.
   
 #### Core Class
@@ -367,7 +364,7 @@ None.
 
 #### Input Parameters
 
-Same as EncodedSerialCommunicator.
+Same as [EncodedSerialCommunicator](#encodedserialcommunicator).
   
 #### Specifications
 
@@ -375,11 +372,11 @@ None.
 
 #### Core Class
 
-Same as EncodedSerialCommunicator.
+Same as [EncodedSerialCommunicator](#encodedserialcommunicator).
 
 #### Relationship with other ANL Modules
 
-- EncodedSerialCommunicator <br>
+- EncodedSerialCommunicator<br>
   Base class for serial communicaton encoded in UTF-8
   
 ### PushToMongoDB
@@ -407,9 +404,9 @@ Same as EncodedSerialCommunicator.
 
 #### Specifications
 
-- mod_initialize <br>
+- <b>mod_initialize</b> <br>
   This function initialize the MySQL communicataion. If <modpar>check_exist</modpar> is true, it checks the existence of tables and its columns.
-- mod_analyze <br>
+- <b>mod_analyze</b><br>
   Collect telemetry data from telemetry definitions, and push them to MySQL.
 
 #### Core Class
