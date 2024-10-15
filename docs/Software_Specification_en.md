@@ -60,6 +60,38 @@
 
 - None.
 
+### EncodedSerialCommunicator
+
+#### Functions
+
+- Perform serial communication
+
+#### Input Parameters
+
+- <modpar>filename</modpar> (default: "/dev/ttyACM0")
+  Serial file path.
+- <modpar>timeout_sec</modpar> (default: 1) <br>
+  Time out time in sec. If arduino sends nothing for <modpar>timeout_sec</modpar> + <modpar>timeout_usec</modpar>, this module skip the process.
+- <modpar>timeout_usec</modpar> (default: 0) <br>
+  See <modpar>timeout_sec</modpar>.
+- <modpar>baudrate</modpar> (default: B9600)
+  Baudrate of serial communication.
+- <modpar>mode</modpar> (default: O_RDWR | O_NONBLOCK)
+  Serial mode.
+
+#### Specifications
+
+None.
+
+#### Core Class
+
+- EncodedSerialCommunication.cc
+  Perform serial communication encoded by UTF-8
+
+#### Relationship with other ANL Modules
+
+None.
+
 ### GetArduinoData
 
 #### Functions
@@ -126,6 +158,34 @@
 #### Core class
 
 - BME680IO.cc
+
+### GetPressure
+
+#### Functions
+
+- Get ADC data using EncodedSerialCommunicator.
+- Extract pressure information with regular expression.
+
+#### Input Parameters
+
+- <modpar>channel</modpar> (default: 0) <br>
+  Channel number of pressure meter.
+- <modpar>EncodedSerialCommunicator_name</modpar> (default: "EncodedSerialCommunicator") <br>
+- <modpar>sleep_for_msec</modpar> (default: 500) <br>
+  Sleeping time before taking data.
+
+#### Specifications
+
+- mod_pre_initialize
+- mod_initialize
+- mod_begin_run
+- mod_analyze
+- mod_end_run
+- mod_finalize
+
+#### Core Class
+
+#### Relationship with other ANL Modules
 
 ### GetRaspiStatus
 
@@ -254,17 +314,74 @@
 
 #### Specifications
 
-- mod_pre_initialize
-- mod_initialize
-- mod_begin_run
-- mod_analyze
-- mod_end_run
-- mod_finalize
+- mod_analyze <br>
+  Get ADC data from the Arduino and convert them.
 
 #### Core Class
+  
+  None.
 
 #### Relationship with other ANL Modules
 
+- GetArduinoData <br>
+  Get Arduino data from this module.
+
+### MeasureTemperatureWithRTDSensorByMHADC
+
+#### Functions
+
+- Get ADC data from EncodedSerialCommunicator module
+- Convert ADC data into temperature.
+
+#### Input Parameters
+
+- <modpar>GetMHADCData_name</modpar> (default: "GetMHADCData") <br>
+  Name of GetMHADCData module.
+- <modpar>channel</modpar> (default: 0) <br>
+  The number of channel.
+- <modpar>bit</modpar> (default: 10) <br>
+  ADC resolution.
+- <modpar>offset</modpar> (default: 0) <br>
+  Offset of ADC value for calibration.
+  
+#### Specifications
+
+- mod_analyze
+  If <modpar>GetMHADCData</modpar> exists, get data from this module, and convert it into temperature, otherwise temperature is set to 0.
+  
+#### Core Class
+
+None.
+
+#### Relationship with other ANL Modules
+
+- EncodedSerialCommunicator <br>
+  Get ADC data with this module.
+
+### PressureGaugeManager
+
+#### Functions
+
+- Inherited from EncodedSerialCommunicator.
+- Provide specific functions for pressure gauge.
+
+#### Input Parameters
+
+Same as EncodedSerialCommunicator.
+  
+#### Specifications
+
+None.
+
+#### Core Class
+
+Same as EncodedSerialCommunicator.
+
+#### Relationship with other ANL Modules
+
+- EncodedSerialCommunicator <br>
+  Base class for serial communicaton encoded in UTF-8
+  
 ### PushToMongoDB
 
 ### PushToMySQL
@@ -302,7 +419,7 @@
 
 #### Relationship with other ANL Modules
 
-- ReceiveTelemetry
+- ReceiveTelemetry <br>
   Get the telemetry data from this module.
 
 ### ReadWaveform
