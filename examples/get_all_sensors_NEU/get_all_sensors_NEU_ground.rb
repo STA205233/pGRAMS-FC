@@ -21,6 +21,6 @@ end
 
 
 a = MyApp.new
-a.serial_path = "telemetryPTY1"
+a.serial_path = "/dev/ttyS0"
 
 a.run(:all, 1)

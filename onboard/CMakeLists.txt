@@ -22,7 +22,7 @@ set(USE_RUBY ON)
 set(MY_LIBRARY GRAMSBalloon)
 #set(RASPI ON)
 
-find_package(Ruby 2.7 REQUIRED)
+find_package(Ruby 3.0 REQUIRED)
 
 ### options
 ## library options

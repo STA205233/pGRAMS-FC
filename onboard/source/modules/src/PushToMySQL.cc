@@ -18,13 +18,23 @@ ANLStatus PushToMySQL::mod_initialize() {
   mysqlIO_.SetCheckExist(checkExist_);
   mysqlIO_.Initialize(host_, port_, user_, password_, database_);
   mysqlIO_.AddTable("chamber");
+  mysqlIO_.AddColumn("chamber", "id");
   mysqlIO_.AddColumn("chamber", "time");
   for (int i = 0; i < 6; i++) {
     mysqlIO_.AddColumn("chamber", (boost::format("rtd%i") % i).str());
   }
-  mysqlIO_.AddColumn("chamber", "cp");
-  mysqlIO_.AddColumn("chamber", "jp");
+  mysqlIO_.AddColumn("chamber", "cp_PR3");
+  mysqlIO_.AddColumn("chamber", "jp_PR3");
+  mysqlIO_.AddColumn("chamber", "cp_PR1");
+  mysqlIO_.AddColumn("chamber", "cp_PR2");
+  mysqlIO_.AddColumn("chamber", "cp_PR4");
+  mysqlIO_.AddColumn("chamber", "cp_PR5");
+  mysqlIO_.AddColumn("chamber", "jp_PR1");
+  mysqlIO_.AddColumn("chamber", "jp_PR2");
+  mysqlIO_.AddColumn("chamber", "jp_PR4");
+  mysqlIO_.AddColumn("chamber", "jp_PR5");
   mysqlIO_.AddTable("ground");
+  mysqlIO_.AddColumn("ground", "id");
   mysqlIO_.AddColumn("ground", "time");
   mysqlIO_.AddColumn("ground", "compressT1");
   mysqlIO_.AddColumn("ground", "compressT2");
@@ -44,8 +54,15 @@ ANLStatus PushToMySQL::mod_analyze() {
     return AS_OK;
   }
   std::vector<uint16_t> &chamber_temperature = telemdef->ChamberTemperature();
+  std::cout << "chamber_temperature: ";
+  for (size_t i = 0; i < chamber_temperature.size(); i++){
+    std::cout << chamber_temperature[i]/10 << " ";
+  }
+  std::cout << std::endl;
   uint16_t valve_temperature = telemdef->ValveTemperature();
+  std::cout << "valve_temperature: " << valve_temperature/10 << std::endl;
   uint16_t outer_temperature = telemdef->OuterTemperature();
+  std::cout << "outer_temperature: " << outer_temperature/10 << std::endl;
   int n = chamber_temperature.size();
   //TODO: This conversion should be reconsidered.
   for (int i = 0; i < n; i++) {
@@ -53,8 +70,18 @@ ANLStatus PushToMySQL::mod_analyze() {
   }
   mysqlIO_.SetItem("chamber", "rtd3", std::to_string(static_cast<float>(valve_temperature) / 10));
   mysqlIO_.SetItem("chamber", "rtd4", std::to_string(static_cast<float>(outer_temperature) / 10));
-  mysqlIO_.SetItem("chamber", "cp", std::to_string(telemdef->TPCHVSetting() * 1e6));
-  mysqlIO_.SetItem("chamber", "jp", std::to_string(telemdef->PMTHVSetting() * 1e6));
+  mysqlIO_.SetItem("chamber", "cp_PR1", std::to_string(0));
+  mysqlIO_.SetItem("chamber", "cp_PR2", std::to_string(0));
+  mysqlIO_.SetItem("chamber", "cp_PR3", std::to_string(telemdef->TPCHVSetting() * 1e6));
+  std::cout << "cp_PR3: " << std::to_string(telemdef->TPCHVSetting() * 1e6) << std::endl;
+  mysqlIO_.SetItem("chamber", "cp_PR4", std::to_string(0));
+  mysqlIO_.SetItem("chamber", "cp_PR5", std::to_string(0));
+  mysqlIO_.SetItem("chamber", "jp_PR1", std::to_string(0));
+  mysqlIO_.SetItem("chamber", "jp_PR2", std::to_string(0));
+  mysqlIO_.SetItem("chamber", "jp_PR3", std::to_string(telemdef->PMTHVSetting() * 1e6));
+  std::cout << "jp_PR3: " << telemdef->PMTHVSetting() * 1e6 << std::endl;
+  mysqlIO_.SetItem("chamber", "jp_PR4", std::to_string(0));
+  mysqlIO_.SetItem("chamber", "jp_PR5", std::to_string(0));
   const uint16_t chamber_temperature2 = telemdef->TPCHVCurrentMeasure();
   mysqlIO_.SetItem("chamber", "rtd5", std::to_string(static_cast<float>(chamber_temperature2) / 10));
   //// FIXME: How to insert NULL
