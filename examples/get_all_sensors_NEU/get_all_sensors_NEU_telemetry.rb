@@ -37,11 +37,12 @@ class MyApp < ANL::ANLApp
         with_parameters(EncodedSerialCommunicator_name:"PressureCommunicator_2", sleep_for_msec: 100, channel: 2, chatter: 1)
         chain GRAMSBalloon::SendTelemetry
         with_parameters(
-          serial_path: "./telemetryPTY0",
+          # serial_path: "./telemetryPTY0",
+          serial_path: "/dev/ttyS0",
           MeasureTemperature_module_names: measure_temperature_modules,
           GetPressure_module_names: ["GetPressure_1", "GetPressure_2"],
           binary_filename_base:ENV["HOME"] + "/data/telemetry_test/telemetry",
-          chatter: 0
+          chatter: 1
         ) do |m|
             m.set_singleton(0)
         end
@@ -60,7 +61,8 @@ a = MyApp.new
 
 
 a.num_parallels = 1
-a.run(1000000000, 1)
+# a.run(1000000000, 1)
+a.run(1)
 exit_status = 1
 puts "exit_status: #{exit_status}"
 exit exit_status
