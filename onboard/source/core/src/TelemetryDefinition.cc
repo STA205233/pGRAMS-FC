@@ -7,7 +7,7 @@
 namespace gramsballoon {
 
 TelemetryDefinition::TelemetryDefinition() {
-  chamberTemperature_.resize(3);
+  chamberTemperature_.resize(5);
   chamberPressureNEU_.resize(5);
   jacketPressureNEU_.resize(5);
   compressorTemperature_.resize(4);
@@ -135,7 +135,7 @@ void TelemetryDefinition::writeRTDTemperature() {
     temperature[i] = RTDTemperatureADC_[i];
   }
   addVector<uint16_t>(temperature);
-  for (int i = 0; i < 3; i++) {
+  for (int i = 0; i < 5; i++) {
     setChamberTemperature(i, temperature[i]);
   }
   setValveTemperature(temperature[3]);
