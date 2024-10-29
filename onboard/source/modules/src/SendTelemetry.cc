@@ -95,7 +95,7 @@ ANLStatus SendTelemetry::mod_initialize() {
     get_module_NC(get_compressor_data_md, &getCompressorData_);
   }
 
-  for (int i = 0; i < getPressureModuleNames_.size(); i++) {
+  for (int i = 0; i < static_cast<int>(getPressureModuleNames_.size()); i++) {
     const std::string module_name = getPressureModuleNames_[i];
     if (exist_module(module_name)) {
       getPressure_.push_back(get_module_NC<GetPressure>(module_name));
@@ -211,33 +211,44 @@ void SendTelemetry::inputDetectorInfo() {
   if (getSlowADCData_ != nullptr) {
     telemdef_->setChamberPressure(getSlowADCData_->getADC(2));
   }
-  const int n = std::min(static_cast<int>(measureTemperatureVec_.size()), 5);
-
+  const int n = measureTemperatureVec_.size();
   for (int i = 0; i < n; i++) {
     telemdef_->setRTDTemperatureADC(i, measureTemperatureVec_[i]->TemperatureADC());
   }
 
-  // TODO: telemetry definition is not changed for now
-  if (getPressure_.size() > 0) {
-    if (getPressure_[0] != nullptr) {
-      telemdef_->setTPCHVSetting(getPressure_[0]->Pressure());
-    }
+  if (TPCHVController_ != nullptr) {
+    telemdef_->setTPCHVSetting(TPCHVController_->NextVoltage());
   }
   if (getSlowADCData_ != nullptr) {
     telemdef_->setTPCHVMeasure(getSlowADCData_->getADC(3));
   }
 
-  // TODO: telemetry definition is not changed for now
   if (getPressure_.size() > 1) {
     if (getPressure_[1] != nullptr) {
-      telemdef_->setPMTHVSetting(getPressure_[1]->Pressure());
+      const auto &press = getPressure_[1]->Pressure();
+      const int n = std::min(static_cast<int>(press.size()), 5);
+      if (n != 5) {
+        std::cerr << "Pressure size is not correct: n = " << n << std::endl;
+      }
+      for (int i = 0; i < n; i++) {
+        telemdef_->setJacketPressureNEU(i, press[i]);
+      }
     }
   }
-  // TODO: telemetry definition is not changed for now
-  if (static_cast<int>(measureTemperatureVec_.size()) > 5) {
-    if (measureTemperatureVec_[5] != nullptr) {
-      telemdef_->setTPCHVCurrentMeasure(static_cast<uint16_t>(measureTemperatureVec_[5]->TemperatureADC()));
+  if (getPressure_.size() > 0) {
+    if (getPressure_[0] != nullptr) {
+      const auto &press = getPressure_[0]->Pressure();
+      const int n = std::min(static_cast<int>(press.size()), 5);
+      if (n != 5) {
+        std::cerr << "Pressure size is not correct: n = " << n << std::endl;
+      }
+      for (int i = 0; i < n; i++) {
+        telemdef_->setChamberPressureNEU(i, press[i]);
+      }
     }
+  }
+  if (getSlowADCData_ != nullptr) {
+    telemdef_->setTPCHVCurrentMeasure(getSlowADCData_->getADC(4));
   }
 }
 
@@ -251,15 +262,20 @@ void SendTelemetry::inputHKVesselInfo() {
     telemdef_->setEnvTemperature(i, getEnvironmentalDataVec_[i]->Temperature());
     telemdef_->setEnvHumidity(i, getEnvironmentalDataVec_[i]->Humidity());
     telemdef_->setEnvPressure(i, getEnvironmentalDataVec_[i]->Pressure());
-    // TODO: telemetry definition is not changed for now
-    if (getCompressorData_ != nullptr) {
-      if (i < 4) {
-        telemdef_->setEnvTemperature(i, getCompressorData_->Temperature(i));
-      }
-      if (i < 2) {
-        telemdef_->setEnvPressure(i, getCompressorData_->Pressure(i));
-      }
-    }
+  }
+  const int n_compressor = std::min(getCompressorData_->NumTemperature(), 2);
+  if (n_compressor != 2){
+    std::cerr << "Compressor temperature size is not correct: n = " << n_compressor << std::endl;
+  }
+  for (int i = 0; i < n_compressor; i++) {
+    telemdef_->setCompressorTemperature(i, getCompressorData_->Temperature(i));
+  }
+  const int n_comppress = std::min(getCompressorData_->NumPressure(), 2);
+  if (n_comppress != 2){
+    std::cerr << "Compressor pressure size is not correct: n = " << n_comppress << std::endl;
+  }
+  for (int i = 0; i < n_comppress; i++) {
+    telemdef_->setCompressorPressure(i, getCompressorData_->Pressure(i));
   }
 
   if (measureAcceleration_ != nullptr) {

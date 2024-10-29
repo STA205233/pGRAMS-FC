@@ -18,7 +18,9 @@ ANLStatus GetPressure::mod_initialize() {
     encodedSerialCommunicator_ = nullptr;
     return AS_ERROR;
   }
-  command_ = (boost::format("@%03dPR3?;FF") % channel_).str();
+  for (int i = 0; i < MAX_PRESSURE_NUM; i++) {
+    commands_.push_back((boost::format("@%03dPR%d?;FF") % channel_ % i).str());
+  }
   std::string pat((boost::format("@%03dACK([0-9\\-\\+E\\.]*?);FF") % channel_).str());
   reg_ = std::regex(pat);
   return AS_OK;
@@ -28,32 +30,34 @@ ANLStatus GetPressure::mod_analyze() {
     return AS_OK;
   }
   std::string dat;
-  const int byte_read = encodedSerialCommunicator_->SendComAndGetData(command_, dat, sleepForMsec_);
-  if (byte_read < 0) {
-    std::cerr << "Error in GetPressure::mod_analyze: byte_read = " << byte_read << std::endl;
-    return AS_OK;
-  }
-  else if (byte_read == 0) {
-    return AS_OK;
-  }
-  std::smatch m;
-  const bool result = std::regex_search(dat, m, reg_);
-  if (!result) {
-    std::cout << "Pressure data was not read." << std::endl;
-    return AS_OK;
-  }
-  if (chatter_ > 0){
-    std::cout << "read: " << m[1].str() << std::endl;
-  }
-  try {
-    pressure_ = std::stof(m[1].str());
-  }
-  catch (const std::invalid_argument &e) {
-    std::cout << "Pressure data was not read." << std::endl;
-    pressure_ = 0;
-  }
-  if (chatter_ > 0){
-    std::cout << "Pressure: " << pressure_ << std::endl;
+  for (int i = 0; i < static_cast<int>(commands_.size()); i++) {
+    const int byte_read = encodedSerialCommunicator_->SendComAndGetData(commands_[i], dat, sleepForMsec_);
+    if (byte_read < 0) {
+      std::cerr << "Error in GetPressure::mod_analyze: byte_read = " << byte_read << std::endl;
+      return AS_OK;
+    }
+    else if (byte_read == 0) {
+      return AS_OK;
+    }
+    std::smatch m;
+    const bool result = std::regex_search(dat, m, reg_);
+    if (!result) {
+      std::cout << "Pressure data was not read." << std::endl;
+      return AS_OK;
+    }
+    if (chatter_ > 0) {
+      std::cout << "read: " << m[1].str() << std::endl;
+    }
+    try {
+      pressure_[i] = std::stof(m[1].str());
+    }
+    catch (const std::invalid_argument &e) {
+      std::cout << "Pressure data was not read." << std::endl;
+      pressure_[i] = 0;
+    }
+    if (chatter_ > 0) {
+      std::cout << "Pressure: " << pressure_[i] << std::endl;
+    }
   }
   return AS_OK;
 }

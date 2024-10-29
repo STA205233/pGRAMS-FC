@@ -29,8 +29,8 @@ ANLStatus GetSlowADCDataIncludingPressure::mod_analyze() {
   GetSlowADCData::mod_analyze();
   for (int i = 0; i < static_cast<int>(getPressureNames_.size()); i++) {
     if (getPressures_[i]) {
-      SetADCData(channels_[i], static_cast<uint16_t>(getPressures_[i]->Pressure() * 1e3)); // TODO: 1e3 means 1e6 * 1e-3 (to match the unit of HV setting)
-      SetVoltage(channels_[i], getPressures_[i]->Pressure() * 1e3); // TODO: 1e3 means 1e6 * 1e-3 (to match the unit of HV setting)
+      SetADCData(channels_[i], static_cast<uint16_t>(getPressures_[i]->Pressure()[2] * 1e3)); // TODO: 1e3 means 1e6 * 1e-3 (to match the unit of HV setting)
+      SetVoltage(channels_[i], getPressures_[i]->Pressure()[2] * 1e3); // TODO: 1e3 means 1e6 * 1e-3 (to match the unit of HV setting)
     }
   }
   return AS_OK;

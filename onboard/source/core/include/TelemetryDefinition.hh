@@ -63,7 +63,15 @@ public:
   void setEventCount(uint32_t v) { eventCount_ = v; }
   void setCurrentEventID(uint32_t v) { currentEventID_ = v; }
   void setChamberPressure(uint16_t v) { chamberPressure_ = v; }
-  void setChamberTemperature(const std::vector<uint16_t>& v) { chamberTemperature_ = v; } //should be fixed
+  void setChamberPressureNEU(int index, int32_t v){ if (index<static_cast<int>(chamberPressureNEU_.size())) chamberPressureNEU_[index] = v; }
+  void resizeChamberPressureNEU(int n) { chamberPressureNEU_.resize(n); }
+  void setJacketPressureNEU(int index, int32_t v){ if (index<static_cast<int>(jacketPressureNEU_.size())) jacketPressureNEU_[index] = v; }
+  void resizeJacketPressureNEU(int n) { jacketPressureNEU_.resize(n); }
+  void setCompressorTemperature(int index, int16_t v){ if (index<static_cast<int>(compressorTemperature_.size())) compressorTemperature_[index] = v; }
+  void resizeCompressorTemperature(int n) { compressorTemperature_.resize(n); }
+  void setCompressorPressure(int index, uint16_t v){ if (index<static_cast<int>(compressorPressure_.size())) compressorPressure_[index] = v; }
+  void resizeCompressorPressure(int n) { compressorPressure_.resize(n); }
+  void setChamberTemperature(const std::vector<uint16_t> &v) { chamberTemperature_ = v; } //should be fixed
   void setChamberTemperature(int index, uint16_t v) { if (index<static_cast<int>(chamberTemperature_.size())) chamberTemperature_[index] = v; }
   void resizeChamberTemperature(int n) { chamberTemperature_.resize(n); }
   void setValveTemperature(uint16_t v) { valveTemperature_ = v; }
@@ -130,6 +138,10 @@ public:
   const std::vector<uint16_t>& ChamberTemperature() const { return chamberTemperature_; }
   std::vector<uint16_t>& ChamberTemperature() { return chamberTemperature_; }
   uint16_t ChamberTemperature(int index) { return (index<(int)chamberTemperature_.size()) ? chamberTemperature_[index] : 0 ; }
+  const std::vector<float>& ChamberPressureNEU() const { return chamberPressureNEU_; }
+  const std::vector<float>& JacketPressureNEU() const { return jacketPressureNEU_; }
+  const std::vector<int16_t>& CompressorTemperature() const { return compressorTemperature_; }
+  const std::vector<int16_t>& CompressorPressure() const { return compressorPressure_; }
   uint16_t ValveTemperature() { return valveTemperature_; }
   uint16_t OuterTemperature() { return outerTemperature_; }
   double TPCHVSetting() { return TPCHVSetting_; }
@@ -199,6 +211,10 @@ private:
   uint32_t currentEventID_ = 0;
   uint16_t chamberPressure_ = 0;
   std::vector<uint16_t> chamberTemperature_;
+  std::vector<float> chamberPressureNEU_;
+  std::vector<float> jacketPressureNEU_;
+  std::vector<int16_t> compressorTemperature_;
+  std::vector<int16_t> compressorPressure_;
   uint16_t valveTemperature_ = 0;
   uint16_t outerTemperature_ = 0;
   double TPCHVSetting_ = 0.0;
