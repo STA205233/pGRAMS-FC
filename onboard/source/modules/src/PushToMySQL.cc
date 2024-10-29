@@ -91,9 +91,12 @@ ANLStatus PushToMySQL::mod_analyze() {
   //mysqlIO_.SetItem("chamber", "time", "2024:01:01:00:00:00");
   const std::vector<int16_t> &compressor_temperature = telemdef->CompressorTemperature();
   const int n_comptemp = std::min(static_cast<int>(compressor_temperature.size()), 3);
+  std::cout << "compressor temperature: ";
   for (int i = 0; i < n_comptemp; i++) {
     mysqlIO_.SetItem("ground", (boost::format("compressT%i") % (i + 1)).str(), std::to_string(compressor_temperature[i]));
+    std::cout << compressor_temperature[i] << " ";
   }
+  std::cout << std::endl;
   mysqlIO_.SetItem("ground", "RP", std::to_string(telemdef->CompressorPressure()[0]));
   //// FIXME: How to insert NULL
   //mysqlIO_.SetItem("ground", "time", "2024:01:01:00:00:00");
