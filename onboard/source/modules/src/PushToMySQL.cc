@@ -41,6 +41,8 @@ ANLStatus PushToMySQL::mod_initialize() {
   mysqlIO_.AddColumn("ground", "compressT2");
   mysqlIO_.AddColumn("ground", "compressT3");
   mysqlIO_.AddColumn("ground", "RP");
+  mysqlIO_.PrintTableInfo("chamber");
+  mysqlIO_.PrintTableInfo("ground");
   return AS_OK;
 }
 ANLStatus PushToMySQL::mod_analyze() {
@@ -87,7 +89,6 @@ ANLStatus PushToMySQL::mod_analyze() {
   //mysqlIO_.SetItem("ground", "time", "2024:01:01:00:00:00");
   mysqlIO_.Insert("chamber");
   mysqlIO_.Insert("ground");
-  id_++;
   return AS_OK;
 }
 ANLStatus PushToMySQL::mod_finalize() {

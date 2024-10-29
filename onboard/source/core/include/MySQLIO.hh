@@ -41,6 +41,7 @@ public:
   void SetItem(const std::string &table_name, const std::string &col_name, const std::string &value);
   void Insert(const std::string &table_name);
   void SetCheckExist(const bool checkExist) { checkExist_ = checkExist; }
+  void PrintTableInfo(const std::string &table_name);
 };
 
 } // namespace gramsballoon::mysql
