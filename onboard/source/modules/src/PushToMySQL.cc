@@ -21,7 +21,7 @@ ANLStatus PushToMySQL::mod_initialize() {
   mysqlIO_.AddTable("chamber");
   mysqlIO_.AddColumn("chamber", "id");
   mysqlIO_.AddColumn("chamber", "time");
-  for (int i = 0; i < 5; i++) {
+  for (int i = 0; i < 6; i++) {
     mysqlIO_.AddColumn("chamber", (boost::format("rtd%i") % i).str());
   }
   mysqlIO_.AddColumn("chamber", "cp_PR3");
@@ -67,6 +67,7 @@ ANLStatus PushToMySQL::mod_analyze() {
   for (int i = 0; i < n; i++) {
     mysqlIO_.SetItem("chamber", (boost::format("rtd%i") % i).str(), std::to_string(static_cast<float>(chamber_temperature[i] / 10)));
   }
+  mysqlIO_.SetItem("chamber", "rtd5", std::to_string(static_cast<float>(-1)));
   const std::vector<float> &chamber_pressure = telemdef->ChamberPressureNEU();
   const int n_champress = chamber_pressure.size();
   for (int i = 0; i < n_champress; i++) {
