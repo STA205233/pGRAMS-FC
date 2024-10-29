@@ -132,7 +132,7 @@ void TelemetryDefinition::writeRTDTemperature() {
   std::vector<uint16_t> temperature(buf_size, 0);
   for (int i = 0; i < n; i++) {
     if (i == buf_size) break;
-    temperature[i] = RTDTemperatureADC_[i];
+    temperature[i] = static_cast<uint16_t>(RTDTemperatureADC_[i]);
   }
   addVector<uint16_t>(temperature);
   for (int i = 0; i < 5; i++) {
@@ -294,7 +294,7 @@ void TelemetryDefinition::interpret() {
 
 void TelemetryDefinition::interpretHK() {
   chamberPressureNEU_.resize(5);
-  chamberPressureNEU_[0] = getValue<int32_t>(22);
+  chamberPressureNEU_[0] = static_cast<float>(getValue<int32_t>(22) * 1E-6);
   jacketPressureNEU_.resize(5);
   jacketPressureNEU_[0] = getValue<int32_t>(26);
   chamberPressure_ = getValue<uint16_t>(30);

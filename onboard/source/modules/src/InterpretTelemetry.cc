@@ -53,6 +53,7 @@ ANLStatus InterpretTelemetry::mod_initialize()
 ANLStatus InterpretTelemetry::mod_analyze()
 {
   if (!(receiver_->Valid())) {
+    currentTelemetryType_ = 0;
     return AS_OK;
   }
   

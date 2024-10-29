@@ -52,6 +52,9 @@ ANLStatus PushToMySQL::mod_analyze() {
   if (!interpreter_) {
     return AS_OK;
   }
+  if (interpreter_->CurrentTelemetryType() != 1){
+    return AS_OK;
+  }
   TelemetryDefinition *telemdef = interpreter_->Telemdef();
   if (!telemdef) {
     return AS_OK;
@@ -70,20 +73,26 @@ ANLStatus PushToMySQL::mod_analyze() {
   mysqlIO_.SetItem("chamber", "rtd5", std::to_string(static_cast<float>(-1)));
   const std::vector<float> &chamber_pressure = telemdef->ChamberPressureNEU();
   const int n_champress = chamber_pressure.size();
+  std::cout << "chamber pressure: ";
   for (int i = 0; i < n_champress; i++) {
     mysqlIO_.SetItem("chamber", (boost::format("cp_PR%i") % (i + 1)).str(), std::to_string(chamber_pressure[i]));
+    std::cout << chamber_pressure[i] << " ";
   }
+  std::cout << std::endl;
   const std::vector<float> &jacket_pressure = telemdef->JacketPressureNEU();
   const int n_jackpress = jacket_pressure.size();
+  std::cout << "jacket pressure: ";
   for (int i = 0; i < n_jackpress; i++) {
     mysqlIO_.SetItem("chamber", (boost::format("jp_PR%i") % (i + 1)).str(), std::to_string(jacket_pressure[i]));
+    std::cout << jacket_pressure[i] << " ";
   }
+  std::cout << std::endl;
   //// FIXME: How to insert NULL
   //mysqlIO_.SetItem("chamber", "time", "2024:01:01:00:00:00");
   const std::vector<int16_t> &compressor_temperature = telemdef->CompressorTemperature();
   const int n_comptemp = std::min(static_cast<int>(compressor_temperature.size()), 3);
   for (int i = 0; i < n_comptemp; i++) {
-    mysqlIO_.SetItem("ground", (boost::format("compressT%i") % (i + 1)).str(), std::to_string(compressor_temperature[i] / 10));
+    mysqlIO_.SetItem("ground", (boost::format("compressT%i") % (i + 1)).str(), std::to_string(compressor_temperature[i]));
   }
   mysqlIO_.SetItem("ground", "RP", std::to_string(telemdef->CompressorPressure()[0]));
   //// FIXME: How to insert NULL

@@ -76,7 +76,7 @@ void MySQLIO::PrintTableInfo(const std::string &table_name){
   std::cout << "Table: " << table_name << std::endl;
   std::cout << "____________________" << std::endl;
   for (auto &col: tables_[table_name]) {
-    std::cout << col.first << " ";
+    std::cout << col.first << " " << col.second.index << std::endl;
   }
   std::cout << std::endl;
   std::cout << "____________________" << std::endl;
