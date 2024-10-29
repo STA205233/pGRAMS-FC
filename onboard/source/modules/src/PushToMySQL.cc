@@ -1,4 +1,5 @@
 #include "PushToMySQL.hh"
+#include <algorithm>
 using namespace anlnext;
 namespace gramsballoon::pgrams {
 ANLStatus PushToMySQL::mod_define() {
@@ -20,7 +21,7 @@ ANLStatus PushToMySQL::mod_initialize() {
   mysqlIO_.AddTable("chamber");
   mysqlIO_.AddColumn("chamber", "id");
   mysqlIO_.AddColumn("chamber", "time");
-  for (int i = 0; i < 6; i++) {
+  for (int i = 0; i < 5; i++) {
     mysqlIO_.AddColumn("chamber", (boost::format("rtd%i") % i).str());
   }
   mysqlIO_.AddColumn("chamber", "cp_PR3");
@@ -57,8 +58,9 @@ ANLStatus PushToMySQL::mod_analyze() {
   std::cout << "chamber_temperature: ";
   const int n = chamber_temperature.size();
   for (int i = 0; i < n; i++) {
-    std::cout << chamber_temperature[i] / 10 << " ";
+    std::cout << static_cast<float>(chamber_temperature[i]) / 10 << " ";
   }
+  std::cout << std::endl;
   //TODO: This conversion should be reconsidered.
   for (int i = 0; i < n; i++) {
     mysqlIO_.SetItem("chamber", (boost::format("rtd%i") % i).str(), std::to_string(static_cast<float>(chamber_temperature[i] / 10)));
@@ -76,7 +78,7 @@ ANLStatus PushToMySQL::mod_analyze() {
   //// FIXME: How to insert NULL
   //mysqlIO_.SetItem("chamber", "time", "2024:01:01:00:00:00");
   const std::vector<int16_t> &compressor_temperature = telemdef->CompressorTemperature();
-  const int n_comptemp = compressor_temperature.size();
+  const int n_comptemp = std::min(static_cast<int>(compressor_temperature.size()), 3);
   for (int i = 0; i < n_comptemp; i++) {
     mysqlIO_.SetItem("ground", (boost::format("compressT%i") % (i + 1)).str(), std::to_string(compressor_temperature[i] / 10));
   }
@@ -85,6 +87,7 @@ ANLStatus PushToMySQL::mod_analyze() {
   //mysqlIO_.SetItem("ground", "time", "2024:01:01:00:00:00");
   mysqlIO_.Insert("chamber");
   mysqlIO_.Insert("ground");
+  id_++;
   return AS_OK;
 }
 ANLStatus PushToMySQL::mod_finalize() {
