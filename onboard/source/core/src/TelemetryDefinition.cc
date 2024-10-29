@@ -294,9 +294,9 @@ void TelemetryDefinition::interpret() {
 
 void TelemetryDefinition::interpretHK() {
   chamberPressureNEU_.resize(5);
-  chamberPressureNEU_[0] = static_cast<float>(getValue<int32_t>(22) * 1E-6);
+  chamberPressureNEU_[0] = static_cast<float>(getValue<int32_t>(22)) * 1E-6;
   jacketPressureNEU_.resize(5);
-  jacketPressureNEU_[0] = static_cast<float>(getValue<int32_t>(26) * 1E-6);
+  jacketPressureNEU_[0] = static_cast<float>(getValue<int32_t>(26)) * 1E-6;
   chamberPressure_ = getValue<uint16_t>(30);
   chamberTemperature_.resize(5);
   getVector<uint16_t>(32, 5, chamberTemperature_);
