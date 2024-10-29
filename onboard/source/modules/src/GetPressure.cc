@@ -32,6 +32,7 @@ ANLStatus GetPressure::mod_analyze() {
   std::string dat;
   pressure_.resize(MAX_PRESSURE_NUM);
   for (int i = 0; i < static_cast<int>(commands_.size()); i++) {
+    std::cout << "Sent Command: " << commands_[i] << std::endl;
     const int byte_read = encodedSerialCommunicator_->SendComAndGetData(commands_[i], dat, sleepForMsec_);
     if (byte_read < 0) {
       std::cerr << "Error in GetPressure::mod_analyze: byte_read = " << byte_read << std::endl;
@@ -44,7 +45,6 @@ ANLStatus GetPressure::mod_analyze() {
     const bool result = std::regex_search(dat, m, reg_);
     if (!result) {
       std::cout << "Pressure data was not read." << std::endl;
-      std::cout << "Sent Command: " << commands_[i] << std::endl;
     }
     if (chatter_ > 0) {
       std::cout << "read: " << m[1].str() << std::endl;

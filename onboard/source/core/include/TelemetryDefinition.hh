@@ -63,7 +63,7 @@ public:
   void setEventCount(uint32_t v) { eventCount_ = v; }
   void setCurrentEventID(uint32_t v) { currentEventID_ = v; }
   void setChamberPressure(uint16_t v) { chamberPressure_ = v; }
-  void setChamberPressureNEU(int index, int32_t v){ if (index<static_cast<int>(chamberPressureNEU_.size())) chamberPressureNEU_[index] = v; }
+  void setChamberPressureNEU(int index, float v){ if (index<static_cast<int>(chamberPressureNEU_.size())) chamberPressureNEU_[index] = v; }
   void resizeChamberPressureNEU(int n) { chamberPressureNEU_.resize(n); }
   void setJacketPressureNEU(int index, int32_t v){ if (index<static_cast<int>(jacketPressureNEU_.size())) jacketPressureNEU_[index] = v; }
   void resizeJacketPressureNEU(int n) { jacketPressureNEU_.resize(n); }
