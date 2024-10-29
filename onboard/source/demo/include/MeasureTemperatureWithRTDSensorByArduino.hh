@@ -20,7 +20,7 @@ class MeasureTemperatureWithRTDSensorByArduino: public MeasureTemperatureWithRTD
 public:
   MeasureTemperatureWithRTDSensorByArduino() = default;
   virtual ~MeasureTemperatureWithRTDSensorByArduino() = default;
-  int16_t TemperatureADC() override { return singleton_self()->getArduinoData_->AdcData()[ch_]; }
+  //int16_t TemperatureADC() override { return singleton_self()->getArduinoData_->AdcData()[ch_]; }
   anlnext::ANLStatus mod_define() override;
   anlnext::ANLStatus mod_pre_initialize() override;
   anlnext::ANLStatus mod_initialize() override;

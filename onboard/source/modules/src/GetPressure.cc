@@ -18,7 +18,7 @@ ANLStatus GetPressure::mod_initialize() {
     encodedSerialCommunicator_ = nullptr;
     return AS_ERROR;
   }
-  for (int i = 0; i < MAX_PRESSURE_NUM; i++) {
+  for (int i = 1; i <= MAX_PRESSURE_NUM; i++) {
     commands_.push_back((boost::format("@%03dPR%d?;FF") % channel_ % i).str());
   }
   std::string pat((boost::format("@%03dACK([0-9\\-\\+E\\.]*?);FF") % channel_).str());
@@ -30,6 +30,7 @@ ANLStatus GetPressure::mod_analyze() {
     return AS_OK;
   }
   std::string dat;
+  pressure_.resize(MAX_PRESSURE_NUM);
   for (int i = 0; i < static_cast<int>(commands_.size()); i++) {
     const int byte_read = encodedSerialCommunicator_->SendComAndGetData(commands_[i], dat, sleepForMsec_);
     if (byte_read < 0) {
@@ -43,7 +44,7 @@ ANLStatus GetPressure::mod_analyze() {
     const bool result = std::regex_search(dat, m, reg_);
     if (!result) {
       std::cout << "Pressure data was not read." << std::endl;
-      return AS_OK;
+      std::cout << "Sent Command: " << commands_[i] << std::endl;
     }
     if (chatter_ > 0) {
       std::cout << "read: " << m[1].str() << std::endl;
