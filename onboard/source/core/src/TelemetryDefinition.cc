@@ -172,7 +172,7 @@ void TelemetryDefinition::writeEnvironmentalData() {
   }
   const int sz_jacketpress = jacketPressureNEU_.size();
   for (int i = 0; i < 3; i++) {
-    if (sz_jacketpress < i + 2) {
+    if (sz_jacketpress > i + 2) {
       addValue<int32_t>(static_cast<int32_t>(jacketPressureNEU_[i + 2] / 1E-6));
     }
     else {

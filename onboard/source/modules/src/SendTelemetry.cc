@@ -263,8 +263,8 @@ void SendTelemetry::inputHKVesselInfo() {
     telemdef_->setEnvHumidity(i, getEnvironmentalDataVec_[i]->Humidity());
     telemdef_->setEnvPressure(i, getEnvironmentalDataVec_[i]->Pressure());
   }
-  const int n_compressor = std::min(getCompressorData_->NumTemperature(), 2);
-  if (n_compressor != 2){
+  const int n_compressor = std::min(getCompressorData_->NumTemperature(), 4);
+  if (n_compressor != 4){
     std::cerr << "Compressor temperature size is not correct: n = " << n_compressor << std::endl;
   }
   for (int i = 0; i < n_compressor; i++) {

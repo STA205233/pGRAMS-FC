@@ -61,8 +61,7 @@ a = MyApp.new
 
 
 a.num_parallels = 1
-# a.run(1000000000, 1)
-a.run(1)
+a.run(1000000000, 1)
 exit_status = 1
 puts "exit_status: #{exit_status}"
 exit exit_status
