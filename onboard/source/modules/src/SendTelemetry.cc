@@ -23,7 +23,8 @@ ANLStatus SendTelemetry::mod_define() {
   define_parameter("TPCHVController_module_name", &mod_class::TPCHVControllerModuleName_);
   define_parameter("PMTHVController_module_name", &mod_class::PMTHVControllerModuleName_);
   define_parameter("GetEnvironmentalData_module_names", &mod_class::getEnvironmentalDataModuleNames_);
-  define_parameter("GetPressure_module_names", &mod_class::getPressureModuleNames_);
+  define_parameter("GetPressure_chamber_module_name", &mod_class::getPressureChamberModuleName_);
+  define_parameter("GetPressure_jacket_module_name", &mod_class::getPressureJacketModuleName_);
   define_parameter("serial_path", &mod_class::serialPath_);
   define_parameter("baudrate", &mod_class::baudrate_);
   define_parameter("open_mode", &mod_class::openMode_);
@@ -95,11 +96,11 @@ ANLStatus SendTelemetry::mod_initialize() {
     get_module_NC(get_compressor_data_md, &getCompressorData_);
   }
 
-  for (int i = 0; i < static_cast<int>(getPressureModuleNames_.size()); i++) {
-    const std::string module_name = getPressureModuleNames_[i];
-    if (exist_module(module_name)) {
-      getPressure_.push_back(get_module_NC<GetPressure>(module_name));
-    }
+  if (exist_module(getPressureChamberModuleName_)) {
+    get_module_NC(getPressureChamberModuleName_, &getPressureChamber_);
+  }
+  if (exist_module(getPressureJacketModuleName_)) {
+    get_module_NC(getPressureJacketModuleName_, &getPressureJacket_);
   }
   const std::string receive_command_md = "ReceiveCommand";
   if (exist_module(receive_command_md)) {
@@ -223,28 +224,24 @@ void SendTelemetry::inputDetectorInfo() {
     telemdef_->setTPCHVMeasure(getSlowADCData_->getADC(3));
   }
 
-  if (getPressure_.size() > 1) {
-    if (getPressure_[1] != nullptr) {
-      const auto &press = getPressure_[1]->Pressure();
-      const int n = std::min(static_cast<int>(press.size()), 5);
-      if (n != 5) {
-        std::cerr << "Pressure size is not correct: n = " << n << std::endl;
-      }
-      for (int i = 0; i < n; i++) {
-        telemdef_->setJacketPressureNEU(i, press[i]);
-      }
+  if (getPressureChamber_ != nullptr) {
+    const auto &press = getPressureChamber_->Pressure();
+    const int n = std::min(static_cast<int>(press.size()), 5);
+    if (n != 5) {
+      std::cerr << "Pressure size is not correct: n = " << n << std::endl;
+    }
+    for (int i = 0; i < n; i++) {
+      telemdef_->setJacketPressureNEU(i, press[i]);
     }
   }
-  if (getPressure_.size() > 0) {
-    if (getPressure_[0] != nullptr) {
-      const auto &press = getPressure_[0]->Pressure();
-      const int n = std::min(static_cast<int>(press.size()), 5);
-      if (n != 5) {
-        std::cerr << "Pressure size is not correct: n = " << n << std::endl;
-      }
-      for (int i = 0; i < n; i++) {
-        telemdef_->setChamberPressureNEU(i, press[i]);
-      }
+  if (getPressureJacket_ != nullptr) {
+    const auto &press = getPressureJacket_->Pressure();
+    const int n = std::min(static_cast<int>(press.size()), 5);
+    if (n != 5) {
+      std::cerr << "Pressure size is not correct: n = " << n << std::endl;
+    }
+    for (int i = 0; i < n; i++) {
+      telemdef_->setChamberPressureNEU(i, press[i]);
     }
   }
   if (getSlowADCData_ != nullptr) {
@@ -264,14 +261,14 @@ void SendTelemetry::inputHKVesselInfo() {
     telemdef_->setEnvPressure(i, getEnvironmentalDataVec_[i]->Pressure());
   }
   const int n_compressor = std::min(getCompressorData_->NumTemperature(), 4);
-  if (n_compressor != 4){
+  if (n_compressor != 4) {
     std::cerr << "Compressor temperature size is not correct: n = " << n_compressor << std::endl;
   }
   for (int i = 0; i < n_compressor; i++) {
     telemdef_->setCompressorTemperature(i, getCompressorData_->Temperature(i));
   }
   const int n_comppress = std::min(getCompressorData_->NumPressure(), 2);
-  if (n_comppress != 2){
+  if (n_comppress != 2) {
     std::cerr << "Compressor pressure size is not correct: n = " << n_comppress << std::endl;
   }
   for (int i = 0; i < n_comppress; i++) {

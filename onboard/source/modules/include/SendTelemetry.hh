@@ -97,8 +97,10 @@ private:
   std::vector<std::string> getEnvironmentalDataModuleNames_;
   std::vector<GetEnvironmentalData *> getEnvironmentalDataVec_;
   pgrams::GetCompressorData *getCompressorData_ = nullptr;
-  std::vector<std::string> getPressureModuleNames_;
-  std::vector<pgrams::GetPressure *> getPressure_;
+  std::string getPressureChamberModuleName_;
+  std::string getPressureJacketModuleName_;
+  pgrams::GetPressure *getPressureChamber_;
+  pgrams::GetPressure *getPressureJacket_;
   MeasureAcceleration *measureAcceleration_ = nullptr;
   GetSlowADCData *getSlowADCData_ = nullptr;
   ReceiveCommand *receiveCommand_ = nullptr;

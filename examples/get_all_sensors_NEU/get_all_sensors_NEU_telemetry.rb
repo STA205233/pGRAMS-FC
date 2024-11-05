@@ -40,7 +40,8 @@ class MyApp < ANL::ANLApp
           # serial_path: "./telemetryPTY0",
           serial_path: "/dev/ttyS0",
           MeasureTemperature_module_names: measure_temperature_modules,
-          GetPressure_module_names: ["GetPressure_1", "GetPressure_2"],
+          GetPressure_jacket_module_name: "GetPressure_1",
+          GetPressure_chamber_module_name: "GetPressure_2",
           binary_filename_base:ENV["HOME"] + "/data/telemetry_test/telemetry",
           chatter: 1
         ) do |m|
