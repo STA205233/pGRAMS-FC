@@ -7,7 +7,7 @@
 namespace gramsballoon {
 
 TelemetryDefinition::TelemetryDefinition() {
-  chamberTemperature_.resize(5);
+  chamberTemperature_.resize(6);
   chamberPressureNEU_.resize(5);
   jacketPressureNEU_.resize(5);
   compressorTemperature_.resize(4);
@@ -61,7 +61,7 @@ void TelemetryDefinition::generateTelemetryHK() {
   addValue<int32_t>(static_cast<int32_t>(chamberPressureNEU_[1] / 1E-6));
   addValue<int16_t>(TPCHVMeasure_);
   addValue<int32_t>(static_cast<int32_t>(jacketPressureNEU_[1] / 1E-6));
-  addValue<int16_t>(TPCHVCurrentMeasure_);
+  addValue<uint16_t>(chamberTemperature_[5]);
   addValue<int16_t>(static_cast<int16_t>(CPUTemperature_ / 0.1));
   writeEnvironmentalData();
   writeAccelerationData();
@@ -298,12 +298,12 @@ void TelemetryDefinition::interpretHK() {
   jacketPressureNEU_.resize(5);
   jacketPressureNEU_[0] = static_cast<float>(getValue<int32_t>(26)) * 1E-6;
   chamberPressure_ = getValue<uint16_t>(30);
-  chamberTemperature_.resize(5);
+  chamberTemperature_.resize(6);
   getVector<uint16_t>(32, 5, chamberTemperature_);
   chamberPressureNEU_[1] = static_cast<float>(getValue<int32_t>(42) * 1E-6);
   TPCHVMeasure_ = getValue<uint16_t>(46);
   jacketPressureNEU_[1] = static_cast<float>(getValue<int32_t>(48)) * 1E-6;
-  TPCHVCurrentMeasure_ = getValue<uint16_t>(52);
+  chamberTemperature_[5] = getValue<uint16_t>(52);
   CPUTemperature_ = static_cast<double>(getValue<int16_t>(54)) * 0.1;
 
   envTemperature_.resize(5);

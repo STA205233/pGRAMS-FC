@@ -1,10 +1,14 @@
 #ifndef GRAMSBalloon_GetPressure_hh
 #define GRAMSBalloon_GetPressure_hh 1
 #include "EncodedSerialCommunicator.hh"
+//#include "SendTelemetry.hh"
 #include "anlnext/BasicModule.hh"
 #include <regex>
 #include <vector>
 
+//namespace gramsballoon {
+//class SendTelemetry;
+//} // namespace gramsballoon
 namespace gramsballoon::pgrams {
 class GetPressure: public anlnext::BasicModule {
   DEFINE_ANL_MODULE(GetPressure, 1.0);
@@ -23,6 +27,7 @@ private:
   EncodedSerialCommunicator *encodedSerialCommunicator_ = nullptr;
   std::string encodedSerialCommunicatorName_ = "EncodedSerialCommunicator";
   std::vector<float> pressure_;
+  //SendTelemetry *sendTelemetry_ = nullptr;
   int channel_ = 0;
   int sleepForMsec_ = 500;
   std::vector<std::string> commands_;

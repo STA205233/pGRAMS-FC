@@ -52,7 +52,7 @@ ANLStatus PushToMySQL::mod_analyze() {
   if (!interpreter_) {
     return AS_OK;
   }
-  if (interpreter_->CurrentTelemetryType() != 1){
+  if (interpreter_->CurrentTelemetryType() != 1) {
     return AS_OK;
   }
   TelemetryDefinition *telemdef = interpreter_->Telemdef();
@@ -70,7 +70,6 @@ ANLStatus PushToMySQL::mod_analyze() {
   for (int i = 0; i < n; i++) {
     mysqlIO_.SetItem("chamber", (boost::format("rtd%i") % i).str(), std::to_string(static_cast<float>(chamber_temperature[i] / 10)));
   }
-  mysqlIO_.SetItem("chamber", "rtd5", std::to_string(static_cast<float>(-1)));
   const std::vector<float> &chamber_pressure = telemdef->ChamberPressureNEU();
   const int n_champress = chamber_pressure.size();
   std::cout << "chamber pressure: ";

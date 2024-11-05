@@ -10,12 +10,18 @@ ANLStatus GetPressure::mod_define() {
   return AS_OK;
 }
 ANLStatus GetPressure::mod_initialize() {
+  //if (exist_module("SendTelemetry")) {
+  //  get_module_NC("SendTelemetry", &sendTelemetry_);
+  //}
   if (exist_module(encodedSerialCommunicatorName_)) {
     get_module_NC(encodedSerialCommunicatorName_, &encodedSerialCommunicator_);
   }
   else {
     std::cerr << encodedSerialCommunicatorName_ << " does not exist." << std::endl;
     encodedSerialCommunicator_ = nullptr;
+    //if (sendTelemetry_) {
+    //  sendTelemetry_->getErrorManager()->setError(ErrorType::MODULE_ACCESS_ERROR);
+    //}
     return AS_ERROR;
   }
   for (int i = 1; i <= MAX_PRESSURE_NUM; i++) {
