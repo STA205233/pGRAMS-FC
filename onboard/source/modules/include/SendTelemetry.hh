@@ -99,8 +99,8 @@ private:
   pgrams::GetCompressorData *getCompressorData_ = nullptr;
   std::string getPressureChamberModuleName_;
   std::string getPressureJacketModuleName_;
-  pgrams::GetPressure *getPressureChamber_;
-  pgrams::GetPressure *getPressureJacket_;
+  pgrams::GetPressure *getPressureChamber_ = nullptr;
+  pgrams::GetPressure *getPressureJacket_ = nullptr;
   MeasureAcceleration *measureAcceleration_ = nullptr;
   GetSlowADCData *getSlowADCData_ = nullptr;
   ReceiveCommand *receiveCommand_ = nullptr;
