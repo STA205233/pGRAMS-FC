@@ -10,7 +10,7 @@ class MyApp < ANL::ANLApp
         # chain GRAMSBalloon::GetMHADCData
         # with_parameters(num_ch: 32, sleep_for_msec: 10, MHADCManager_name: "MHADCManager", chatter: 0) 
         chain GRAMSBalloon::GetArduinoData
-        with_parameters(num_ch: 6, sleep_for_msec: 500, timeout_sec:1, timeout_usec:0)
+        with_parameters(num_ch: 6, sleep_for_msec: 10, timeout_sec:1, timeout_usec:0)
         
         measure_temperature_modules = []
         for i in 0..5 do
@@ -30,11 +30,11 @@ class MyApp < ANL::ANLApp
         chain GRAMSBalloon::PressureGaugeManager, "PressureCommunicator_1"
         with_parameters(filename: "/dev/ttyUSB0", baudrate: 4098,  timeout_usec: 0, timeout_sec: 1)
         chain GRAMSBalloon::GetPressure, "GetPressure_1"
-        with_parameters(EncodedSerialCommunicator_name:"PressureCommunicator_1", sleep_for_msec: 100, channel: 1, chatter: 1)
+        with_parameters(EncodedSerialCommunicator_name:"PressureCommunicator_1", sleep_for_msec: 100, channel: 2, chatter: 1)
         chain GRAMSBalloon::PressureGaugeManager, "PressureCommunicator_2"
         with_parameters(filename: "/dev/ttyUSB1", baudrate: 4098, timeout_usec: 0, timeout_sec: 1)
         chain GRAMSBalloon::GetPressure, "GetPressure_2"
-        with_parameters(EncodedSerialCommunicator_name:"PressureCommunicator_2", sleep_for_msec: 100, channel: 2, chatter: 1)
+        with_parameters(EncodedSerialCommunicator_name:"PressureCommunicator_2", sleep_for_msec: 100, channel: 1, chatter: 1)
         chain GRAMSBalloon::SendTelemetry
         with_parameters(
           # serial_path: "./telemetryPTY0",
@@ -43,7 +43,8 @@ class MyApp < ANL::ANLApp
           GetPressure_jacket_module_name: "GetPressure_1",
           GetPressure_chamber_module_name: "GetPressure_2",
           binary_filename_base:ENV["HOME"] + "/data/telemetry_test/telemetry",
-          chatter: 1
+          chatter: 1,
+          sleep_for_msec: 10
         ) do |m|
             m.set_singleton(0)
         end

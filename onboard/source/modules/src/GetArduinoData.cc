@@ -19,6 +19,7 @@ ANLStatus GetArduinoData::mod_initialize() {
   adcData_.resize(numCh_);
   esc_ = std::make_shared<EncodedSerialCommunication>(filename_, baudrate_, mode_);
   esc_->initialize();
+  std::this_thread::sleep_for(std::chrono::milliseconds(1000));
   return AS_OK;
 }
 ANLStatus GetArduinoData::mod_analyze() {

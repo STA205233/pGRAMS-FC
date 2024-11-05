@@ -81,7 +81,7 @@ private:
   bool saveTelemetry_ = true;
   std::string binaryFilenameBase_ = "";
   int numTelemPerFile_ = 1000;
-  static constexpr int sleepms_ = 500;
+  int sleepms_ = 500;
   int wfDivisionCounter_ = 0;
   int chatter_ = 0;
 
