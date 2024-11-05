@@ -299,12 +299,13 @@ void TelemetryDefinition::interpretHK() {
   jacketPressureNEU_.resize(5);
   jacketPressureNEU_[0] = static_cast<float>(getValue<int32_t>(26)) * 1E-6;
   chamberPressure_ = getValue<uint16_t>(30);
-  chamberTemperature_.resize(6);
+  chamberTemperature_.resize(5);
   getVector<uint16_t>(32, 5, chamberTemperature_);
   chamberPressureNEU_[1] = static_cast<float>(getValue<int32_t>(42) * 1E-6);
   TPCHVMeasure_ = getValue<uint16_t>(46);
   jacketPressureNEU_[1] = static_cast<float>(getValue<int32_t>(48)) * 1E-6;
-  chamberTemperature_[5] = getValue<uint16_t>(52);
+  const uint16_t chamberTemperature5 = getValue<uint16_t>(52);
+  chamberTemperature_.push_back(chamberTemperature5);
   CPUTemperature_ = static_cast<double>(getValue<int16_t>(54)) * 0.1;
 
   envTemperature_.resize(5);
