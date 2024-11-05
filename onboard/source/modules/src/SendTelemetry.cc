@@ -231,7 +231,7 @@ void SendTelemetry::inputDetectorInfo() {
       std::cerr << "Pressure size is not correct: n = " << n << std::endl;
     }
     for (int i = 0; i < n; i++) {
-      telemdef_->setJacketPressureNEU(i, press[i]);
+      telemdef_->setChamberPressureNEU(i, press[i]);
     }
   }
   if (getPressureJacket_ != nullptr) {
@@ -241,7 +241,7 @@ void SendTelemetry::inputDetectorInfo() {
       std::cerr << "Pressure size is not correct: n = " << n << std::endl;
     }
     for (int i = 0; i < n; i++) {
-      telemdef_->setChamberPressureNEU(i, press[i]);
+      telemdef_->setJacketPressureNEU(i, press[i]);
     }
   }
   if (getSlowADCData_ != nullptr) {
