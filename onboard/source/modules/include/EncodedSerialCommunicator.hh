@@ -31,6 +31,7 @@ private:
   int timeoutUsec_ = 0;
   speed_t baudrate_ = B9600;
   mode_t mode_ = O_RDWR | O_NONBLOCK;
+  int chatter_ = 0;
 };
 } // namespace gramsballoon::pgrams
 #endif //GRAMSBalloon_EncodedSerialCommunicator_HH

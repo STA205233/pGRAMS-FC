@@ -13,13 +13,16 @@ ANLStatus GetArduinoData::mod_define() {
   define_parameter("sleep_for_msec", &mod_class::sleepForMilliSec_);
   define_parameter("baudrate", &mod_class::baudrate_);
   define_parameter("mode", &mod_class::mode_);
+  define_parameter("chatter", &mod_class::chatter_);
   return AS_OK;
 }
 ANLStatus GetArduinoData::mod_initialize() {
   adcData_.resize(numCh_);
   esc_ = std::make_shared<EncodedSerialCommunication>(filename_, baudrate_, mode_);
   esc_->initialize();
-  std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+  for (int i = 0; i < numCh_; i++){
+    regs_.push_back(std::regex((boost::format("A%d_(\\d*)") % i).str()));
+  }
   return AS_OK;
 }
 ANLStatus GetArduinoData::mod_analyze() {
@@ -39,11 +42,12 @@ ANLStatus GetArduinoData::mod_analyze() {
   }
   std::string dat;
   esc_->ReadDataUntilBreak(dat);
-  std::cout << dat << std::endl;
+  if (chatter_ > 0){
+    std::cout << dat << std::endl;
+  }
   for (int i = 0; i < numCh_; i++) {
-    std::regex reg = std::regex((boost::format("A%d_(\\d*)") % i).str());
     std::smatch m;
-    std::regex_search(dat, m, reg);
+    std::regex_search(dat, m, regs_[i]);
     try {
       adcData_[i] = std::stoi(m[1].str());
     }
@@ -51,7 +55,9 @@ ANLStatus GetArduinoData::mod_analyze() {
       std::cout << "Ch " << i << " data was not read." << std::endl;
       adcData_[i] = 0;
     }
-    std::cout << "Ch" << i << ": " << adcData_[i] << std::endl;
+    if (chatter_ > 0){
+      std::cout << "Ch" << i << ": " << adcData_[i] << std::endl;
+    }
   }
   return AS_OK;
 }

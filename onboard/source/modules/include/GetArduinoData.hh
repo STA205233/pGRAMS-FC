@@ -30,6 +30,7 @@ private:
   static constexpr int BUFFER_SIZE = 500;
   int numCh_ = 32;
   std::vector<int> adcData_;
+  std::vector<std::regex> regs_;
   std::string filename_ = "/dev/ttyACM0";
   std::shared_ptr<EncodedSerialCommunication> esc_ = nullptr;
   int timeout_ = 1;
@@ -37,6 +38,8 @@ private:
   mode_t mode_ = O_RDWR | O_NONBLOCK;
   int timeoutUsec_ = 0;
   int sleepForMilliSec_ = 0;
+  int chatter_ = 0;
+
 public:
   anlnext::ANLStatus mod_define() override;
   anlnext::ANLStatus mod_analyze() override;

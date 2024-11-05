@@ -1,3 +1,10 @@
+/**
+ *  Module for communicating with MHADC.
+ *
+ * @author Shota Arai
+ * @date 2024-09-19
+ * 
+ */
 #ifndef GRAMSBalloon_GetMHADCData_hh
 #define GRAMSBalloon_GetMHADCData_hh 1
 #include "EncodedSerialCommunicator.hh"
@@ -31,6 +38,7 @@ public:
 private:
   int numCh_ = 32;
   std::vector<int> adcData_;
+  std::vector<std::regex> regs_;
   int sleepForMsec_ = 500;
   int chatter_ = 0;
   EncodedSerialCommunicator *encodedSerialCommunicator_ = nullptr;

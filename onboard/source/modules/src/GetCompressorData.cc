@@ -38,8 +38,10 @@ ANLStatus GetCompressorData::mod_analyze() {
   if (res_press <= 0 && res_temp <= 0) {
     return AS_ERROR;
   }
-  std::cout << "data_temp: " << data_temp << std::endl;
-  std::cout << "data_press: " << data_press << std::endl;
+  if (chatter_ > 0) {
+    std::cout << "data_temp: " << data_temp << std::endl;
+    std::cout << "data_press: " << data_press << std::endl;
+  }
   std::smatch m_temp;
   std::regex_search(data_temp, m_temp, regTemp_);
   const int sz = static_cast<int>(m_temp.size());
@@ -55,12 +57,14 @@ ANLStatus GetCompressorData::mod_analyze() {
       std::cout << "TP " << i + 1 << " data was not read." << std::endl;
       temperature_[i] = 0;
     }
-    std::cout << "TP" << i + 1 << ": " << temperature_[i] << std::endl;
+    if (chatter_ > 0) {
+      std::cout << "TP" << i + 1 << ": " << temperature_[i] << std::endl;
+    }
   }
   std::smatch m_press;
   std::regex_search(data_press, m_press, regPress_);
   const int sz2 = static_cast<int>(m_press.size());
-  if (sz2 != NUM_PRESSURE + 1) {
+  if (sz2 != NUM_PRESSURE + 1) { // +1 means data which is always 0.
     std::cerr << "Data size is incorrect" << std::endl;
     return AS_ERROR;
   }
@@ -72,7 +76,9 @@ ANLStatus GetCompressorData::mod_analyze() {
       std::cout << "PR " << i + 1 << " data was not read." << std::endl;
       pressure_[i] = 0;
     }
-    std::cout << "PR" << i + 1 << ": " << pressure_[i] << std::endl;
+    if (chatter_ > 0) {
+      std::cout << "PR" << i + 1 << ": " << pressure_[i] << std::endl;
+    }
   }
   return AS_OK;
 }

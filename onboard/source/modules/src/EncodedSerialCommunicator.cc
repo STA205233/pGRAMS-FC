@@ -10,6 +10,7 @@ ANLStatus EncodedSerialCommunicator::mod_define() {
   define_parameter("timeout_usec", &mod_class::timeoutUsec_);
   define_parameter("baudrate", &mod_class::baudrate_);
   define_parameter("mode", &mod_class::mode_);
+  define_parameter("chatter", &mod_class::chatter_);
   return AS_OK;
 }
 ANLStatus EncodedSerialCommunicator::mod_initialize() {
@@ -40,7 +41,9 @@ int EncodedSerialCommunicator::SendComAndGetData(const std::string &command, std
     return 0;
   }
   const int ret = esc_->ReadDataUntilSpecificStr(data, "\r");
-  std::cout << "data: " << data << std::endl;
+  if (chatter_ > 0){
+    std::cout << "data: " << data << std::endl;
+  }
   return ret;
 }
 int EncodedSerialCommunicator::SendCommand(const std::string &command) {
