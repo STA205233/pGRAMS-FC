@@ -127,15 +127,16 @@ void TelemetryDefinition::generateTelemetryStatus() {
 }
 
 void TelemetryDefinition::writeRTDTemperature() {
-  const int buf_size = 5;
+  const int buf_size = 6;
   const int n = RTDTemperatureADC_.size();
   std::vector<uint16_t> temperature(buf_size, 0);
   for (int i = 0; i < n; i++) {
     if (i == buf_size) break;
     temperature[i] = static_cast<uint16_t>(RTDTemperatureADC_[i]);
   }
+  temperature.pop_back(); // NOTE: This is for NEU Temperature system.
   addVector<uint16_t>(temperature);
-  for (int i = 0; i < 5; i++) {
+  for (int i = 0; i < 6; i++) {
     setChamberTemperature(i, temperature[i]);
   }
   setValveTemperature(temperature[3]);

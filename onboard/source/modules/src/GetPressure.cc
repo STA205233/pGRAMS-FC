@@ -42,10 +42,10 @@ ANLStatus GetPressure::mod_analyze() {
     const int byte_read = encodedSerialCommunicator_->SendComAndGetData(commands_[i], dat, sleepForMsec_);
     if (byte_read < 0) {
       std::cerr << "Error in GetPressure::mod_analyze: byte_read = " << byte_read << std::endl;
-      return AS_OK;
+      continue;
     }
     else if (byte_read == 0) {
-      return AS_OK;
+      continue;
     }
     std::smatch m;
     const bool result = std::regex_search(dat, m, reg_);
