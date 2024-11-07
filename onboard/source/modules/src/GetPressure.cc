@@ -38,8 +38,12 @@ ANLStatus GetPressure::mod_analyze() {
   }
   std::string dat;
   pressure_.resize(MAX_PRESSURE_NUM);
-  for (int i = 0; i < static_cast<int>(commands_.size()); i++) {
-    for (int j = 0; j < num_trials_; j++) {
+  std::vector<bool> successes(MAX_PRESSURE_NUM, false);
+  for (int j = 0; j < num_trials_; j++) {
+    for (int i = 0; i < static_cast<int>(commands_.size()); i++) {
+      if (successes[i]) {
+        continue;
+      }
       if (chatter_ > 0) {
         std::cout << "Sent Command: " << commands_[i] << std::endl;
       }
@@ -73,6 +77,7 @@ ANLStatus GetPressure::mod_analyze() {
       if (chatter_ > 0) {
         std::cout << "Pressure: " << pressure_[i] << std::endl;
       }
+      successes[i] = true;
       break;
     }
   }
