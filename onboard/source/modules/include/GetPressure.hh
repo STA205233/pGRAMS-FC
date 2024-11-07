@@ -31,6 +31,7 @@ private:
   int channel_ = 0;
   int sleepForMsec_ = 500;
   std::vector<std::string> commands_;
+  int num_trials_ = 10;
   std::regex reg_;
   int chatter_ = 0;
 };

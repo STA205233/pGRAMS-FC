@@ -41,6 +41,7 @@ private:
   std::vector<std::regex> regs_;
   int sleepForMsec_ = 500;
   int chatter_ = 0;
+  int numTrials_ = 10;
   EncodedSerialCommunicator *encodedSerialCommunicator_ = nullptr;
   std::string encodedSerialCommunicatorName_ = "EncodedSerialCommunicator";
 };

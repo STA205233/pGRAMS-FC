@@ -9,6 +9,7 @@ ANLStatus GetMHADCData::mod_define() {
   define_parameter("num_ch", &mod_class::numCh_);
   define_parameter("MHADCManager_name", &mod_class::encodedSerialCommunicatorName_);
   define_parameter("sleep_for_msec", &mod_class::sleepForMsec_);
+  define_parameter("num_trials", &mod_class::numTrials_);
   define_parameter("chatter", &mod_class::chatter_);
   return AS_OK;
 }
@@ -37,27 +38,34 @@ ANLStatus GetMHADCData::mod_analyze() {
   if (!encodedSerialCommunicator_) {
     return AS_OK;
   }
-  const int byte_read = encodedSerialCommunicator_->SendComAndGetData("a", dat, sleepForMsec_);
-  if (byte_read < 0) {
-    std::cerr << "Error in GetMHADCData::mod_analyze: byte_read = " << byte_read << std::endl;
-    return AS_OK;
-  }
-  else if (byte_read == 0) {
-    return AS_OK;
-  }
-  for (int i = 0; i < numCh_; i++) {
-    std::smatch m;
-    std::regex_search(dat, m, regs_[i]);
-    try {
-      adcData_[i] = std::stoi(m[1].str());
+  for (int j = 0; j < numTrials_; j++) {
+    const int byte_read = encodedSerialCommunicator_->SendComAndGetData("a", dat, sleepForMsec_);
+    if (byte_read < 0) {
+      std::cerr << "Error in GetMHADCData::mod_analyze: byte_read = " << byte_read << std::endl;
+      continue;
     }
-    catch (const std::invalid_argument &e) {
-      std::cerr << "Ch " << i << " data cannot be converted." << std::endl;
-      std::cerr << "Data: " << dat << std::endl;
-      adcData_[i] = 0;
+    else if (byte_read == 0) {
+      continue;
     }
-    if (chatter_ > 0) {
-      std::cout << "Ch" << i << ": " << adcData_[i] << std::endl;
+    bool success = true;
+    for (int i = 0; i < numCh_; i++) {
+      std::smatch m;
+      std::regex_search(dat, m, regs_[i]);
+      try {
+        adcData_[i] = std::stoi(m[1].str());
+      }
+      catch (const std::invalid_argument &e) {
+        std::cerr << "Ch " << i << " data cannot be converted." << std::endl;
+        std::cerr << "Data: " << dat << std::endl;
+        adcData_[i] = 0;
+        success = false;
+      }
+      if (chatter_ > 0) {
+        std::cout << "Ch" << i << ": " << adcData_[i] << std::endl;
+      }
+    }
+    if (success) {
+      break;
     }
   }
   return AS_OK;

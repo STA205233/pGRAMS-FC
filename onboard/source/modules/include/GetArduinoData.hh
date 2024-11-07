@@ -36,6 +36,7 @@ private:
   int timeout_ = 1;
   speed_t baudrate_ = B9600;
   mode_t mode_ = O_RDWR | O_NONBLOCK;
+  int numTrials_ = 10;
   int timeoutUsec_ = 0;
   int sleepForMilliSec_ = 0;
   int chatter_ = 0;

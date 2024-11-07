@@ -6,6 +6,7 @@ ANLStatus GetPressure::mod_define() {
   define_parameter("channel", &mod_class::channel_);
   define_parameter("EncodedSerialCommunicator_name", &mod_class::encodedSerialCommunicatorName_);
   define_parameter("sleep_for_msec", &mod_class::sleepForMsec_);
+  define_parameter("num_trials", &mod_class::num_trials_);
   define_parameter("chatter", &mod_class::chatter_);
   return AS_OK;
 }
@@ -38,35 +39,41 @@ ANLStatus GetPressure::mod_analyze() {
   std::string dat;
   pressure_.resize(MAX_PRESSURE_NUM);
   for (int i = 0; i < static_cast<int>(commands_.size()); i++) {
-    if (chatter_ > 0) {
-      std::cout << "Sent Command: " << commands_[i] << std::endl;
-    }
-    const int byte_read = encodedSerialCommunicator_->SendComAndGetData(commands_[i], dat, sleepForMsec_);
-    if (byte_read < 0) {
-      std::cerr << "Error in GetPressure::mod_analyze: byte_read = " << byte_read << std::endl;
-      continue;
-    }
-    else if (byte_read == 0) {
-      continue;
-    }
-    std::smatch m;
-    const bool result = std::regex_search(dat, m, reg_);
-    if (!result) {
-      std::cerr << "Pressure data (Ch" << i << ") was not read" << std::endl;
-      std::cerr << "Data: " << dat << std::endl;
-    }
-    if (chatter_ > 0) {
-      std::cout << "read: " << m[1].str() << std::endl;
-    }
-    try {
-      pressure_[i] = std::stof(m[1].str());
-    }
-    catch (const std::invalid_argument &e) {
-      std::cout << "Pressure data cannot be converted (data: " << dat << ")" << std::endl;
-      pressure_[i] = 0;
-    }
-    if (chatter_ > 0) {
-      std::cout << "Pressure: " << pressure_[i] << std::endl;
+    for (int j = 0; j < num_trials_; j++) {
+      if (chatter_ > 0) {
+        std::cout << "Sent Command: " << commands_[i] << std::endl;
+      }
+      const int byte_read = encodedSerialCommunicator_->SendComAndGetData(commands_[i], dat, sleepForMsec_);
+      if (byte_read < 0) {
+        std::cerr << "Error in GetPressure::mod_analyze: byte_read = " << byte_read << std::endl;
+        pressure_[i] = 0;
+        continue;
+      }
+      else if (byte_read == 0) {
+        pressure_[i] = 0;
+        continue;
+      }
+      std::smatch m;
+      const bool result = std::regex_search(dat, m, reg_);
+      if (!result) {
+        std::cerr << "Pressure data (Ch" << i << ") was not read" << std::endl;
+        std::cerr << "Data: " << dat << std::endl;
+      }
+      if (chatter_ > 0) {
+        std::cout << "read: " << m[1].str() << std::endl;
+      }
+      try {
+        pressure_[i] = std::stof(m[1].str());
+      }
+      catch (const std::invalid_argument &e) {
+        std::cout << "Pressure data cannot be converted (data: " << dat << ")" << std::endl;
+        pressure_[i] = 0;
+        continue;
+      }
+      if (chatter_ > 0) {
+        std::cout << "Pressure: " << pressure_[i] << std::endl;
+      }
+      break;
     }
   }
   return AS_OK;
