@@ -52,7 +52,8 @@ ANLStatus GetArduinoData::mod_analyze() {
       adcData_[i] = std::stoi(m[1].str());
     }
     catch (const std::invalid_argument &e) {
-      std::cout << "Ch " << i << " data was not read." << std::endl;
+      std::cerr << "Ch " << i << " data cannot be converted." << std::endl;
+      std::cerr << "Data: " << dat << std::endl;
       adcData_[i] = 0;
     }
     if (chatter_ > 0){

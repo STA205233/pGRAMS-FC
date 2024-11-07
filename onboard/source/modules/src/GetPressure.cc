@@ -52,7 +52,8 @@ ANLStatus GetPressure::mod_analyze() {
     std::smatch m;
     const bool result = std::regex_search(dat, m, reg_);
     if (!result) {
-      std::cout << "Pressure data (Ch" << i << ") was not read" << std::endl;
+      std::cerr << "Pressure data (Ch" << i << ") was not read" << std::endl;
+      std::cerr << "Data: " << dat << std::endl;
     }
     if (chatter_ > 0) {
       std::cout << "read: " << m[1].str() << std::endl;
@@ -61,7 +62,7 @@ ANLStatus GetPressure::mod_analyze() {
       pressure_[i] = std::stof(m[1].str());
     }
     catch (const std::invalid_argument &e) {
-      std::cout << "Pressure data was not read (data: " << pressure_[i] << ")" << std::endl;
+      std::cout << "Pressure data cannot be converted (data: " << dat << ")" << std::endl;
       pressure_[i] = 0;
     }
     if (chatter_ > 0) {

@@ -47,6 +47,7 @@ ANLStatus GetCompressorData::mod_analyze() {
   const int sz = static_cast<int>(m_temp.size());
   if (sz != NUM_TEMPERATURE + 1) {
     std::cerr << "Data size is incorrect" << std::endl;
+    std::cerr << "Data: " << data_temp << std::endl;
     return AS_ERROR;
   }
   for (int i = 0; i < sz - 1; i++) {
@@ -54,7 +55,8 @@ ANLStatus GetCompressorData::mod_analyze() {
       temperature_[i] = std::stoi(m_temp[i + 1].str());
     }
     catch (const std::invalid_argument &e) {
-      std::cout << "TP " << i + 1 << " data was not read." << std::endl;
+      std::cerr << "TP " << i + 1 << " data cannot be converted." << std::endl;
+      std::cerr << "Data: " << data_temp << std::endl;
       temperature_[i] = 0;
     }
     if (chatter_ > 0) {
@@ -66,6 +68,7 @@ ANLStatus GetCompressorData::mod_analyze() {
   const int sz2 = static_cast<int>(m_press.size());
   if (sz2 != NUM_PRESSURE + 1) { // +1 means data which is always 0.
     std::cerr << "Data size is incorrect" << std::endl;
+    std::cerr << "Data: " << data_press << std::endl;
     return AS_ERROR;
   }
   for (int i = 0; i < sz2 - 1; i++) {
@@ -73,7 +76,8 @@ ANLStatus GetCompressorData::mod_analyze() {
       pressure_[i] = std::stoi(m_press[i + 1].str());
     }
     catch (const std::invalid_argument &e) {
-      std::cout << "PR " << i + 1 << " data was not read." << std::endl;
+      std::cerr << "PR " << i + 1 << " data cannot be converted." << std::endl;
+      std::cerr << "Data: " << data_press << std::endl;
       pressure_[i] = 0;
     }
     if (chatter_ > 0) {
