@@ -23,7 +23,7 @@ public:
   const std::vector<float> &Pressure() const { return singleton_self()->pressure_; }
 
 private:
-  static constexpr int MAX_PRESSURE_NUM = 5;
+  static constexpr int MAX_PRESSURE_NUM = 3;
   EncodedSerialCommunicator *encodedSerialCommunicator_ = nullptr;
   std::string encodedSerialCommunicatorName_ = "EncodedSerialCommunicator";
   std::vector<float> pressure_;

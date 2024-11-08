@@ -1,5 +1,7 @@
 #include "GetPressure.hh"
 #include "boost/format.hpp"
+#include <chrono>
+#include <thread>
 using namespace anlnext;
 namespace gramsballoon::pgrams {
 ANLStatus GetPressure::mod_define() {
@@ -39,7 +41,11 @@ ANLStatus GetPressure::mod_analyze() {
   std::string dat;
   pressure_.resize(MAX_PRESSURE_NUM);
   std::vector<bool> successes(MAX_PRESSURE_NUM, false);
+  int num_success = 0;
   for (int j = 0; j < num_trials_; j++) {
+    if (num_success == MAX_PRESSURE_NUM) {
+      break;
+    }
     for (int i = 0; i < static_cast<int>(commands_.size()); i++) {
       if (successes[i]) {
         continue;
@@ -47,6 +53,7 @@ ANLStatus GetPressure::mod_analyze() {
       if (chatter_ > 0) {
         std::cout << "Sent Command: " << commands_[i] << std::endl;
       }
+      std::this_thread::sleep_for(std::chrono::milliseconds(sleepForMsec_));
       const int byte_read = encodedSerialCommunicator_->SendComAndGetData(commands_[i], dat, sleepForMsec_);
       if (byte_read < 0) {
         std::cerr << "Error in GetPressure::mod_analyze: byte_read = " << byte_read << std::endl;
@@ -62,6 +69,8 @@ ANLStatus GetPressure::mod_analyze() {
       if (!result) {
         std::cerr << "Pressure data (Ch" << i << ") was not read" << std::endl;
         std::cerr << "Data: " << dat << std::endl;
+        pressure_[i] = 0;
+        continue;
       }
       if (chatter_ > 0) {
         std::cout << "read: " << m[1].str() << std::endl;
@@ -78,7 +87,7 @@ ANLStatus GetPressure::mod_analyze() {
         std::cout << "Pressure: " << pressure_[i] << std::endl;
       }
       successes[i] = true;
-      break;
+      num_success++;
     }
   }
   return AS_OK;
