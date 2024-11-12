@@ -13,18 +13,18 @@ ANLStatus GetPressure::mod_define() {
   return AS_OK;
 }
 ANLStatus GetPressure::mod_initialize() {
-  //if (exist_module("SendTelemetry")) {
-  //  get_module_NC("SendTelemetry", &sendTelemetry_);
-  //}
+  if (exist_module("SendTelemetry")) {
+    get_module_NC("SendTelemetry", &sendTelemetry_);
+  }
   if (exist_module(encodedSerialCommunicatorName_)) {
     get_module_NC(encodedSerialCommunicatorName_, &encodedSerialCommunicator_);
   }
   else {
     std::cerr << encodedSerialCommunicatorName_ << " does not exist." << std::endl;
     encodedSerialCommunicator_ = nullptr;
-    //if (sendTelemetry_) {
-    //  sendTelemetry_->getErrorManager()->setError(ErrorType::MODULE_ACCESS_ERROR);
-    //}
+    if (sendTelemetry_) {
+      sendTelemetry_->getErrorManager()->setError(ErrorType::MODULE_ACCESS_ERROR);
+    }
     return AS_ERROR;
   }
   for (int i = 1; i <= MAX_PRESSURE_NUM; i++) {
@@ -57,6 +57,9 @@ ANLStatus GetPressure::mod_analyze() {
       const int byte_read = encodedSerialCommunicator_->SendComAndGetData(commands_[i], dat, sleepForMsec_);
       if (byte_read < 0) {
         std::cerr << "Error in GetPressure::mod_analyze: byte_read = " << byte_read << std::endl;
+        if (sendTelemetry_) {
+          sendTelemetry_->getErrorManager()->setError(ErrorType::ENV_DATA_AQUISITION_ERROR_1);
+        }
         pressure_[i] = 0;
         continue;
       }
@@ -69,6 +72,9 @@ ANLStatus GetPressure::mod_analyze() {
       if (!result) {
         std::cerr << "Pressure data (Ch" << i << ") was not read" << std::endl;
         std::cerr << "Data: " << dat << std::endl;
+        if (sendTelemetry_) {
+          sendTelemetry_->getErrorManager()->setError(ErrorType::ENV_DATA_AQUISITION_ERROR_1);
+        }
         pressure_[i] = 0;
         continue;
       }
@@ -80,6 +86,9 @@ ANLStatus GetPressure::mod_analyze() {
       }
       catch (const std::invalid_argument &e) {
         std::cout << "Pressure data cannot be converted (data: " << dat << ")" << std::endl;
+        if (sendTelemetry_) {
+          sendTelemetry_->getErrorManager()->setError(ErrorType::ENV_DATA_AQUISITION_ERROR_1);
+        }
         pressure_[i] = 0;
         continue;
       }

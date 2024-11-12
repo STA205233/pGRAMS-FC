@@ -1,9 +1,14 @@
 #ifndef GRAMSBalloon_GetCompressorData_hh
 #define GRAMSBalloon_GetCompressorData_hh 1
 #include "EncodedSerialCommunicator.hh"
+#include "SendTelemetry.hh"
 #include "anlnext/BasicModule.hh"
 #include <regex>
 #include <string>
+
+namespace gramsballoon {
+class SendTelemetry;
+} // namespace gramsballoon
 
 namespace gramsballoon::pgrams {
 class GetCompressorData: public anlnext::BasicModule {
@@ -38,6 +43,7 @@ public:
 private:
   std::string encodedSerialCommunicatorName_ = "EncodedSerialCommunicator";
   EncodedSerialCommunicator *communicator_ = nullptr;
+  SendTelemetry *sendTelemetry_ = nullptr;
   std::array<int, NUM_TEMPERATURE> temperature_;
   std::array<int, NUM_PRESSURE> pressure_;
   std::regex regTemp_;

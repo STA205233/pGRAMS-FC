@@ -14,6 +14,9 @@ ANLStatus GetMHADCData::mod_define() {
   return AS_OK;
 }
 ANLStatus GetMHADCData::mod_initialize() {
+  if (exist_module("SendTelemetry")) {
+    get_module_NC("SendTelemetry", &sendTelemetry_);
+  }
   adcData_.resize(numCh_);
   for (int i = 0; i < numCh_; i++) {
     regs_.push_back(std::regex((boost::format("A%02d_(\\d*)") % i).str()));
@@ -24,6 +27,9 @@ ANLStatus GetMHADCData::mod_initialize() {
   else {
     std::cerr << encodedSerialCommunicatorName_ << " does not exist." << std::endl;
     encodedSerialCommunicator_ = nullptr;
+    if (sendTelemetry_) {
+      sendTelemetry_->getErrorManager()->setError(ErrorType::MODULE_ACCESS_ERROR);
+    }
     return AS_ERROR;
   }
   return AS_OK;
@@ -42,6 +48,9 @@ ANLStatus GetMHADCData::mod_analyze() {
     const int byte_read = encodedSerialCommunicator_->SendComAndGetData("a", dat, sleepForMsec_);
     if (byte_read < 0) {
       std::cerr << "Error in GetMHADCData::mod_analyze: byte_read = " << byte_read << std::endl;
+      if (sendTelemetry_) {
+        sendTelemetry_->getErrorManager()->setError(ErrorType::RTD_DATA_AQUISITION_ERROR_1);
+      }
       continue;
     }
     else if (byte_read == 0) {
@@ -57,6 +66,9 @@ ANLStatus GetMHADCData::mod_analyze() {
       catch (const std::invalid_argument &e) {
         std::cerr << "Ch " << i << " data cannot be converted." << std::endl;
         std::cerr << "Data: " << dat << std::endl;
+        if (sendTelemetry_) {
+          sendTelemetry_->getErrorManager()->setError(ErrorType::RTD_DATA_AQUISITION_ERROR_1);
+        }
         adcData_[i] = 0;
         success = false;
       }

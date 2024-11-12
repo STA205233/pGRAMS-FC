@@ -1,8 +1,13 @@
 #ifndef GRAMSBalloon_MeasureTemperatureWithRTDSensorByMHADC_hh
 #define GRAMSBalloon_MeasureTemperatureWithRTDSensorByMHADC_hh 1
 #include "GetMHADCData.hh"
+#include "SendTelemetry.hh"
 #include "MeasureTemperatureWithRTDSensor.hh"
 
+
+namespace gramsballoon {
+class SendTelemetry;
+} // namespace gramsballoon
 namespace gramsballoon::pgrams {
 class MeasureTemperatureWithRTDSensorByMHADC: public MeasureTemperatureWithRTDSensor {
   DEFINE_ANL_MODULE(MeasureTemperatureWithRTDSensorByMHADC, 1.0);
@@ -23,6 +28,7 @@ public:
 private:
   GetMHADCData *getMHADCData_ = nullptr;
   std::string getMHADCDataName_ = "GetMHADCData";
+  SendTelemetry* sendTelemetry_ = nullptr;
   int channel_ = 0;
   float ConvertTemperature(int adc, int bits, int offset) const;
   int bit_ = 10;

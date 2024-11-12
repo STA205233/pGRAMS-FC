@@ -8,8 +8,13 @@
 #ifndef GRAMSBalloon_GetMHADCData_hh
 #define GRAMSBalloon_GetMHADCData_hh 1
 #include "EncodedSerialCommunicator.hh"
+#include "SendTelemetry.hh"
 #include "anlnext/BasicModule.hh"
 #include <regex>
+
+namespace gramsballoon{
+class SendTelemetry;
+}
 
 namespace gramsballoon::pgrams {
 class GetMHADCData: public anlnext::BasicModule {
@@ -37,6 +42,7 @@ public:
 
 private:
   int numCh_ = 32;
+  SendTelemetry* sendTelemetry_ = nullptr;
   std::vector<int> adcData_;
   std::vector<std::regex> regs_;
   int sleepForMsec_ = 500;

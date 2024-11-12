@@ -9,12 +9,18 @@ ANLStatus GetCompressorData::mod_define() {
   return AS_OK;
 }
 ANLStatus GetCompressorData::mod_initialize() {
+  if (exist_module("SendTelemetry")) {
+    get_module_NC("SendTelemetry", &sendTelemetry_);
+  }
   if (exist_module(encodedSerialCommunicatorName_)) {
     get_module_NC(encodedSerialCommunicatorName_, &communicator_);
   }
   else {
     std::cerr << encodedSerialCommunicatorName_ << " does not exist." << std::endl;
     communicator_ = nullptr;
+    if (sendTelemetry_) {
+      sendTelemetry_->getErrorManager()->setError(ErrorType::MODULE_ACCESS_ERROR);
+    }
     return AS_ERROR;
   }
   regTemp_ = std::regex("\\$.*?,(\\d*),(\\d*),(\\d*),(\\d*),.*?");
@@ -36,6 +42,9 @@ ANLStatus GetCompressorData::mod_analyze() {
   const int res_temp = communicator_->SendComAndGetData(command_temp, data_temp, sleepForMsec_);
   const int res_press = communicator_->SendComAndGetData(command_press, data_press, sleepForMsec_);
   if (res_press <= 0 && res_temp <= 0) {
+    if (sendTelemetry_) {
+      sendTelemetry_->getErrorManager()->setError(ErrorType::ENV_DATA_AQUISITION_ERROR_2);
+    }
     return AS_ERROR;
   }
   if (chatter_ > 0) {
@@ -48,6 +57,9 @@ ANLStatus GetCompressorData::mod_analyze() {
   if (sz != NUM_TEMPERATURE + 1) {
     std::cerr << "Data size is incorrect" << std::endl;
     std::cerr << "Data: " << data_temp << std::endl;
+    if (sendTelemetry_) {
+      sendTelemetry_->getErrorManager()->setError(ErrorType::ENV_DATA_AQUISITION_ERROR_2);
+    }
     return AS_ERROR;
   }
   for (int i = 0; i < sz - 1; i++) {
@@ -58,6 +70,9 @@ ANLStatus GetCompressorData::mod_analyze() {
       std::cerr << "TP " << i + 1 << " data cannot be converted." << std::endl;
       std::cerr << "Data: " << data_temp << std::endl;
       temperature_[i] = 0;
+      if (sendTelemetry_) {
+        sendTelemetry_->getErrorManager()->setError(ErrorType::ENV_DATA_AQUISITION_ERROR_2);
+      }
     }
     if (chatter_ > 0) {
       std::cout << "TP" << i + 1 << ": " << temperature_[i] << std::endl;
@@ -69,6 +84,9 @@ ANLStatus GetCompressorData::mod_analyze() {
   if (sz2 != NUM_PRESSURE + 1) { // +1 means data which is always 0.
     std::cerr << "Data size is incorrect" << std::endl;
     std::cerr << "Data: " << data_press << std::endl;
+    if (sendTelemetry_) {
+      sendTelemetry_->getErrorManager()->setError(ErrorType::ENV_DATA_AQUISITION_ERROR_2);
+    }
     return AS_ERROR;
   }
   for (int i = 0; i < sz2 - 1; i++) {
@@ -79,6 +97,9 @@ ANLStatus GetCompressorData::mod_analyze() {
       std::cerr << "PR " << i + 1 << " data cannot be converted." << std::endl;
       std::cerr << "Data: " << data_press << std::endl;
       pressure_[i] = 0;
+      if (sendTelemetry_) {
+        sendTelemetry_->getErrorManager()->setError(ErrorType::ENV_DATA_AQUISITION_ERROR_2);
+      }
     }
     if (chatter_ > 0) {
       std::cout << "PR" << i + 1 << ": " << pressure_[i] << std::endl;

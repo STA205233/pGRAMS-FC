@@ -25,6 +25,7 @@ ANLStatus MeasureTemperatureWithRTDSensorByArduino::mod_initialize() {
     if (sendTelemetry_) {
       sendTelemetry_->getErrorManager()->setError(ErrorType::MODULE_ACCESS_ERROR);
     }
+    return AS_ERROR;
   }
   if (ch_ > getArduinoData_->NumCH()) {
     std::cerr << "Channel number must be smaller than " << getArduinoData_->NumCH() << std::endl;

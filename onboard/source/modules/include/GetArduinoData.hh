@@ -9,11 +9,16 @@
 #ifndef GRAMSBalloon_GetArduinoData_hh
 #define GRAMSBalloon_GetArduinoData_hh 1
 #include "EncodedSerialCommunication.hh"
+#include "SendTelemetry.hh"
 #include "anlnext/BasicModule.hh"
 #include <fstream>
 #include <regex>
 #include <string>
 #include <vector>
+
+namespace gramsballoon{
+class SendTelemetry;
+} // namespace gramsballoon
 namespace gramsballoon::pgrams {
 class GetArduinoData: public anlnext::BasicModule {
   DEFINE_ANL_MODULE(GetArduinoData, 1.0);
@@ -29,6 +34,7 @@ protected:
 private:
   static constexpr int BUFFER_SIZE = 500;
   int numCh_ = 32;
+  SendTelemetry* sendTelemetry_ = nullptr;
   std::vector<int> adcData_;
   std::vector<std::regex> regs_;
   std::string filename_ = "/dev/ttyACM0";

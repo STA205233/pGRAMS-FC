@@ -10,11 +10,17 @@ ANLStatus MeasureTemperatureWithRTDSensorByMHADC::mod_define() {
   return AS_OK;
 }
 ANLStatus MeasureTemperatureWithRTDSensorByMHADC::mod_initialize() {
+  if (exist_module("SendTelemetry")) {
+    get_module_NC("SendTelemetry", &sendTelemetry_);
+  }
   if (exist_module(getMHADCDataName_)) {
     get_module_NC(getMHADCDataName_, &getMHADCData_);
   }
   else {
     std::cerr << getMHADCDataName_ << " does not exist." << std::endl;
+    if (sendTelemetry_) {
+      sendTelemetry_->getErrorManager()->setError(ErrorType::MODULE_ACCESS_ERROR);
+    }
   }
   return AS_OK;
 }

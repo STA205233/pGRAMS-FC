@@ -24,6 +24,9 @@ ANLStatus GetArduinoData::mod_initialize() {
   for (int i = 0; i < numCh_; i++) {
     regs_.push_back(std::regex((boost::format("A%d_(\\d*)") % i).str()));
   }
+  if (exist_module("SendTelemtry")) {
+    get_module_NC("SendTelemetry", &sendTelemetry_);
+  }
   return AS_OK;
 }
 ANLStatus GetArduinoData::mod_analyze() {
@@ -36,6 +39,9 @@ ANLStatus GetArduinoData::mod_analyze() {
     const int rv = esc_->WaitForTimeOut(timeout);
     if (rv == -1) {
       std::cerr << "Error in GetArduinoData::mod_analyze: rv = -1" << std::endl;
+      if (sendTelemetry_) {
+        sendTelemetry_->getErrorManager()->setError(ErrorType::RTD_DATA_AQUISITION_ERROR_1);
+      }
       continue;
     }
     if (rv == 0) {
@@ -66,6 +72,11 @@ ANLStatus GetArduinoData::mod_analyze() {
     }
     if (success) {
       break;
+    }
+    else {
+      if (sendTelemetry_) {
+        sendTelemetry_->getErrorManager()->setError(ErrorType::RTD_DATA_AQUISITION_ERROR_1);
+      }
     }
   }
   return AS_OK;

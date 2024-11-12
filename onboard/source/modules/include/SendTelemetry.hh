@@ -12,7 +12,6 @@
 #include "ErrorManager.hh"
 #include "GetCompressorData.hh"
 #include "GetEnvironmentalData.hh"
-#include "GetPressure.hh"
 #include "GetRaspiStatus.hh"
 #include "GetSlowADCData.hh"
 #include "MeasureAcceleration.hh"
@@ -22,6 +21,14 @@
 #include "RunIDManager.hh"
 #include "SerialCommunication.hh"
 #include "TelemetryDefinition.hh"
+#ifdef GB_DEMO_MODE
+#include "GetArduinoData.hh"
+//#include "MeasureTemperatureWithRTDSensorByArduino.hh"
+//#include "MeasureTemperatureWithRTDSensorByMHADC.hh"
+#include "GetMHADCData.hh"
+#include "GetCompressorData.hh"
+#include "GetPressure.hh"
+#endif
 #include <anlnext/BasicModule.hh>
 #include <thread>
 
@@ -36,6 +43,14 @@ class MeasureAcceleration;
 class GetSlowADCData;
 class ReceiveCommand;
 class RunIDManager;
+namespace pgrams {
+class GetCompressorData;
+class GetArduinoData;
+//class MeasureTemperatureWithRTDSensorByMHADC;
+//class MeasureTemperatureWithRTDSensorByArduino;
+class GetMHADCData;
+class GetPressure;
+}
 
 class SendTelemetry: public anlnext::BasicModule {
   DEFINE_ANL_MODULE(SendTelemetry, 2.0);
