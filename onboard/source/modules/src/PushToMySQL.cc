@@ -41,6 +41,10 @@ ANLStatus PushToMySQL::mod_initialize() {
   mysqlIO_.AddColumn("ground", "compressT2");
   mysqlIO_.AddColumn("ground", "compressT3");
   mysqlIO_.AddColumn("ground", "RP");
+  mysqlIO_.AddTable("error");
+  mysqlIO_.AddColumn("error", "id");
+  mysqlIO_.AddColumn("error", "time");
+  mysqlIO_.AddColumn("error", "error_code");
   mysqlIO_.PrintTableInfo("chamber");
   mysqlIO_.PrintTableInfo("ground");
   return AS_OK;
@@ -99,8 +103,12 @@ ANLStatus PushToMySQL::mod_analyze() {
   mysqlIO_.SetItem("ground", "RP", std::to_string(telemdef->CompressorPressure()[0]));
   //// FIXME: How to insert NULL
   //mysqlIO_.SetItem("ground", "time", "2024:01:01:00:00:00");
+
+  mysqlIO_.SetItem("error", "error_code", std::to_string(telemdef->SoftwareErrorCode()));
+
   mysqlIO_.Insert("chamber");
   mysqlIO_.Insert("ground");
+  mysqlIO_.Insert("error");
   return AS_OK;
 }
 ANLStatus PushToMySQL::mod_finalize() {
