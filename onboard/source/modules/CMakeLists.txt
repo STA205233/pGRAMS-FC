@@ -32,6 +32,7 @@ set(GB_MODULES
   src/GetPressure.cc
   src/PressureGaugeManager.cc
   src/InterpretTelemetry.cc
+  src/Sleep.cc
 )
 
 if(GB_DEMO_MODE)

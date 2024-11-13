@@ -4,6 +4,7 @@
 #include <anlnext/BasicModule.hh>
 #include <string>
 #include "SimpleLoop.hh"
+#include "Sleep.hh"
 #ifdef USE_PIGPIO
 #include "SPIManager.hh"
 #endif
@@ -87,7 +88,13 @@ class SimpleLoop : public anlnext::BasicModule
 public:
   SimpleLoop();
 };
-
+namespace pgrams{
+class Sleep : public anlnext::BasicModule
+{
+public:
+  Sleep();
+};
+}
 #ifdef USE_PIGPIO
 class SPIManager : public anlnext::BasicModule
 {
