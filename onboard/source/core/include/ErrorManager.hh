@@ -38,6 +38,8 @@ enum class ErrorType {
   ENV_DATA_AQUISITION_ERROR_5 = 15,
   PRESS_DATA_AQUISITION_ERROR_JP = 12,
   PRESS_DATA_AQUISITION_ERROR_CP = 13,
+  COMP_TEMP_DATA_ERROR = 14,
+  COMP_PRESS_DATA_ERROR = 15,
   ACCEL_DEVICE_NOT_FOUND = 16,
   ACCEL_DATA_AQUISITION_ERROR = 17,
   SLOW_ADC_DATA_AQUISITION_ERROR = 18,
@@ -80,9 +82,9 @@ public:
   bool ReceiveCommandSelectError() const { return errorCode_ & (1LL << static_cast<int>(ErrorType::RECEIVE_COMMAND_SELECT_ERROR)); }
   bool ReceiveCommandSreadError() const { return errorCode_ & (1LL << static_cast<int>(ErrorType::RECEIVE_COMMAND_SREAD_ERROR)); }
   bool InvalidCommand() const { return errorCode_ & (1LL << static_cast<int>(ErrorType::INVALID_COMMAND)); }
-  bool PigpioStartError() const { return errorCode_ & (1LL << static_cast<int>(ErrorType::PIGPIO_START_ERROR)); }
+  bool CompTempDataError() const { return errorCode_ & (1LL << static_cast<int>(ErrorType::COMP_TEMP_DATA_ERROR)); }
+  bool CompPressDataError() const { return errorCode_ & (1LL << static_cast<int>(ErrorType::COMP_PRESS_DATA_ERROR)); }
   bool PressSerialCommunicationError() const { return errorCode_ & (1LL << static_cast<int>(ErrorType::PRESS_SERIAL_COMMUNICATION_ERROR)); }
-  bool SpiOpenError() const { return errorCode_ & (1LL << static_cast<int>(ErrorType::SPI_OPEN_ERROR)); }
   bool RtdSerialCommunicationError() const { return errorCode_ & (1LL << static_cast<int>(ErrorType::RTD_SERIAL_COMMUNICATION_ERROR)); }
   bool RtdDataAquisitionError1() const { return errorCode_ & (1LL << static_cast<int>(ErrorType::RTD_DATA_AQUISITION_ERROR_1)); }
   bool RtdDataAquisitionError2() const { return errorCode_ & (1LL << static_cast<int>(ErrorType::RTD_DATA_AQUISITION_ERROR_2)); }
@@ -90,11 +92,6 @@ public:
   bool RtdDataAquisitionError4() const { return errorCode_ & (1LL << static_cast<int>(ErrorType::RTD_DATA_AQUISITION_ERROR_4)); }
   bool RtdDataAquisitionError5() const { return errorCode_ & (1LL << static_cast<int>(ErrorType::RTD_DATA_AQUISITION_ERROR_5)); }
   bool RtdDataAquisitionError6() const { return errorCode_ & (1LL << static_cast<int>(ErrorType::RTD_DATA_AQUISITION_ERROR_6)); }
-  bool EnvDataAquisitionError1() const { return errorCode_ & (1LL << static_cast<int>(ErrorType::ENV_DATA_AQUISITION_ERROR_1)); }
-  bool EnvDataAquisitionError2() const { return errorCode_ & (1LL << static_cast<int>(ErrorType::ENV_DATA_AQUISITION_ERROR_2)); }
-  bool EnvDataAquisitionError3() const { return errorCode_ & (1LL << static_cast<int>(ErrorType::ENV_DATA_AQUISITION_ERROR_3)); }
-  bool EnvDataAquisitionError4() const { return errorCode_ & (1LL << static_cast<int>(ErrorType::ENV_DATA_AQUISITION_ERROR_4)); }
-  bool EnvDataAquisitionError5() const { return errorCode_ & (1LL << static_cast<int>(ErrorType::ENV_DATA_AQUISITION_ERROR_5)); }
   bool PressDataAquisitionErrorJp() const { return errorCode_ & (1LL << static_cast<int>(ErrorType::PRESS_DATA_AQUISITION_ERROR_JP)); }
   bool PressDataAquisitionErrorCp() const { return errorCode_ & (1LL << static_cast<int>(ErrorType::PRESS_DATA_AQUISITION_ERROR_CP)); }
   bool AccelDeviceNotFound() const { return errorCode_ & (1LL << static_cast<int>(ErrorType::ACCEL_DEVICE_NOT_FOUND)); }

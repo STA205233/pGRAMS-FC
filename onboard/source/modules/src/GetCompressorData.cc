@@ -43,7 +43,7 @@ ANLStatus GetCompressorData::mod_analyze() {
   const int res_press = communicator_->SendComAndGetData(command_press, data_press, sleepForMsec_);
   if (res_press <= 0 && res_temp <= 0) {
     if (sendTelemetry_) {
-      sendTelemetry_->getErrorManager()->setError(ErrorType::ENV_DATA_AQUISITION_ERROR_2);
+      sendTelemetry_->getErrorManager()->setError(ErrorType::COMP_SERIAL_COMMUNICATION_ERROR);
     }
     return AS_ERROR;
   }
@@ -58,7 +58,7 @@ ANLStatus GetCompressorData::mod_analyze() {
     std::cerr << "Data size is incorrect" << std::endl;
     std::cerr << "Data: " << data_temp << std::endl;
     if (sendTelemetry_) {
-      sendTelemetry_->getErrorManager()->setError(ErrorType::ENV_DATA_AQUISITION_ERROR_2);
+      sendTelemetry_->getErrorManager()->setError(ErrorType::COMP_TEMP_DATA_ERROR);
     }
     return AS_ERROR;
   }
@@ -71,7 +71,7 @@ ANLStatus GetCompressorData::mod_analyze() {
       std::cerr << "Data: " << data_temp << std::endl;
       temperature_[i] = 0;
       if (sendTelemetry_) {
-        sendTelemetry_->getErrorManager()->setError(ErrorType::ENV_DATA_AQUISITION_ERROR_2);
+        sendTelemetry_->getErrorManager()->setError(ErrorType::COMP_TEMP_DATA_ERROR);
       }
     }
     if (chatter_ > 0) {
@@ -85,7 +85,7 @@ ANLStatus GetCompressorData::mod_analyze() {
     std::cerr << "Data size is incorrect" << std::endl;
     std::cerr << "Data: " << data_press << std::endl;
     if (sendTelemetry_) {
-      sendTelemetry_->getErrorManager()->setError(ErrorType::ENV_DATA_AQUISITION_ERROR_2);
+      sendTelemetry_->getErrorManager()->setError(ErrorType::COMP_PRESS_DATA_ERROR);
     }
     return AS_ERROR;
   }
@@ -98,7 +98,7 @@ ANLStatus GetCompressorData::mod_analyze() {
       std::cerr << "Data: " << data_press << std::endl;
       pressure_[i] = 0;
       if (sendTelemetry_) {
-        sendTelemetry_->getErrorManager()->setError(ErrorType::ENV_DATA_AQUISITION_ERROR_2);
+        sendTelemetry_->getErrorManager()->setError(ErrorType::COMP_PRESS_DATA_ERROR);
       }
     }
     if (chatter_ > 0) {

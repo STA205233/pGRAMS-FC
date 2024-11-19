@@ -12,7 +12,7 @@ class MyApp < ANL::ANLApp
         chain GRAMSBalloon::Sleep
         with_parameters(sleep_sec: 1)
         chain GRAMSBalloon::GetArduinoData
-        with_parameters(num_ch: 6, sleep_for_msec: 10, timeout_sec:1, timeout_usec:0, chatter: 0)
+        with_parameters(num_ch: 6, sleep_for_msec: 10, timeout_sec:0, timeout_usec:10000, chatter: 0)
         
         measure_temperature_modules = []
         for i in 0..5 do
@@ -30,9 +30,9 @@ class MyApp < ANL::ANLApp
         chain GRAMSBalloon::GetCompressorData
         with_parameters(EncodedSerialCommunicator_name: "CompressorManager", sleep_for_msec: 10)
         chain GRAMSBalloon::PressureGaugeManager, "PressureCommunicator_1"
-        with_parameters(filename: "/dev/ttyUSB0", baudrate: 4098,  timeout_usec: 0, timeout_sec: 1)
+        with_parameters(filename: "/dev/ttyUSB0", baudrate: 4098,  timeout_usec: 10000, timeout_sec: 0)
         chain GRAMSBalloon::GetPressure, "GetPressure_1"
-        with_parameters(EncodedSerialCommunicator_name:"PressureCommunicator_1", sleep_for_msec: 500, channel: 2, chatter: 1)
+        with_parameters(EncodedSerialCommunicator_name:"PressureCommunicator_1", sleep_for_msec: 500, channel: 2, chatter: 1, type: "jp")
         #chain GRAMSBalloon::PressureGaugeManager, "PressureCommunicator_2"
         #with_parameters(filename: "/dev/ttyUSB1", baudrate: 4098, timeout_usec: 0, timeout_sec: 1)
         #chain GRAMSBalloon::GetPressure, "GetPressure_2"

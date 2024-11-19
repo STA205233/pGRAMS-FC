@@ -8,6 +8,7 @@ ANLStatus GetPressure::mod_define() {
   define_parameter("channel", &mod_class::channel_);
   define_parameter("EncodedSerialCommunicator_name", &mod_class::encodedSerialCommunicatorName_);
   define_parameter("sleep_for_msec", &mod_class::sleepForMsec_);
+  define_parameter("type", &mod_class::type_);
   define_parameter("num_trials", &mod_class::num_trials_);
   define_parameter("chatter", &mod_class::chatter_);
   return AS_OK;
@@ -32,6 +33,12 @@ ANLStatus GetPressure::mod_initialize() {
   }
   std::string pat((boost::format("@%03dACK([0-9\\-\\+E\\.]*?);FF") % channel_).str());
   reg_ = std::regex(pat);
+  if (!(type_ == "jp") && !(type_ == "cp")) {
+    std::cerr << "type should be jp or cp" << std::endl;
+    if (sendTelemetry_) {
+      sendTelemetry_->getErrorManager()->setError(ErrorType::OTHER_ERRORS);
+    }
+  }
   return AS_OK;
 }
 ANLStatus GetPressure::mod_analyze() {
@@ -58,7 +65,7 @@ ANLStatus GetPressure::mod_analyze() {
       if (byte_read < 0) {
         std::cerr << "Error in GetPressure::mod_analyze: byte_read = " << byte_read << std::endl;
         if (sendTelemetry_) {
-          sendTelemetry_->getErrorManager()->setError(ErrorType::ENV_DATA_AQUISITION_ERROR_1);
+          sendTelemetry_->getErrorManager()->setError(ErrorType::PRESS_SERIAL_COMMUNICATION_ERROR);
         }
         pressure_[i] = 0;
         continue;
@@ -72,9 +79,6 @@ ANLStatus GetPressure::mod_analyze() {
       if (!result) {
         std::cerr << "Pressure data (Ch" << i << ") was not read" << std::endl;
         std::cerr << "Data: " << dat << std::endl;
-        if (sendTelemetry_) {
-          sendTelemetry_->getErrorManager()->setError(ErrorType::ENV_DATA_AQUISITION_ERROR_1);
-        }
         pressure_[i] = 0;
         continue;
       }
@@ -86,9 +90,6 @@ ANLStatus GetPressure::mod_analyze() {
       }
       catch (const std::invalid_argument &e) {
         std::cout << "Pressure data cannot be converted (data: " << dat << ")" << std::endl;
-        if (sendTelemetry_) {
-          sendTelemetry_->getErrorManager()->setError(ErrorType::ENV_DATA_AQUISITION_ERROR_1);
-        }
         pressure_[i] = 0;
         continue;
       }
@@ -97,6 +98,18 @@ ANLStatus GetPressure::mod_analyze() {
       }
       successes[i] = true;
       num_success++;
+    }
+  }
+  for (int i = 0; i < static_cast<int>(successes.size()); i++) {
+    if (!successes[i]) {
+      if (sendTelemetry_) {
+        if (type_ == "jp") {
+          sendTelemetry_->getErrorManager()->setError(ErrorType::PRESS_DATA_AQUISITION_ERROR_JP);
+        }
+        else if (type_ == "cp") {
+          sendTelemetry_->getErrorManager()->setError(ErrorType::PRESS_DATA_AQUISITION_ERROR_CP);
+        }
+      }
     }
   }
   return AS_OK;

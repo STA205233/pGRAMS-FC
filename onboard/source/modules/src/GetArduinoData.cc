@@ -5,6 +5,28 @@
 using namespace anlnext;
 
 namespace gramsballoon::pgrams {
+ErrorType ConvertErrorType(int channel) {
+  if (channel == 0) {
+    return ErrorType::RTD_DATA_AQUISITION_ERROR_1;
+  }
+  if (channel == 1) {
+    return ErrorType::RTD_DATA_AQUISITION_ERROR_2;
+  }
+  if (channel == 2) {
+    return ErrorType::RTD_DATA_AQUISITION_ERROR_3;
+  }
+  if (channel == 3) {
+    return ErrorType::RTD_DATA_AQUISITION_ERROR_4;
+  }
+  if (channel == 4) {
+    return ErrorType::RTD_DATA_AQUISITION_ERROR_5;
+  }
+  if (channel == 5) {
+    return ErrorType::RTD_DATA_AQUISITION_ERROR_6;
+  }
+  std::cerr << "channel setting in ConvertErrorType is invalid." << std::endl;
+  return ErrorType::OTHER_ERRORS;
+}
 ANLStatus GetArduinoData::mod_define() {
   define_parameter("filename", &mod_class::filename_);
   define_parameter("num_ch", &mod_class::numCh_);
@@ -32,6 +54,7 @@ ANLStatus GetArduinoData::mod_initialize() {
 ANLStatus GetArduinoData::mod_analyze() {
   std::this_thread::sleep_for(std::chrono::milliseconds(sleepForMilliSec_));
   adcData_.resize(numCh_, 0);
+  std::vector<bool> failed_ch(numCh_, false);
   for (int j = 0; j < numTrials_; j++) {
     timeval timeout;
     timeout.tv_sec = timeout_;
@@ -59,11 +82,13 @@ ANLStatus GetArduinoData::mod_analyze() {
       std::regex_search(dat, m, regs_[i]);
       try {
         adcData_[i] = std::stoi(m[1].str());
+        failed_ch[i] = false;
       }
       catch (const std::invalid_argument &e) {
         std::cerr << "Ch " << i << " data cannot be converted." << std::endl;
         std::cerr << "Data: " << dat << std::endl;
         adcData_[i] = 0;
+        failed_ch[i] = true;
         success = false;
       }
       if (chatter_ > 0) {
@@ -73,9 +98,11 @@ ANLStatus GetArduinoData::mod_analyze() {
     if (success) {
       break;
     }
-    else {
-      if (sendTelemetry_) {
-        sendTelemetry_->getErrorManager()->setError(ErrorType::RTD_DATA_AQUISITION_ERROR_1);
+  }
+  if (sendTelemetry_) {
+    for (int i = 0; i < numCh_; i++) {
+      if (failed_ch[i]) {
+        sendTelemetry_->getErrorManager()->setError(ConvertErrorType(i));
       }
     }
   }

@@ -33,6 +33,7 @@ private:
   std::vector<std::string> commands_;
   int num_trials_ = 10;
   std::regex reg_;
+  std::string type_ = "jp";
   int chatter_ = 0;
 };
 
