@@ -48,14 +48,14 @@ ANLStatus PushToMySQL::mod_initialize() {
   mysqlIO_.AddColumn("error", "RTD_SERIAL_COMMUNICATION_ERROR");
   mysqlIO_.AddColumn("error", "COMP_SERIAL_COMMUNICATION_ERROR");
   mysqlIO_.AddColumn("error", "OTHER_ERRORS");
-  mysqlIO_.AddColumn("error", "RTD_DATA_AQUISITION_ERROR_1");
-  mysqlIO_.AddColumn("error", "RTD_DATA_AQUISITION_ERROR_2");
-  mysqlIO_.AddColumn("error", "RTD_DATA_AQUISITION_ERROR_3");
-  mysqlIO_.AddColumn("error", "RTD_DATA_AQUISITION_ERROR_4");
-  mysqlIO_.AddColumn("error", "RTD_DATA_AQUISITION_ERROR_5");
-  mysqlIO_.AddColumn("error", "RTD_DATA_AQUISITION_ERROR_6");
-  mysqlIO_.AddColumn("error", "PRESS_DATA_AQUISITION_ERROR_JP");
-  mysqlIO_.AddColumn("error", "PRESS_DATA_AQUISITION_ERROR_CP");
+  mysqlIO_.AddColumn("error", "RTD_DATA_ACQUISITION_ERROR_1");
+  mysqlIO_.AddColumn("error", "RTD_DATA_ACQUISITION_ERROR_2");
+  mysqlIO_.AddColumn("error", "RTD_DATA_ACQUISITION_ERROR_3");
+  mysqlIO_.AddColumn("error", "RTD_DATA_ACQUISITION_ERROR_4");
+  mysqlIO_.AddColumn("error", "RTD_DATA_ACQUISITION_ERROR_5");
+  mysqlIO_.AddColumn("error", "RTD_DATA_ACQUISITION_ERROR_6");
+  mysqlIO_.AddColumn("error", "PRESS_DATA_ACQUISITION_ERROR_JP");
+  mysqlIO_.AddColumn("error", "PRESS_DATA_ACQUISITION_ERROR_CP");
   mysqlIO_.PrintTableInfo("chamber");
   mysqlIO_.PrintTableInfo("ground");
   mysqlIO_.PrintTableInfo("error");
@@ -120,15 +120,14 @@ ANLStatus PushToMySQL::mod_analyze() {
   mysqlIO_.SetItem("error", "RTD_SERIAL_COMMUNICATION_ERROR", std::to_string(interpreter_->getErrorManager()->RtdSerialCommunicationError()));
   mysqlIO_.SetItem("error", "COMP_SERIAL_COMMUNICATION_ERROR", std::to_string(interpreter_->getErrorManager()->CompSerialCommunicationError()));
   mysqlIO_.SetItem("error", "OTHER_ERRORS", std::to_string(interpreter_->getErrorManager()->OtherErrors()));
-  mysqlIO_.SetItem("error", "RTD_DATA_AQUISITION_ERROR_1", std::to_string(interpreter_->getErrorManager()->RtdDataAquisitionError1()));
-  mysqlIO_.SetItem("error", "RTD_DATA_AQUISITION_ERROR_2", std::to_string(interpreter_->getErrorManager()->RtdDataAquisitionError2()));
+  mysqlIO_.SetItem("error", "RTD_DATA_ACQUISITION_ERROR_1", std::to_string(interpreter_->getErrorManager()->RtdDataAquisitionError1()));
+  mysqlIO_.SetItem("error", "RTD_DATA_ACQUISITION_ERROR_2", std::to_string(interpreter_->getErrorManager()->RtdDataAquisitionError2()));
   mysqlIO_.SetItem("error", "RTD_DATA_AQUISITION_ERROR_3", std::to_string(interpreter_->getErrorManager()->RtdDataAquisitionError3()));
-  mysqlIO_.SetItem("error", "RTD_DATA_AQUISITION_ERROR_4", std::to_string(interpreter_->getErrorManager()->RtdDataAquisitionError4()));
-  mysqlIO_.SetItem("error", "RTD_DATA_AQUISITION_ERROR_5", std::to_string(interpreter_->getErrorManager()->RtdDataAquisitionError5()));
-  mysqlIO_.SetItem("error", "RTD_DATA_AQUISITION_ERROR_6", std::to_string(interpreter_->getErrorManager()->RtdDataAquisitionError6()));
-  mysqlIO_.SetItem("error", "PRESS_DATA_AQUISITION_ERROR_JP", std::to_string(interpreter_->getErrorManager()->PressDataAquisitionErrorJp()));
-  mysqlIO_.SetItem("error", "PRESS_DATA_AQUISITION_ERROR_CP", std::to_string(interpreter_->getErrorManager()->PressDataAquisitionErrorCp()));
-  
+  mysqlIO_.SetItem("error", "RTD_DATA_ACQUISITION_ERROR_4", std::to_string(interpreter_->getErrorManager()->RtdDataAquisitionError4()));
+  mysqlIO_.SetItem("error", "RTD_DATA_ACQUISITION_ERROR_5", std::to_string(interpreter_->getErrorManager()->RtdDataAquisitionError5()));
+  mysqlIO_.SetItem("error", "RTD_DATA_ACQUISITION_ERROR_6", std::to_string(interpreter_->getErrorManager()->RtdDataAquisitionError6()));
+  mysqlIO_.SetItem("error", "PRESS_DATA_ACQUISITION_ERROR_JP", std::to_string(interpreter_->getErrorManager()->PressDataAquisitionErrorJp()));
+  mysqlIO_.SetItem("error", "PRESS_DATA_ACQUISITION_ERROR_CP", std::to_string(interpreter_->getErrorManager()->PressDataAquisitionErrorCp()));
 
   mysqlIO_.Insert("chamber");
   mysqlIO_.Insert("ground");
