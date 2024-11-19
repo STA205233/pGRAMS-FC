@@ -40,7 +40,7 @@ ANLStatus GetArduinoData::mod_analyze() {
     if (rv == -1) {
       std::cerr << "Error in GetArduinoData::mod_analyze: rv = -1" << std::endl;
       if (sendTelemetry_) {
-        sendTelemetry_->getErrorManager()->setError(ErrorType::RTD_DATA_AQUISITION_ERROR_1);
+        sendTelemetry_->getErrorManager()->setError(ErrorType::RTD_SERIAL_COMMUNICATION_ERROR);
       }
       continue;
     }

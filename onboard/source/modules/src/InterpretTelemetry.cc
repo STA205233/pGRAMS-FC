@@ -8,6 +8,7 @@ namespace gramsballoon {
 InterpretTelemetry::InterpretTelemetry()
 {
   telemdef_ = std::make_shared<TelemetryDefinition>();
+  errorManager_ = std::make_shared<ErrorManager>();
   binaryFilenameBase_ = "Telemetry";
   runIDFilename_ = "/Users/grams/settings/run_id/run_id.txt";
   receiverModuleName_ = "ReceiveTelemetry";
@@ -68,6 +69,8 @@ ANLStatus InterpretTelemetry::mod_analyze()
     return AS_OK;
   }
   telemdef_->interpret();
+  const uint64_t err = telemdef_->SoftwareErrorCode();
+  errorManager_->SetErrorCode(err);
   currentTelemetryType_ = telemdef_->TelemetryType();
 
   if (telemdef_->RunID() != currentRunID_) {

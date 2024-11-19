@@ -6,6 +6,7 @@
 #include <chrono>
 #include "TelemetryDefinition.hh"
 #include "ReceiveTelemetry.hh"
+#include "ErrorManager.hh"
 #ifdef USE_ROOT
 #include "PlotWaveform.hh"
 #endif // USE_ROOT
@@ -40,11 +41,13 @@ public:
   void updateRunIDFile();
 
   TelemetryDefinition* Telemdef() { return telemdef_.get(); }
+  std::shared_ptr<const ErrorManager> getErrorManager() const { return errorManager_; }
   int CurrentTelemetryType() { return currentTelemetryType_; }
   
 private:
   std::shared_ptr<TelemetryDefinition> telemdef_;
   ReceiveTelemetry* receiver_ = nullptr;
+  std::shared_ptr<ErrorManager> errorManager_ = nullptr;
 #ifdef USE_ROOT
   PlotWaveform* plotter_ = nullptr;
 #endif // USE_ROOT
