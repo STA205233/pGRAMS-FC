@@ -122,7 +122,7 @@ ANLStatus PushToMySQL::mod_analyze() {
   mysqlIO_.SetItem("error", "OTHER_ERRORS", std::to_string(interpreter_->getErrorManager()->OtherErrors()));
   mysqlIO_.SetItem("error", "RTD_DATA_ACQUISITION_ERROR_1", std::to_string(interpreter_->getErrorManager()->RtdDataAquisitionError1()));
   mysqlIO_.SetItem("error", "RTD_DATA_ACQUISITION_ERROR_2", std::to_string(interpreter_->getErrorManager()->RtdDataAquisitionError2()));
-  mysqlIO_.SetItem("error", "RTD_DATA_AQUISITION_ERROR_3", std::to_string(interpreter_->getErrorManager()->RtdDataAquisitionError3()));
+  mysqlIO_.SetItem("error", "RTD_DATA_ACQUISITION_ERROR_3", std::to_string(interpreter_->getErrorManager()->RtdDataAquisitionError3()));
   mysqlIO_.SetItem("error", "RTD_DATA_ACQUISITION_ERROR_4", std::to_string(interpreter_->getErrorManager()->RtdDataAquisitionError4()));
   mysqlIO_.SetItem("error", "RTD_DATA_ACQUISITION_ERROR_5", std::to_string(interpreter_->getErrorManager()->RtdDataAquisitionError5()));
   mysqlIO_.SetItem("error", "RTD_DATA_ACQUISITION_ERROR_6", std::to_string(interpreter_->getErrorManager()->RtdDataAquisitionError6()));
