@@ -84,13 +84,13 @@ ANLStatus PushToMySQL::mod_analyze() {
   std::cout << std::endl;
   //TODO: This conversion should be reconsidered.
   for (int i = 0; i < n; i++) {
-    mysqlIO_.SetItem("chamber", (boost::format("rtd%i") % i).str(), std::to_string(static_cast<float>(chamber_temperature[i] / 10)));
+    mysqlIO_.SetItem("chamber", (boost::format("rtd%i") % i).str(), static_cast<float>(chamber_temperature[i] / 10));
   }
   const std::vector<float> &chamber_pressure = telemdef->ChamberPressureNEU();
   const int n_champress = chamber_pressure.size();
   std::cout << "chamber pressure: ";
   for (int i = 0; i < n_champress; i++) {
-    mysqlIO_.SetItem("chamber", (boost::format("cp_PR%i") % (i + 1)).str(), std::to_string(chamber_pressure[i]));
+    mysqlIO_.SetItem("chamber", (boost::format("cp_PR%i") % (i + 1)).str(), chamber_pressure[i]);
     std::cout << chamber_pressure[i] << " ";
   }
   std::cout << std::endl;
@@ -98,7 +98,7 @@ ANLStatus PushToMySQL::mod_analyze() {
   const int n_jackpress = jacket_pressure.size();
   std::cout << "jacket pressure: ";
   for (int i = 0; i < n_jackpress; i++) {
-    mysqlIO_.SetItem("chamber", (boost::format("jp_PR%i") % (i + 1)).str(), std::to_string(jacket_pressure[i]));
+    mysqlIO_.SetItem("chamber", (boost::format("jp_PR%i") % (i + 1)).str(), jacket_pressure[i]);
     std::cout << jacket_pressure[i] << " ";
   }
   std::cout << std::endl;
@@ -108,26 +108,26 @@ ANLStatus PushToMySQL::mod_analyze() {
   const int n_comptemp = std::min(static_cast<int>(compressor_temperature.size()), 3);
   std::cout << "compressor temperature: ";
   for (int i = 0; i < n_comptemp; i++) {
-    mysqlIO_.SetItem("ground", (boost::format("compressT%i") % (i + 1)).str(), std::to_string(compressor_temperature[i]));
+    mysqlIO_.SetItem("ground", (boost::format("compressT%i") % (i + 1)).str(), compressor_temperature[i]);
     std::cout << compressor_temperature[i] << " ";
   }
   std::cout << std::endl;
-  mysqlIO_.SetItem("ground", "RP", std::to_string(telemdef->CompressorPressure()[0]));
+  mysqlIO_.SetItem("ground", "RP", telemdef->CompressorPressure()[0]);
   //// FIXME: How to insert NULL
   //mysqlIO_.SetItem("ground", "time", "2024:01:01:00:00:00");
 
-  mysqlIO_.SetItem("error", "PRESS_SERIAL_COMMUNICATION_ERROR", std::to_string(interpreter_->getErrorManager()->ReceiveCommandSerialCommunicationError()));
-  mysqlIO_.SetItem("error", "RTD_SERIAL_COMMUNICATION_ERROR", std::to_string(interpreter_->getErrorManager()->RtdSerialCommunicationError()));
-  mysqlIO_.SetItem("error", "COMP_SERIAL_COMMUNICATION_ERROR", std::to_string(interpreter_->getErrorManager()->CompSerialCommunicationError()));
-  mysqlIO_.SetItem("error", "OTHER_ERRORS", std::to_string(interpreter_->getErrorManager()->OtherErrors()));
-  mysqlIO_.SetItem("error", "RTD_DATA_ACQUISITION_ERROR_1", std::to_string(interpreter_->getErrorManager()->RtdDataAquisitionError1()));
-  mysqlIO_.SetItem("error", "RTD_DATA_ACQUISITION_ERROR_2", std::to_string(interpreter_->getErrorManager()->RtdDataAquisitionError2()));
-  mysqlIO_.SetItem("error", "RTD_DATA_ACQUISITION_ERROR_3", std::to_string(interpreter_->getErrorManager()->RtdDataAquisitionError3()));
-  mysqlIO_.SetItem("error", "RTD_DATA_ACQUISITION_ERROR_4", std::to_string(interpreter_->getErrorManager()->RtdDataAquisitionError4()));
-  mysqlIO_.SetItem("error", "RTD_DATA_ACQUISITION_ERROR_5", std::to_string(interpreter_->getErrorManager()->RtdDataAquisitionError5()));
-  mysqlIO_.SetItem("error", "RTD_DATA_ACQUISITION_ERROR_6", std::to_string(interpreter_->getErrorManager()->RtdDataAquisitionError6()));
-  mysqlIO_.SetItem("error", "PRESS_DATA_ACQUISITION_ERROR_JP", std::to_string(interpreter_->getErrorManager()->PressDataAquisitionErrorJp()));
-  mysqlIO_.SetItem("error", "PRESS_DATA_ACQUISITION_ERROR_CP", std::to_string(interpreter_->getErrorManager()->PressDataAquisitionErrorCp()));
+  mysqlIO_.SetItem("error", "PRESS_SERIAL_COMMUNICATION_ERROR", interpreter_->getErrorManager()->ReceiveCommandSerialCommunicationError());
+  mysqlIO_.SetItem("error", "RTD_SERIAL_COMMUNICATION_ERROR", interpreter_->getErrorManager()->RtdSerialCommunicationError());
+  mysqlIO_.SetItem("error", "COMP_SERIAL_COMMUNICATION_ERROR", interpreter_->getErrorManager()->CompSerialCommunicationError());
+  mysqlIO_.SetItem("error", "OTHER_ERRORS", interpreter_->getErrorManager()->OtherErrors());
+  mysqlIO_.SetItem("error", "RTD_DATA_ACQUISITION_ERROR_1", interpreter_->getErrorManager()->RtdDataAquisitionError1());
+  mysqlIO_.SetItem("error", "RTD_DATA_ACQUISITION_ERROR_2", interpreter_->getErrorManager()->RtdDataAquisitionError2());
+  mysqlIO_.SetItem("error", "RTD_DATA_ACQUISITION_ERROR_3", interpreter_->getErrorManager()->RtdDataAquisitionError3());
+  mysqlIO_.SetItem("error", "RTD_DATA_ACQUISITION_ERROR_4", interpreter_->getErrorManager()->RtdDataAquisitionError4());
+  mysqlIO_.SetItem("error", "RTD_DATA_ACQUISITION_ERROR_5", interpreter_->getErrorManager()->RtdDataAquisitionError5());
+  mysqlIO_.SetItem("error", "RTD_DATA_ACQUISITION_ERROR_6", interpreter_->getErrorManager()->RtdDataAquisitionError6());
+  mysqlIO_.SetItem("error", "PRESS_DATA_ACQUISITION_ERROR_JP", interpreter_->getErrorManager()->PressDataAquisitionErrorJp());
+  mysqlIO_.SetItem("error", "PRESS_DATA_ACQUISITION_ERROR_CP", interpreter_->getErrorManager()->PressDataAquisitionErrorCp());
 
   mysqlIO_.Insert("chamber");
   mysqlIO_.Insert("ground");

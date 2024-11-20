@@ -38,7 +38,7 @@ public:
   void Initialize(const std::string &host, const int port, const std::string &user, const std::string &password, const std::string &database);
   void AddTable(const std::string &table_name);
   void AddColumn(const std::string &table_name, const std::string &col_name);
-  void SetItem(const std::string &table_name, const std::string &col_name, const std::string &value);
+  void SetItem(const std::string &table_name, const std::string &col_name, const mysqlx::Value &value);
   void Insert(const std::string &table_name);
   void SetCheckExist(const bool checkExist) { checkExist_ = checkExist; }
   void PrintTableInfo(const std::string &table_name);

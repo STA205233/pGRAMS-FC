@@ -59,7 +59,7 @@ void MySQLIO::AddColumn(const std::string &table_name, const std::string &col_na
   const int sz = it->second.size();
   it->second.insert(std::make_pair(col_name, TableContent(sz, "")));
 }
-void MySQLIO::SetItem(const std::string &table_name, const std::string &col_name, const std::string &value) {
+void MySQLIO::SetItem(const std::string &table_name, const std::string &col_name, const mysqlx::Value &value) {
   const auto it = tables_.find(table_name);
   if (it == tables_.end()) {
     std::cerr << "Table (" << table_name << ") is not resistered to gramsballoon::mysql::MySQLIO" << std::endl;
@@ -72,7 +72,7 @@ void MySQLIO::SetItem(const std::string &table_name, const std::string &col_name
   }
   it2->second.value = value;
 }
-void MySQLIO::PrintTableInfo(const std::string &table_name){
+void MySQLIO::PrintTableInfo(const std::string &table_name) {
   std::cout << "Table: " << table_name << std::endl;
   std::cout << "____________________" << std::endl;
   for (auto &col: tables_[table_name]) {
