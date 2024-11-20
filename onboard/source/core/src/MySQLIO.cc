@@ -20,23 +20,23 @@ void MySQLIO::Insert(const std::string &table_name) {
     return;
   }
   TRY_AND_CATCH_MYSQL_EXCEPTIONS_BEGIN;
-  auto table_insert = schema_->getTable(table_name, checkExist_).insert();
   std::vector<mysqlx::Value> cols;
-  const int n = tables_[table_name].size();
-  cols.resize(n);
+  std::vector<std::string> cols_name;
   for (auto &col: tables_[table_name]) {
-    if (col.second.value == std::nullopt) {
-      cols[col.second.index] = mysqlx::nullvalue;
+    if (!col.second) {
+      continue;
     }
     else {
-      cols[col.second.index] = col.second.value.value();
+      cols_name.push_back(col.first);
+      cols.push_back(col.second.value());
     }
   }
+  auto table_insert = schema_->getTable(table_name, checkExist_).insert(cols_name);
   table_insert.values(cols);
   table_insert.execute();
   TRY_AND_CATCH_MYSQL_EXCEPTIONS_END;
   for (auto &col: tables_[table_name]) {
-    col.second.Reset();
+    col.second.reset();
   }
 }
 void MySQLIO::Initialize(const std::string &host, const int port, const std::string &user, const std::string &password, const std::string &database) {
@@ -56,8 +56,7 @@ void MySQLIO::AddColumn(const std::string &table_name, const std::string &col_na
     std::cerr << col_name << "is already resisgered in Table(" << table_name << ")" << std::endl;
     return;
   }
-  const int sz = it->second.size();
-  it->second.insert(std::make_pair(col_name, TableContent(sz, "")));
+  it->second.insert(std::make_pair(col_name, std::nullopt));
 }
 void MySQLIO::SetItem(const std::string &table_name, const std::string &col_name, const mysqlx::Value &value) {
   const auto it = tables_.find(table_name);
@@ -70,13 +69,13 @@ void MySQLIO::SetItem(const std::string &table_name, const std::string &col_name
     std::cerr << "Table (" << table_name << ") doesn't have column (" << col_name << ")." << std::endl;
     return;
   }
-  it2->second.value = value;
+  it2->second = value;
 }
 void MySQLIO::PrintTableInfo(const std::string &table_name) {
   std::cout << "Table: " << table_name << std::endl;
   std::cout << "____________________" << std::endl;
   for (auto &col: tables_[table_name]) {
-    std::cout << col.first << " " << col.second.index << std::endl;
+    std::cout << col.first << " " << col.second.value() << std::endl;
   }
   std::cout << std::endl;
   std::cout << "____________________" << std::endl;

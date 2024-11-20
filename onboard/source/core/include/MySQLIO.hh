@@ -14,14 +14,8 @@
   }
 
 namespace gramsballoon::mysql {
-struct TableContent {
-  const int index;
-  std::optional<mysqlx::Value> value;
-  TableContent(int idx, const std::string &val) : index(idx), value(val) {}
-  void Reset() { value = std::nullopt; }
-};
 using value_t = mysqlx::Value;
-using table_t = std::map<std::string, TableContent>;
+using table_t = std::map<std::string, std::optional<mysqlx::Value>>;
 class MySQLIO {
 
 public:
