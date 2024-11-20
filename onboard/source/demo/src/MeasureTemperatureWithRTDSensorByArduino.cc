@@ -32,19 +32,31 @@ ANLStatus MeasureTemperatureWithRTDSensorByArduino::mod_initialize() {
     if (sendTelemetry_) {
       sendTelemetry_->getErrorManager()->setError(ErrorType::OTHER_ERRORS);
     }
+    hasProblem_ = true;
   }
   else if (ch_ < 0) {
     std::cerr << "Channel number must be non-negative: ch = " << ch_ << std::endl;
     if (sendTelemetry_) {
       sendTelemetry_->getErrorManager()->setError(ErrorType::OTHER_ERRORS);
     }
+    hasProblem_ = true;
   }
   return AS_OK;
 }
 ANLStatus MeasureTemperatureWithRTDSensorByArduino::mod_analyze() {
+  if (hasProblem_) {
+    return AS_OK;
+  }
   if (getArduinoData_) {
-    const double temp = ConvertTemperature(getArduinoData_->AdcData()[ch_], bit_, offset_);
-    if (chatter_ > 0){
+    double temp = ConvertTemperature(getArduinoData_->AdcData()[ch_], bit_, offset_);
+    if (!isfinite(temp)) {
+      std::cerr << this->module_id() << " Temperature is invalid: " << temp << std::endl;
+      if (sendTelemetry_) {
+        sendTelemetry_->getErrorManager()->setError(ConvertRTDError(ch_));
+      }
+      temp = 0;
+    }
+    if (chatter_ > 0) {
       std::cout << this->module_id() << " Temperature: " << temp << std::endl;
     }
     SetTemperature(temp);

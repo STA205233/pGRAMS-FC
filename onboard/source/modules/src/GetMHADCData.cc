@@ -39,6 +39,7 @@ ANLStatus GetMHADCData::mod_analyze() {
   if (chatter_ > 0) {
     std::cout << "GetMHADCData::mod_analyze" << std::endl;
   }
+  std::vector<bool> failed_ch(numCh_, false);
   adcData_.resize(numCh_, 0);
   std::string dat;
   if (!encodedSerialCommunicator_) {
@@ -49,7 +50,7 @@ ANLStatus GetMHADCData::mod_analyze() {
     if (byte_read < 0) {
       std::cerr << "Error in GetMHADCData::mod_analyze: byte_read = " << byte_read << std::endl;
       if (sendTelemetry_) {
-        sendTelemetry_->getErrorManager()->setError(ErrorType::RTD_DATA_AQUISITION_ERROR_1);
+        sendTelemetry_->getErrorManager()->setError(ErrorType::RTD_SERIAL_COMMUNICATION_ERROR);
       }
       continue;
     }
@@ -62,14 +63,13 @@ ANLStatus GetMHADCData::mod_analyze() {
       std::regex_search(dat, m, regs_[i]);
       try {
         adcData_[i] = std::stoi(m[1].str());
+        failed_ch[i] = false;
       }
       catch (const std::invalid_argument &e) {
         std::cerr << "Ch " << i << " data cannot be converted." << std::endl;
         std::cerr << "Data: " << dat << std::endl;
-        if (sendTelemetry_) {
-          sendTelemetry_->getErrorManager()->setError(ErrorType::RTD_DATA_AQUISITION_ERROR_1);
-        }
         adcData_[i] = 0;
+        failed_ch[i] = true;
         success = false;
       }
       if (chatter_ > 0) {
@@ -78,6 +78,13 @@ ANLStatus GetMHADCData::mod_analyze() {
     }
     if (success) {
       break;
+    }
+    else {
+      for (int i = 0; i < numCh_; i++) {
+        if (failed_ch[i]) {
+          sendTelemetry_->getErrorManager()->setError(ConvertRTDError(i));
+        }
+      }
     }
   }
   return AS_OK;

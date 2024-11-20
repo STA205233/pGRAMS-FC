@@ -1,11 +1,10 @@
 #ifndef ErrorManager_H
 #define ErrorManager_H 1
 
-
-#include <iostream>
-#include <vector>
-#include <string>
 #include "magic_enum.hpp"
+#include <iostream>
+#include <string>
+#include <vector>
 
 /**
  * A class to handle software error
@@ -62,7 +61,7 @@ enum class ErrorType {
   MODULE_ACCESS_ERROR = 62,
   OTHER_ERRORS = 63
 };
-
+ErrorType ConvertRTDError(int ch);
 class ErrorManager {
 public:
   ErrorManager();

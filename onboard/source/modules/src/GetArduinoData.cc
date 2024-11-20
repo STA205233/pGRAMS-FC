@@ -5,28 +5,6 @@
 using namespace anlnext;
 
 namespace gramsballoon::pgrams {
-ErrorType ConvertErrorType(int channel) {
-  if (channel == 0) {
-    return ErrorType::RTD_DATA_AQUISITION_ERROR_1;
-  }
-  if (channel == 1) {
-    return ErrorType::RTD_DATA_AQUISITION_ERROR_2;
-  }
-  if (channel == 2) {
-    return ErrorType::RTD_DATA_AQUISITION_ERROR_3;
-  }
-  if (channel == 3) {
-    return ErrorType::RTD_DATA_AQUISITION_ERROR_4;
-  }
-  if (channel == 4) {
-    return ErrorType::RTD_DATA_AQUISITION_ERROR_5;
-  }
-  if (channel == 5) {
-    return ErrorType::RTD_DATA_AQUISITION_ERROR_6;
-  }
-  std::cerr << "channel setting in ConvertErrorType is invalid." << std::endl;
-  return ErrorType::OTHER_ERRORS;
-}
 ANLStatus GetArduinoData::mod_define() {
   define_parameter("filename", &mod_class::filename_);
   define_parameter("num_ch", &mod_class::numCh_);
@@ -102,7 +80,7 @@ ANLStatus GetArduinoData::mod_analyze() {
   if (sendTelemetry_) {
     for (int i = 0; i < numCh_; i++) {
       if (failed_ch[i]) {
-        sendTelemetry_->getErrorManager()->setError(ConvertErrorType(i));
+        sendTelemetry_->getErrorManager()->setError(ConvertRTDError(i));
       }
     }
   }

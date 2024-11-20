@@ -32,7 +32,9 @@ private:
   int channel_ = 0;
   float ConvertTemperature(int adc, int bits, int offset) const;
   int bit_ = 10;
-  int offset_ = 0; 
+  int offset_ = 0;
+  int chatter_ = 0;
+  bool hasProblem_ = false;
 };
 } // namespace gramsballoon::pgrams
 #endif //GRAMSBalloon_MeasureTemperatureWithRTDSensorByMHADC_hh
