@@ -73,11 +73,9 @@ void MySQLIO::SetItem(const std::string &table_name, const std::string &col_name
 }
 void MySQLIO::PrintTableInfo(const std::string &table_name) {
   std::cout << "Table: " << table_name << std::endl;
-  std::cout << "____________________" << std::endl;
   for (auto &col: tables_[table_name]) {
-    std::cout << col.first << " " << col.second.value() << std::endl;
+    std::cout << col.first << " " ;
   }
   std::cout << std::endl;
-  std::cout << "____________________" << std::endl;
 }
 } // namespace gramsballoon::mysql
