@@ -12,7 +12,7 @@
 #include "anlnext/BasicModule.hh"
 #include <regex>
 
-namespace gramsballoon{
+namespace gramsballoon {
 class SendTelemetry;
 }
 
@@ -37,12 +37,12 @@ public:
     return singleton_self()->adcData_;
   }
   int NumCH() const {
-    return numCh_;
+    return singleton_self()->numCh_;
   }
 
 private:
   int numCh_ = 32;
-  SendTelemetry* sendTelemetry_ = nullptr;
+  SendTelemetry *sendTelemetry_ = nullptr;
   std::vector<int> adcData_;
   std::vector<std::regex> regs_;
   int sleepForMsec_ = 500;

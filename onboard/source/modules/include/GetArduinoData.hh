@@ -16,7 +16,7 @@
 #include <string>
 #include <vector>
 
-namespace gramsballoon{
+namespace gramsballoon {
 class SendTelemetry;
 } // namespace gramsballoon
 namespace gramsballoon::pgrams {
@@ -34,7 +34,7 @@ protected:
 private:
   static constexpr int BUFFER_SIZE = 500;
   int numCh_ = 32;
-  SendTelemetry* sendTelemetry_ = nullptr;
+  SendTelemetry *sendTelemetry_ = nullptr;
   std::vector<int> adcData_;
   std::vector<std::regex> regs_;
   std::string filename_ = "/dev/ttyACM0";
@@ -53,10 +53,10 @@ public:
   anlnext::ANLStatus mod_initialize() override;
   anlnext::ANLStatus mod_finalize() override;
   const std::vector<int> &AdcData() const {
-    return adcData_;
+    return singleton_self()->adcData_;
   }
   int NumCH() const {
-    return numCh_;
+    return singleton_self()->numCh_;
   }
 };
 } // namespace gramsballoon::pgrams
