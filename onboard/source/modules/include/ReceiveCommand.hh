@@ -3,6 +3,7 @@
  *
  * @author Tsubasa Tamba, Shota Arai
  * @date 2023-03-01
+ * @note 2024-11-28 Shota Arai: Modified for pGRAMS telemetry and command system.
  */
 
 
@@ -13,6 +14,7 @@
 #include <queue>
 #include <sys/select.h>
 #include <sys/time.h>
+#include "mosquittopp.h"
 #include "CommandDefinition.hh"
 #include "SerialCommunication.hh"
 #include "ShutdownSystem.hh"
@@ -21,7 +23,7 @@
 #include "ControlHighVoltage.hh"
 #include "RunIDManager.hh"
 
-namespace gramsballoon {
+    namespace gramsballoon {
 
 class ShutdownSystem;
 class SendTelemetry;
@@ -54,6 +56,7 @@ public:
   uint16_t CommandRejectCount() { return singleton_self()->commandRejectCount_; }
 
 private:
+  static constexpr int QOS = 1;
   std::vector<uint8_t> buffer_;
   std::vector<uint8_t> command_;
   std::shared_ptr<CommandDefinition> comdef_ = nullptr;
@@ -76,10 +79,12 @@ private:
   RunIDManager* runIDManager_ = nullptr;
 
   //communication
-  std::shared_ptr<SerialCommunication> sc_ = nullptr;
-  speed_t baudrate_;
-  std::string serialPath_;
-  mode_t openMode_ = O_RDWR;
+  std::shared_ptr<mosqpp::mosquittopp> mosq_ = nullptr;
+  std::string host_ = "localhost";
+  int port_ = 1883;
+  std::string passwd_ = "password";
+  std::string topic_ = "command";
+  int keepAlive_ = 60;
   int timeoutSec_ = 2;
   constexpr static int bufferSize_ = 200;
   constexpr static int serialReadingTimems_ = 250;
