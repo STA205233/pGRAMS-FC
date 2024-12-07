@@ -45,7 +45,7 @@ ANLStatus MeasureTemperatureWithRTDSensorByMHADC::mod_analyze() {
   }
   if (getMHADCData_) {
     double temp = ConvertTemperature(getMHADCData_->AdcData()[channel_], bit_, offset_);
-    if (!isfinite(temp)) {
+    if (!std::isfinite(temp)) {
       std::cerr << this->module_id() << " Temperature is invalid: " << temp << std::endl;
       if (sendTelemetry_) {
         sendTelemetry_->getErrorManager()->setError(ConvertRTDError(channel_));

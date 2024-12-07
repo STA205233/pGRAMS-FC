@@ -75,12 +75,11 @@ ANLStatus ReceiveCommand::mod_initialize() {
       sendTelemetry_->getErrorManager()->setError(ErrorType::RECEIVE_COMMAND_SERIAL_COMMUNICATION_ERROR);
     }
   }
-  const int rv = mosq_->loop_forever();
   return AS_OK;
 }
 
 ANLStatus ReceiveCommand::mod_analyze() {
-  
+  int byte_read = mosq_->
   if (chatter_ >= 1) {
     std::cout << "ReceiveCommand byte_read: " << byte_read << std::endl;
     for (int i = 0; i < static_cast<int>(command_.size()); i++) {
@@ -351,5 +350,6 @@ void ReceiveCommand::writeCommandToFile(bool failed) {
   }
   fileIDmp_[type].second++;
 }
+
 
 } /* namespace gramsballoon */
