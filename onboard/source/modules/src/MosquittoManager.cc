@@ -1,26 +1,18 @@
-#ifndef GB_MosquittoManager_hh
-#define GB_MosquittoManager_hh 1
-#include "anlnext/BasicModule.hh"
-
+#include "MosquittoIO.hh"
+using namespace anlnext;
 namespace gramsballoon::pgrams {
-class MosquittoManager : public anlnext::BasicModule {
-  DEFINE_ANL_MODULE(MosquittoManager, 1.0);
-  ENABLE_PARALLEL_RUN();
-public:
-  MosquittoManager() = default;
-  virtual ~MosquittoManager() = default;
-protected:
-  MosquittoManager(const MosquittoManager &r) = default;
-public:
-  anlnext::ANLStatus mod_define() override;
-  anlnext::ANLStatus mod_initialize() override;
-  anlnext::ANLStatus mod_pre_initialize() override;
-  anlnext::ANLStatus mod_begin_run() override;
-  anlnext::ANLStatus mod_analyze() override;
-  anlnext::ANLStatus mod_end_run() override;
-  anlnext::ANLStatus mod_finalize() override;
-private:
-  
-};
+ANLStatus MosquittoManager::mod_define() {
+  define_parameter("host", &mod_class::host_);
+  define_parameter("port", &mod_class::port_);
+  define_parameter("topicPub", &mod_class::topicPub_);
+  define_parameter("topicSub", &mod_class::topicSub_);
+  define_parameter("qos", &mod_class::qos_);
+  define_parameter("chatter", &mod_class::chatter_);
+  return AS_OK;
+}
+ANLStatus MosquittoManager::mod_initialize() {
+  mosquittoIO_ = std::make_shared<MosquittoIO>("MosquittoManager", host_, port_);
+  mosquittoIO_->Connect();
+  return AS_OK;
+}
 } // namespace gramsballoon::pgrams
-#endif // GB_MosquittoManager_hh

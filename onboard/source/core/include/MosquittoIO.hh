@@ -2,6 +2,7 @@
 #define GB_MosquittoIO_hh 1
 #include "mosquittopp.h"
 #include <string>
+#include <vector>
 
 namespace gramsballoon::pgrams {
 class MosquittoIO: public mosqpp::mosquittopp {
@@ -14,23 +15,25 @@ public:
   }
   virtual ~MosquittoIO() = default;
   void Connect();
-  int Read();
-  int Write(const std::string &message, const std::string &topic);
+  int Publish(const std::string &message, const std::string &topic);
   void on_connect(int rc) override;
   void on_disconnect(int rc) override;
   void on_publish(int mid) override;
   void on_message(const struct mosquitto_message *message) override;
   void on_subscribe(int mid, int qos_count, const int *granted_qos) override;
   void on_unsubscribe(int mid) override;
-  std::string getMessage() const { return message_; }
+  const std::vector<std::string> &getMessage() const { return message_; }
   std::string getHost() const { return host_; }
-  std::string getTopic() const { return topic_; }
+  const std::vector<std::string> &getTopicSub() const { return topicSub_; }
+  const std::vector<std::string> &getTopicPub() const { return topicPub_; }
   int getPort() const { return port_; }
 
 private:
-  std::string message_;
+  std::vector<std::string> message_;
   std::string host_;
-  std::string topic_;
+  std::vector<std::string> topicPub_;
+  std::vector<std::string> topicSub_;
+
   int port_;
   int keepAlive_;
 };

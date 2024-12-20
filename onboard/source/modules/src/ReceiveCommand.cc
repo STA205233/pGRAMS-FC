@@ -59,9 +59,6 @@ ANLStatus ReceiveCommand::mod_initialize() {
   }
 
   // communication
-  mosq_ = std::make_shared<mosqpp::mosquittopp>("ReceiveCommand");
-  mosq_->threaded_set(true); // This function enables the use of multi-threading.
-  const int status = mosq_->connect(host_.c_str(), port_, keepAlive_);
   if (status != 0) {
     std::cerr << "Error in ReceiveCommand::mod_initialize: Connecting MQTT failed. Error Message: " << mosqpp::strerror(status) << std::endl;
     if (sendTelemetry_) {
@@ -69,7 +66,7 @@ ANLStatus ReceiveCommand::mod_initialize() {
     }
   }
   const int sub_result = mosq_->subscribe(NULL, topic_.c_str(), QOS);
-  if (sub_result != 0){
+  if (sub_result != 0) {
     std::cerr << "Error in ReceiveCommand::mod_initialize: Subscribing MQTT failed. Error Message: " << mosqpp::strerror(sub_result) << std::endl;
     if (sendTelemetry_) {
       sendTelemetry_->getErrorManager()->setError(ErrorType::RECEIVE_COMMAND_SERIAL_COMMUNICATION_ERROR);
@@ -79,7 +76,6 @@ ANLStatus ReceiveCommand::mod_initialize() {
 }
 
 ANLStatus ReceiveCommand::mod_analyze() {
-  int byte_read = mosq_->
   if (chatter_ >= 1) {
     std::cout << "ReceiveCommand byte_read: " << byte_read << std::endl;
     for (int i = 0; i < static_cast<int>(command_.size()); i++) {
@@ -350,6 +346,5 @@ void ReceiveCommand::writeCommandToFile(bool failed) {
   }
   fileIDmp_[type].second++;
 }
-
 
 } /* namespace gramsballoon */

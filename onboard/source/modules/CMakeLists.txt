@@ -106,6 +106,12 @@ if(GB_USE_MYSQL)
     src/PushToMySQL.cc
   )
 endif(GB_USE_MYSQL)
+
+if (GB_USE_MOSQUITTO)
+  set(GB_MOSQUITTO_MODULES
+    src/MosquittoManager.cc
+  )
+endif(GB_USE_MOSQUITTO)
 add_library(GBModules SHARED
   ${GB_MODULES}
   ${GB_PIGPIO_MODULES}

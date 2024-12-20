@@ -51,12 +51,19 @@ if(GB_USE_MYSQL)
     )
 endif(GB_USE_MYSQL)
 
+if (GB_USE_MOSQUITTO)
+  set(GB_MOSQUITTO_CORE_CLASSES
+    src/MosquittoIO.cc
+    )
+endif(GB_USE_MOSQUITTO)
+
 add_library(GBCore SHARED
   ${GB_CORE_CLASSES}
   ${GB_PIGPIO_CORE_CLASSES}
   ${GB_WAVEFORMS_CORE_CLASSES}
   ${GB_ICM20948_CORE_CLASSES}
   ${GB_MYSQL_CORE_CLASSES}
+  ${GB_MOSQUITTO_CORE_CLASSES}
   )
 
 target_link_libraries(GBCore
@@ -68,6 +75,7 @@ target_link_libraries(GBCore
   ${WAVEFORMS_LIB}
   ${ICM20948_LIB}
   ${MYSQL_LIB}
+  ${MOSQUITTO_LIB}
   )
 
 install(TARGETS GBCore LIBRARY DESTINATION ${CMAKE_INSTALL_PREFIX}/lib)
