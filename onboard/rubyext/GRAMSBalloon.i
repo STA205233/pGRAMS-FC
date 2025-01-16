@@ -74,6 +74,7 @@
 #include "ReadWaveformDemo.hh"
 #include "GetSlowADCDataDemo.hh"
 #endif
+#include "MosquittoManager.hh"
 %}
 
 %include "std_vector.i"
@@ -223,6 +224,11 @@ public:
   PushToMySQL();
 };
 #endif
+class MosquittoManager : public anlnext::BasicModule
+{
+public:
+  MosquittoManager();
+};
 } // namespace pgrams
 
 #ifdef USE_RASPISYS

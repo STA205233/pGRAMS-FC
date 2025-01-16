@@ -34,7 +34,6 @@ option(GB_USE_HSQUICKLOOK "enable hsquicklook" OFF)
 option(GB_APT_RUBY "installed ruby via apt" ON)
 option(GB_USE_ROOT "enable root" OFF)
 option(GB_USE_MYSQL "enable mysql" OFF)
-option(GB_USE_MOSQUITTO "enable mosquitto" ON)
 
 ## install options
 option(GB_INSTALL_HEADERS "install all header files" ON)
@@ -177,7 +176,7 @@ endif(GB_USE_MYSQL)
 
 if(GB_USE_MOSQUITTO)
   find_package(PkgConfig REQUIRED)
-  pkg_check_modules(Mosquitto IMPORTED_TARGET libmosquitto REQUIRED)
+  pkg_check_modules(Mosquitto IMPORTED_TARGET libmosquittopp REQUIRED)
   set(MOSQUITTO_LIB PkgConfig::Mosquitto)
 endif(GB_USE_MOSQUITTO)
 

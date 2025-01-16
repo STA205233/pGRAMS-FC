@@ -11,9 +11,6 @@ SendTelemetry::SendTelemetry() {
   binaryFilenameBase_ = "Telemetry";
   TPCHVControllerModuleName_ = "ControlHighVoltage_TPC";
   PMTHVControllerModuleName_ = "ControlHighVoltage_PMT";
-  serialPath_ = "/dev/null";
-  baudrate_ = B57600;
-  openMode_ = O_RDWR;
 }
 
 SendTelemetry::~SendTelemetry() = default;
@@ -25,15 +22,13 @@ ANLStatus SendTelemetry::mod_define() {
   define_parameter("GetEnvironmentalData_module_names", &mod_class::getEnvironmentalDataModuleNames_);
   define_parameter("GetPressure_chamber_module_name", &mod_class::getPressureChamberModuleName_);
   define_parameter("GetPressure_jacket_module_name", &mod_class::getPressureJacketModuleName_);
-  define_parameter("serial_path", &mod_class::serialPath_);
-  define_parameter("baudrate", &mod_class::baudrate_);
-  define_parameter("open_mode", &mod_class::openMode_);
   define_parameter("save_telemetry", &mod_class::saveTelemetry_);
   define_parameter("binary_filename_base", &mod_class::binaryFilenameBase_);
   define_parameter("num_telem_per_file", &mod_class::numTelemPerFile_);
   define_parameter("sleep_for_msec", &mod_class::sleepms_);
+  define_parameter("topic", &mod_class::pubTopic_);
+  define_parameter("qos", &mod_class::qos_);
   define_parameter("chatter", &mod_class::chatter_);
-
   return AS_OK;
 }
 
@@ -42,7 +37,6 @@ ANLStatus SendTelemetry::mod_initialize() {
   if (exist_module(read_wf_md)) {
     get_module_NC(read_wf_md, &readWaveform_);
   }
-
   const int num_modules_temp = measureTemperatureModuleNames_.size();
   for (int i = 0; i < num_modules_temp; i++) {
     const std::string module_name = measureTemperatureModuleNames_[i];
@@ -114,18 +108,27 @@ ANLStatus SendTelemetry::mod_initialize() {
   }
 
   // communication
-  sc_ = std::make_shared<SerialCommunication>(serialPath_, baudrate_, openMode_);
-  const int status = sc_->initialize();
-  if (status != 0) {
-    std::cerr << "Error in SendTelemetry::mod_initialize: Serial communication failed." << std::endl;
-    getErrorManager()->setError(ErrorType::SEND_TELEMETRY_SERIAL_COMMUNICATION_ERROR);
+  if (exist_module("MosquittoManager")) {
+    get_module_NC("MosquittoManager", &mosquittoManager_);
   }
-
+  else {
+    std::cerr << "Error in SendTelemetry::mod_initialize: MosquittoManager module not found." << std::endl;
+    return AS_ERROR;
+  }
+  mosq_ = mosquittoManager_->getMosquittoIO();
+  if (!mosq_) {
+    std::cerr << "MosquittoIO is nullptr" << std::endl;
+    return AS_ERROR;
+  }
   return AS_OK;
 }
 
 ANLStatus SendTelemetry::mod_analyze() {
   if (chatter_ > 0) std::cout << "SendTelemetry::mod_analyze" << std::endl;
+  if (mosq_ == nullptr) {
+    std::cout << "mosq_ is nullptr" << std::endl;
+    return AS_OK;
+  }
   if (telemetryType_ == 2) {
     if (wfDivisionCounter_ == 0) {
       inputStatusInfo();
@@ -146,15 +149,13 @@ ANLStatus SendTelemetry::mod_analyze() {
     telemdef_->generateTelemetry();
     telemetryType_ = 1;
   }
-
   const std::vector<uint8_t> &telemetry = telemdef_->Telemetry();
-  const int status = sc_->swrite(telemetry);
-  const bool failed = (status != static_cast<int>(telemetry.size()));
+  const int status = mosq_->Publish(telemetry, pubTopic_, qos_);
+  const bool failed = (status != mosq_err_t::MOSQ_ERR_SUCCESS);
   if (failed) {
-    std::cerr << "Sending telemetry failed: status = " << status << std::endl;
-    getErrorManager()->setError(ErrorType::SEND_TELEMETRY_SWRITE_ERROR);
+    std::cerr << "Error in SendTelemetry::mod_analyze: Publishing MQTT failed.Error Message: " << mosqpp::strerror(status) << std::endl;
+    errorManager_->setError(ErrorType::SEND_TELEMETRY_SERIAL_COMMUNICATION_ERROR);
   }
-
   if (saveTelemetry_) {
     writeTelemetryToFile(failed);
   }
@@ -175,7 +176,6 @@ ANLStatus SendTelemetry::mod_analyze() {
   }
 
   std::this_thread::sleep_for(std::chrono::milliseconds(sleepms_));
-
   return AS_OK;
 }
 
@@ -261,19 +261,22 @@ void SendTelemetry::inputHKVesselInfo() {
     telemdef_->setEnvHumidity(i, getEnvironmentalDataVec_[i]->Humidity());
     telemdef_->setEnvPressure(i, getEnvironmentalDataVec_[i]->Pressure());
   }
-  const int n_compressor = std::min(getCompressorData_->NumTemperature(), 4);
-  if (n_compressor != 4) {
-    std::cerr << "Compressor temperature size is not correct: n = " << n_compressor << std::endl;
-  }
-  for (int i = 0; i < n_compressor; i++) {
-    telemdef_->setCompressorTemperature(i, getCompressorData_->Temperature(i));
-  }
-  const int n_comppress = std::min(getCompressorData_->NumPressure(), 2);
-  if (n_comppress != 2) {
-    std::cerr << "Compressor pressure size is not correct: n = " << n_comppress << std::endl;
-  }
-  for (int i = 0; i < n_comppress; i++) {
-    telemdef_->setCompressorPressure(i, getCompressorData_->Pressure(i));
+  if (getCompressorData_ != nullptr) {
+    std::cerr << "getCompressorData_ is nullptr" << std::endl;
+    const int n_compressor = std::min(getCompressorData_->NumTemperature(), 4);
+    if (n_compressor != 4) {
+      std::cerr << "Compressor temperature size is not correct: n = " << n_compressor << std::endl;
+    }
+    for (int i = 0; i < n_compressor; i++) {
+      telemdef_->setCompressorTemperature(i, getCompressorData_->Temperature(i));
+    }
+    const int n_comppress = std::min(getCompressorData_->NumPressure(), 2);
+    if (n_comppress != 2) {
+      std::cerr << "Compressor pressure size is not correct: n = " << n_comppress << std::endl;
+    }
+    for (int i = 0; i < n_comppress; i++) {
+      telemdef_->setCompressorPressure(i, getCompressorData_->Pressure(i));
+    }
   }
 
   if (measureAcceleration_ != nullptr) {

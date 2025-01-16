@@ -33,6 +33,8 @@ set(GB_MODULES
   src/PressureGaugeManager.cc
   src/InterpretTelemetry.cc
   src/Sleep.cc
+  src/MosquittoManager.cc
+  src/ReceiveCommand.cc
 )
 
 if(GB_DEMO_MODE)
@@ -71,7 +73,6 @@ if(GB_USE_WAVEFORMS)
     src/AnalogDiscoveryManager.cc
     src/ControlHighVoltage.cc
     src/ReadWaveform.cc
-    src/ReceiveCommand.cc
     src/SendTelemetry.cc
     )
 endif(GB_USE_WAVEFORMS)
@@ -107,11 +108,6 @@ if(GB_USE_MYSQL)
   )
 endif(GB_USE_MYSQL)
 
-if (GB_USE_MOSQUITTO)
-  set(GB_MOSQUITTO_MODULES
-    src/MosquittoManager.cc
-  )
-endif(GB_USE_MOSQUITTO)
 add_library(GBModules SHARED
   ${GB_MODULES}
   ${GB_PIGPIO_MODULES}
@@ -122,6 +118,7 @@ add_library(GBModules SHARED
   ${GB_ROOT_MODULES}
   ${GB_DEMO_MODULES}
   ${GB_MYSQL_MODULES}
+  ${GB_MOSQUITTO_MODULES}
   )
 target_link_libraries(GBModules
   GBCore
@@ -135,6 +132,7 @@ target_link_libraries(GBModules
   ${MONGODB_LIB}
   ${HSQUICKLOOK_LIB}
   ${MYSQL_LIB}
+  ${MOSQUITTO_LIB}
   )
 
 install(TARGETS GBModules LIBRARY DESTINATION ${CMAKE_INSTALL_PREFIX}/lib)

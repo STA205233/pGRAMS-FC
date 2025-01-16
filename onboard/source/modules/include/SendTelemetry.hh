@@ -16,6 +16,7 @@
 #include "GetSlowADCData.hh"
 #include "MeasureAcceleration.hh"
 #include "MeasureTemperatureWithRTDSensor.hh"
+#include "MosquittoManager.hh"
 #include "ReadWaveform.hh"
 #include "ReceiveCommand.hh"
 #include "RunIDManager.hh"
@@ -25,8 +26,8 @@
 #include "GetArduinoData.hh"
 //#include "MeasureTemperatureWithRTDSensorByArduino.hh"
 //#include "MeasureTemperatureWithRTDSensorByMHADC.hh"
-#include "GetMHADCData.hh"
 #include "GetCompressorData.hh"
+#include "GetMHADCData.hh"
 #include "GetPressure.hh"
 #endif
 #include <anlnext/BasicModule.hh>
@@ -50,7 +51,8 @@ class GetArduinoData;
 //class MeasureTemperatureWithRTDSensorByArduino;
 class GetMHADCData;
 class GetPressure;
-}
+class MosquittoManager;
+} // namespace pgrams
 
 class SendTelemetry: public anlnext::BasicModule {
   DEFINE_ANL_MODULE(SendTelemetry, 2.0);
@@ -120,12 +122,11 @@ private:
   GetSlowADCData *getSlowADCData_ = nullptr;
   ReceiveCommand *receiveCommand_ = nullptr;
   RunIDManager *runIDManager_ = nullptr;
+  pgrams::MosquittoManager *mosquittoManager_ = nullptr;
 
-  // communication
-  std::shared_ptr<SerialCommunication> sc_;
-  std::string serialPath_;
-  speed_t baudrate_ = B9600;
-  mode_t openMode_ = O_RDWR;
+  pgrams::MosquittoIO<std::vector<uint8_t>> *mosq_ = nullptr;
+  std::string pubTopic_ = "telemetry";
+  int qos_ = 0;
 };
 
 } /* namespace gramsballoon */

@@ -12,7 +12,6 @@ ReceiveCommand::ReceiveCommand() {
   binaryFilenameBase_ = "Command";
   topic_ = "command";
   comdef_ = std::make_shared<CommandDefinition>();
-  buffer_.resize(bufferSize_);
 }
 
 ReceiveCommand::~ReceiveCommand() = default;
@@ -24,8 +23,9 @@ ANLStatus ReceiveCommand::mod_define() {
   define_parameter("save_command", &mod_class::saveCommand_);
   define_parameter("binary_filename_base", &mod_class::binaryFilenameBase_);
   define_parameter("num_command_per_file", &mod_class::numCommandPerFile_);
+  define_parameter("topic", &mod_class::topic_);
+  define_parameter("qos", &mod_class::qos_);
   define_parameter("chatter", &mod_class::chatter_);
-
   return AS_OK;
 }
 
@@ -58,14 +58,24 @@ ANLStatus ReceiveCommand::mod_initialize() {
     get_module_NC(run_id_manager_md, &runIDManager_);
   }
 
-  // communication
-  if (status != 0) {
-    std::cerr << "Error in ReceiveCommand::mod_initialize: Connecting MQTT failed. Error Message: " << mosqpp::strerror(status) << std::endl;
+  const std::string mosq_md = "MosquittoManager";
+  if (exist_module(mosq_md)) {
+    get_module_NC(mosq_md, &mosquittoManager_);
+  }
+  else {
+    std::cerr << "Error in ReceiveCommand::mod_initialize: MosquittoManager module not found." << std::endl;
     if (sendTelemetry_) {
-      sendTelemetry_->getErrorManager()->setError(ErrorType::RECEIVE_COMMAND_SERIAL_COMMUNICATION_ERROR);
+      sendTelemetry_->getErrorManager()->setError(ErrorType::MODULE_ACCESS_ERROR);
+      return AS_ERROR;
     }
   }
-  const int sub_result = mosq_->subscribe(NULL, topic_.c_str(), QOS);
+  // communication
+  mosq_ = mosquittoManager_->getMosquittoIO();
+  if (!mosq_) {
+    std::cerr << "MosquittoIO is nullptr" << std::endl;
+    return AS_ERROR;
+  }
+  const int sub_result = mosq_->subscribe(NULL, topic_.c_str(), qos_);
   if (sub_result != 0) {
     std::cerr << "Error in ReceiveCommand::mod_initialize: Subscribing MQTT failed. Error Message: " << mosqpp::strerror(sub_result) << std::endl;
     if (sendTelemetry_) {
@@ -76,13 +86,32 @@ ANLStatus ReceiveCommand::mod_initialize() {
 }
 
 ANLStatus ReceiveCommand::mod_analyze() {
+  if (!mosq_) {
+    return AS_OK;
+  }
+  auto commands = mosq_->getPayload();
+  const size_t sz = commands.size();
   if (chatter_ >= 1) {
-    std::cout << "ReceiveCommand byte_read: " << byte_read << std::endl;
-    for (int i = 0; i < static_cast<int>(command_.size()); i++) {
-      std::cout << "command[" << i << "] = " << static_cast<int>(command_[i]) << std::endl;
+    std::cout << "ReceiveCommand Num_packet:" << sz << std::endl;
+  }
+  if (chatter_ >= 2) {
+    for (int i = 0; i < static_cast<int>(sz); i++) {
+      for (int j = 0; j < static_cast<int>(commands[i]->payload.size()); j++) {
+        std::cout << "ReceiveCommand Payload[" << i << "][" << j << "]:" << static_cast<int>(commands[i]->payload[j]) << std::endl;
+      }
     }
   }
-
+  for (const auto &command: commands) {
+    const auto &command_payload = command->payload;
+    const bool applied = applyCommand(command_payload);
+    writeCommandToFile(!applied, command_payload);
+    if (!applied) {
+      commandRejectCount_++;
+      if (sendTelemetry_) {
+        sendTelemetry_->getErrorManager()->setError(ErrorType::INVALID_COMMAND);
+      }
+    }
+  }
   return AS_OK;
 }
 
@@ -90,16 +119,18 @@ ANLStatus ReceiveCommand::mod_finalize() {
   return AS_OK;
 }
 
-bool ReceiveCommand::applyCommand() {
+bool ReceiveCommand::applyCommand(const std::vector<uint8_t> &command) {
   commandIndex_++;
   if (chatter_ >= 1) {
     std::cout << "command start" << std::endl;
     std::cout << "command index: " << commandIndex_ << std::endl;
   }
-  for (int i = 0; i < (int)command_.size(); i++) {
-    std::cout << static_cast<int>(command_[i]) << std::endl;
+  if (chatter_ >= 2) {
+    for (int i = 0; i < (int)command.size(); i++) {
+      std::cout << static_cast<int>(command[i]) << std::endl;
+    }
   }
-  bool status = comdef_->setCommand(command_);
+  const bool status = comdef_->setCommand(command);
   if (!status) {
     return false;
   }
@@ -306,7 +337,7 @@ bool ReceiveCommand::applyCommand() {
   return false;
 }
 
-void ReceiveCommand::writeCommandToFile(bool failed) {
+void ReceiveCommand::writeCommandToFile(bool failed, const std::vector<uint8_t> &command) {
   int type = 1;
   std::string type_str = "";
   if (failed) {
@@ -342,7 +373,7 @@ void ReceiveCommand::writeCommandToFile(bool failed) {
     comdef_->writeFile(filename, app);
   }
   else {
-    writeVectorToBinaryFile(filename, app, command_);
+    writeVectorToBinaryFile(filename, app, command);
   }
   fileIDmp_[type].second++;
 }
