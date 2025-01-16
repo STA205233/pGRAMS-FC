@@ -1,8 +1,10 @@
 #ifndef GB_MosquittoIO_hh
 #define GB_MosquittoIO_hh 1
 #include "mosquittopp.h"
+#include <cstring>
 #include <deque>
 #include <iostream>
+#include <memory>
 #include <stdint.h>
 #include <string>
 #include <vector>
@@ -71,6 +73,7 @@ int MosquittoIO<V>::Publish(const std::vector<V> &message, const std::string &to
   for (const auto &m: message) {
     ret &= Publish(m, topic, qos);
   };
+  return ret;
 }
 template <>
 int MosquittoIO<std::string>::Publish(const std::string &message, const std::string &topic, int qos);
