@@ -50,12 +50,9 @@ if(GB_USE_MYSQL)
     src/MySQLIO.cc
     )
 endif(GB_USE_MYSQL)
-
-if (GB_USE_MOSQUITTO)
-  set(GB_MOSQUITTO_CORE_CLASSES
+set(GB_MOSQUITTO_CORE_CLASSES
     src/MosquittoIO.cc
-    )
-endif(GB_USE_MOSQUITTO)
+  )
 
 add_library(GBCore SHARED
   ${GB_CORE_CLASSES}
