@@ -9,6 +9,10 @@ class MyApp < ANL::ANLApp
         # with_parameters(filename: "/dev/ttyAMA0", baudrate:9600, timeout_sec: 0, timeout_usec: 100)
         # chain GRAMSBalloon::GetMHADCData
         # with_parameters(num_ch: 32, sleep_for_msec: 10, MHADCManager_name: "MHADCManager", chatter: 0)
+        chain GRAMSBalloon::MosquittoManager
+        with_parameters(host: ENV["PGRAMS_MOSQUITTO_HOST"], port: ENV["PGRAMS_MOSQUITTO_PORT"].to_i, password: ENV["PGRAMS_MOSQUITTO_PASSWD"], user: ENV["PGRAMS_MOSQUITTO_USER"], keep_alive: 60, chatter: 100, threaded_set: true) do |m|
+          m.set_singleton(0)
+        end
         chain GRAMSBalloon::Sleep
         with_parameters(sleep_sec: 1)
         chain GRAMSBalloon::GetArduinoData
@@ -32,15 +36,14 @@ class MyApp < ANL::ANLApp
         chain GRAMSBalloon::PressureGaugeManager, "PressureCommunicator_1"
         with_parameters(filename: "/dev/ttyUSB0", baudrate: 4098,  timeout_usec: 10000, timeout_sec: 0)
         chain GRAMSBalloon::GetPressure, "GetPressure_1"
-        with_parameters(EncodedSerialCommunicator_name:"PressureCommunicator_1", sleep_for_msec: 500, channel: 2, chatter: 1, type: "jp")
+        with_parameters(EncodedSerialCommunicator_name:"PressureCommunicator_1", sleep_for_msec: 10, channel: 2, chatter: 1, type: "jp")
         #chain GRAMSBalloon::PressureGaugeManager, "PressureCommunicator_2"
         #with_parameters(filename: "/dev/ttyUSB1", baudrate: 4098, timeout_usec: 0, timeout_sec: 1)
         #chain GRAMSBalloon::GetPressure, "GetPressure_2"
         #with_parameters(EncodedSerialCommunicator_name:"PressureCommunicator_2", sleep_for_msec: 10, channel: 1, chatter: 1)
         chain GRAMSBalloon::SendTelemetry
         with_parameters(
-          # serial_path: "./telemetryPTY0",
-          serial_path: "/dev/ttyS0",
+          topic: "telemetry",
           MeasureTemperature_module_names: measure_temperature_modules,
           GetPressure_jacket_module_name: "GetPressure_1",
           GetPressure_chamber_module_name: "GetPressure_2",

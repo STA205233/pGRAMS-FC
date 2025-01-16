@@ -6,21 +6,20 @@ require 'GRAMSBalloon'
 
 class MyApp < ANL::ANLApp
   def setup()
-    # chain HSQuickLook::MongoDBClient
-    # with_parameters(database: "grams")
+    chain GRAMSBalloon::MosquittoManager
+    with_parameters(host: "localhost", port: 1883, chatter: 3, keep_alive: 60, threaded_set: true)
     chain GRAMSBalloon::ReceiveTelemetry
-    with_parameters(serial_path: @serial_path, open_mode: 2, chatter: 0)
+    with_parameters(topic: "telemetry", chatter: 100)
     chain GRAMSBalloon::InterpretTelemetry
     with_parameters(save_telemetry: true, num_telem_per_file: 1000, chatter: 0, binary_filename_base: Dir.home + "/data/telemetry/telemetry")
-    # chain GRAMSBalloon::PushToMongoDB
     chain GRAMSBalloon::PushToMySQL
     with_parameters(host: ENV["PGRAMS_MYSQL_HOST"], user: ENV["PGRAMS_MYSQL_USER"], password: ENV["PGRAMS_MYSQL_PASSWD"], database: "pgrams", check_exist: true)
+    #chain GRAMSBalloon::Sleep
+    #with_parameters(sleep_sec: 1)  
   end
-  attr_accessor :serial_path
 end
 
 
 a = MyApp.new
-a.serial_path = "/dev/ttyS0"
 
 a.run(:all, 1)
