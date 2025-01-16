@@ -7,7 +7,7 @@ require 'GRAMSBalloon'
 class MyApp < ANL::ANLApp
   def setup()
     chain GRAMSBalloon::MosquittoManager
-    with_parameters(host: "localhost", port: 1883, chatter: 3, keep_alive: 60, threaded_set: true)
+    with_parameters(host: "localhost", port: 1883, chatter: 3, keep_alive: 60, threaded_set: true, device_id: "ground")
     chain GRAMSBalloon::ReceiveTelemetry
     with_parameters(topic: "telemetry", chatter: 100)
     chain GRAMSBalloon::InterpretTelemetry

@@ -36,6 +36,7 @@ private:
   std::string host_ = "localhost";
   std::string user_ = "";
   std::string passwd_ = "";
+  std::string deviceId_ = "MosquittoManager";
   SendTelemetry *sendTelemetry_ = nullptr;
   int port_ = 1883;
   int keepAlive_ = 60;

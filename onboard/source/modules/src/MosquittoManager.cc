@@ -8,6 +8,7 @@ ANLStatus MosquittoManager::mod_define() {
   define_parameter("threaded_set", &mod_class::threadedSet_);
   define_parameter("user", &mod_class::user_);
   define_parameter("password", &mod_class::passwd_);
+  define_parameter("device_id", &mod_class::deviceId_);
   define_parameter("chatter", &mod_class::chatter_);
   return AS_OK;
 }
@@ -28,7 +29,7 @@ ANLStatus MosquittoManager::mod_pre_initialize() {
     std::cerr << "Error in MosquittoManager::mod_pre_initialize: passwd is set but user is empty." << std::endl;
     return AS_ERROR;
   }
-  mosquittoIO_ = std::make_shared<MosquittoIO<std::vector<uint8_t>>>("MosquittoManager", host_, port_, keepAlive_, threadedSet_);
+  mosquittoIO_ = std::make_shared<MosquittoIO<std::vector<uint8_t>>>(deviceId_, host_, port_, keepAlive_, threadedSet_);
   mosquittoIO_->setVerbose(chatter_);
   return AS_OK;
 }

@@ -22,7 +22,7 @@ struct mosquitto_message {
 template <typename V>
 class MosquittoIO: public mosqpp::mosquittopp {
 public:
-  MosquittoIO(const char *id, const std::string &host, int port, int keepAlive = 60, bool threadedset = false) : mosquittopp(id) {
+  MosquittoIO(const std::string &id, const std::string &host, int port, int keepAlive = 60, bool threadedset = false) : mosquittopp(id.c_str()) {
     if (threadedset)
       HandleError(threaded_set(true));
     host_ = host;

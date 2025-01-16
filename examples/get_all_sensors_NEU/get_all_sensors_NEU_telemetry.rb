@@ -10,7 +10,7 @@ class MyApp < ANL::ANLApp
         # chain GRAMSBalloon::GetMHADCData
         # with_parameters(num_ch: 32, sleep_for_msec: 10, MHADCManager_name: "MHADCManager", chatter: 0)
         chain GRAMSBalloon::MosquittoManager
-        with_parameters(host: ENV["PGRAMS_MOSQUITTO_HOST"], port: ENV["PGRAMS_MOSQUITTO_PORT"].to_i, password: ENV["PGRAMS_MOSQUITTO_PASSWD"], user: ENV["PGRAMS_MOSQUITTO_USER"], keep_alive: 60, chatter: 100, threaded_set: true) do |m|
+        with_parameters(host: ENV["PGRAMS_MOSQUITTO_HOST"], port: ENV["PGRAMS_MOSQUITTO_PORT"].to_i, password: ENV["PGRAMS_MOSQUITTO_PASSWD"], user: ENV["PGRAMS_MOSQUITTO_USER"], keep_alive: 60, chatter: 100, threaded_set: true, device_id: "hubcomputer") do |m|
           m.set_singleton(0)
         end
         chain GRAMSBalloon::Sleep

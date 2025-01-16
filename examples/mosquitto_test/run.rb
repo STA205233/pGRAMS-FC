@@ -5,7 +5,7 @@ require 'GRAMSBalloon'
 class MyApp < ANL::ANLApp
     def setup()
         chain GRAMSBalloon::MosquittoManager
-        with_parameters(host: "localhost", port: 1883, keep_alive: 60, chatter: 100, threaded_set: true) do |m| 
+        with_parameters(host: "localhost", port: 1883, keep_alive: 60, chatter: 100, threaded_set: true, device_id: "hubcomputer") do |m| 
             m.set_singleton(0)
         end
         chain GRAMSBalloon::ReceiveCommand
