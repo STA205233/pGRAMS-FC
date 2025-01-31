@@ -47,9 +47,11 @@ ANLStatus ReceiveTelemetry::mod_analyze() {
   const int sz_packet = packet.size();
   if (chatter_ >= 1) {
     std::cout << "size: " << sz_packet << std::endl;
+    std::cout << "packet: ";
     for (int j = 0; j < sz_packet; j++) {
-      std::cout << "telemetry[" << j << "] = " << static_cast<int>(packet[j]) << std::endl;
+      std::cout << static_cast<int>(packet[j]) << ",";
     }
+    std::cout << std::endl;
   }
   if (sz_packet < 3) {
     std::cerr << "Packet size is not correct: sz_packet = " << sz_packet << std::endl;
